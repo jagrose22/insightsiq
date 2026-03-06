@@ -405,7 +405,7 @@ export default function App() {
         .card-hover{transition:box-shadow 0.18s,transform 0.18s}
         .card-hover:hover{box-shadow:0 8px 24px rgba(15,23,42,0.11) !important;transform:translateY(-2px)}
         .lever-card{transition:box-shadow 0.15s,border-color 0.15s,transform 0.15s}
-        .lever-card:hover{box-shadow:0 4px 16px rgba(105,65,242,0.14) !important;border-color:#C4B5FD !important;transform:translateY(-1px)}
+        .lever-card:hover{box-shadow:0 4px 16px .lever-card:hover .lever-cta{opacity:1 !important;transform:translateY(0) !important;}rgba(105,65,242,0.14) !important;border-color:#C4B5FD !important;transform:translateY(-1px)}
 
         /* ── Animations */
         @keyframes fadeIn   {from{opacity:0;transform:translateY(8px)}  to{opacity:1;transform:translateY(0)}}
@@ -1464,206 +1464,538 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, toast }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   PAGE 5 — 16-LEVER GRID
-══════════════════════════════════════════════════════════════════════════ */
-function LeversPage({ tenant, setTenant, toast }) {
-  const [selLever, setSelLever] = useState(LEVERS_DATA[0]);
-  const reds   = LEVERS_DATA.filter(l=>l.status==="red").length;
-  const ambers = LEVERS_DATA.filter(l=>l.status==="amber").length;
-  const greens = LEVERS_DATA.filter(l=>l.status==="green").length;
+   import { useState } from "react";
+
+function ScoreCircle({ score, color, size = 64 }) {
+  const r = (size - 10) / 2;
+  const circ = 2 * Math.PI * r;
+  const fill = (score / 100) * circ;
+  return (
+    <div style={{ position: "relative", width: size, height: size, flexShrink: 0 }}>
+      <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#f0f1f5" strokeWidth={5} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={5}
+          strokeDasharray={`${fill} ${circ}`} strokeLinecap="round"
+          style={{ transition: "stroke-dasharray 0.6s cubic-bezier(0.4,0,0.2,1)" }} />
+      </svg>
+      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ fontSize: 15, fontWeight: 800, color: "#111827", lineHeight: 1 }}>{score}</span>
+        <span style={{ fontSize: 9, color: "#9ca3af", fontWeight: 600 }}>/100</span>
+      </div>
+    </div>
+  );
+}
+
+const levers = [
+  // ARI Integrity
+  {
+    id: "ari-sync", bucket: "ARI Integrity", icon: "🔄", name: "ARI Sync",
+    score: 24, impact: "$34.4K", status: "critical",
+    detail: {
+      description: "ARI (Availability, Rates, Inventory) sync failures across OTAs.",
+      breakdown: [{ label: "Booking.com lag", value: "4.2h avg" }, { label: "Expedia sync fails", value: "18%" }, { label: "Agoda mismatch", value: "31 properties" }],
+      estimatedImpact: "$34,400",
+      actions: ["View Sync Logs", "Force Resync", "Export Report"]
+    }
+  },
+  {
+    id: "availability", bucket: "ARI Integrity", icon: "📅", name: "Availability",
+    score: 61, impact: "$61.2K", status: "medium",
+    detail: {
+      description: "Open sell dates not reflected on distribution channels.",
+      breakdown: [{ label: "Closed dates", value: "142" }, { label: "Channels affected", value: "5" }, { label: "Lost nights", value: "89" }],
+      estimatedImpact: "$61,200",
+      actions: ["View Calendar", "Push Availability", "Export Gaps"]
+    }
+  },
+  {
+    id: "restrictions", bucket: "ARI Integrity", icon: "⛔", name: "Restrictions",
+    score: 78, impact: "$12.1K", status: "medium",
+    detail: {
+      description: "Minimum stay / closed-to-arrival restrictions blocking bookings.",
+      breakdown: [{ label: "Min stay violations", value: "34" }, { label: "CTA blocks", value: "12" }, { label: "Channels impacted", value: "3" }],
+      estimatedImpact: "$12,100",
+      actions: ["Review Restrictions", "Edit Rules", "Export Data"]
+    }
+  },
+  {
+    id: "rate-parity", bucket: "ARI Integrity", icon: "⚖️", name: "Rate Parity",
+    score: 61, impact: "$82.4K", status: "critical",
+    detail: {
+      description: "Rate disparities detected across OTAs vs direct channel.",
+      breakdown: [{ label: "Booking.com", value: "14 violations" }, { label: "Expedia", value: "8 violations" }, { label: "Agoda", value: "5 violations" }],
+      estimatedImpact: "$82,430",
+      actions: ["View Listings", "Export Violations", "Create Fix Ticket"]
+    }
+  },
+
+  // Distribution Errors
+  {
+    id: "error-rate", bucket: "Distribution Errors", icon: "⚠️", name: "Error Rate",
+    score: 45, impact: "$28.7K", status: "critical",
+    detail: {
+      description: "API and channel manager errors causing failed transactions.",
+      breakdown: [{ label: "API errors", value: "247 / day" }, { label: "Booking failures", value: "3.2%" }, { label: "Retry rate", value: "18%" }],
+      estimatedImpact: "$28,700",
+      actions: ["View Error Logs", "Alert Engineering", "Download Report"]
+    }
+  },
+  {
+    id: "activation", bucket: "Distribution Errors", icon: "⚙️", name: "Activation",
+    score: 83, impact: "$8.2K", status: "healthy",
+    detail: {
+      description: "Properties not yet fully activated across all channels.",
+      breakdown: [{ label: "Pending activation", value: "11 properties" }, { label: "Partial setup", value: "6" }, { label: "Avg days to activate", value: "4.1" }],
+      estimatedImpact: "$8,200",
+      actions: ["View Queue", "Send Reminder", "Export List"]
+    }
+  },
+  {
+    id: "mapping", bucket: "Distribution Errors", icon: "🔗", name: "Mapping",
+    score: 52, impact: "$42.1K", status: "critical",
+    detail: {
+      description: "Room type / rate plan mapping errors causing inventory mismatches.",
+      breakdown: [{ label: "Unmapped rooms", value: "38" }, { label: "Rate mismatch", value: "21" }, { label: "OTAs affected", value: "4" }],
+      estimatedImpact: "$42,100",
+      actions: ["Review Mappings", "Auto-Remap", "Export Errors"]
+    }
+  },
+  {
+    id: "commission", bucket: "Distribution Errors", icon: "💰", name: "Commission",
+    score: 74, impact: "$19.3K", status: "medium",
+    detail: {
+      description: "Commission rate anomalies vs contracted rates.",
+      breakdown: [{ label: "Overcharged", value: "9 properties" }, { label: "Avg overcharge", value: "1.8%" }, { label: "Channels", value: "Booking.com, Expedia" }],
+      estimatedImpact: "$19,300",
+      actions: ["View Contracts", "Flag Discrepancies", "Export Report"]
+    }
+  },
+
+  // Content Quality
+  {
+    id: "images", bucket: "Content Quality", icon: "📷", name: "Images",
+    score: 68, impact: "$15.4K", status: "medium",
+    detail: {
+      description: "Properties with insufficient or low-quality image coverage.",
+      breakdown: [{ label: "Below 10 images", value: "22 properties" }, { label: "No exterior shot", value: "8" }, { label: "Low res flagged", value: "14" }],
+      estimatedImpact: "$15,400",
+      actions: ["View Gallery", "Upload Images", "Request Photos"]
+    }
+  },
+  {
+    id: "amenities", bucket: "Content Quality", icon: "🏨", name: "Amenities",
+    score: 81, impact: "$6.8K", status: "healthy",
+    detail: {
+      description: "Missing or incorrect amenity listings reducing search ranking.",
+      breakdown: [{ label: "Missing amenities", value: "31 properties" }, { label: "Incorrect data", value: "9" }, { label: "OTAs impacted", value: "3" }],
+      estimatedImpact: "$6,800",
+      actions: ["Review Amenities", "Bulk Update", "Export Gaps"]
+    }
+  },
+  {
+    id: "descriptions", bucket: "Content Quality", icon: "📝", name: "Descriptions",
+    score: 72, impact: "$9.1K", status: "medium",
+    detail: {
+      description: "Properties with short, missing or duplicate descriptions.",
+      breakdown: [{ label: "Under 150 words", value: "18 properties" }, { label: "Missing entirely", value: "4" }, { label: "Duplicate content", value: "7" }],
+      estimatedImpact: "$9,100",
+      actions: ["Edit Descriptions", "AI-Generate Draft", "Export List"]
+    }
+  },
+  {
+    id: "content-score", bucket: "Content Quality", icon: "🖼️", name: "Content Score",
+    score: 58, impact: "$22.6K", status: "medium",
+    detail: {
+      description: "Overall OTA content score below threshold, reducing search visibility.",
+      breakdown: [{ label: "Below 70 score", value: "27 properties" }, { label: "Below 50 score", value: "11" }, { label: "Avg score", value: "61 / 100" }],
+      estimatedImpact: "$22,600",
+      actions: ["View Scores", "Content Action Plan", "Export Report"]
+    }
+  },
+
+  // Demand Performance
+  {
+    id: "look-to-book", bucket: "Demand Performance", icon: "🔍", name: "Look-to-Book",
+    score: 55, impact: "$37.9K", status: "medium",
+    detail: {
+      description: "High search impressions not converting to bookings.",
+      breakdown: [{ label: "Avg L2B ratio", value: "1:142" }, { label: "Below threshold", value: "19 properties" }, { label: "Top miss channel", value: "Expedia" }],
+      estimatedImpact: "$37,900",
+      actions: ["View Analytics", "Rate Review", "Export Data"]
+    }
+  },
+  {
+    id: "booking-pace", bucket: "Demand Performance", icon: "📈", name: "Booking Pace",
+    score: 47, impact: "$54.2K", status: "critical",
+    detail: {
+      description: "Booking velocity tracking behind prior period and forecast.",
+      breakdown: [{ label: "Behind forecast", value: "31 properties" }, { label: "Avg gap", value: "-18%" }, { label: "Critical windows", value: "Next 14 days" }],
+      estimatedImpact: "$54,200",
+      actions: ["View Pace Report", "Apply Promotions", "Alert Revenue Mgr"]
+    }
+  },
+  {
+    id: "channel-mix", bucket: "Demand Performance", icon: "🌐", name: "Channel Mix",
+    score: 76, impact: "$11.8K", status: "healthy",
+    detail: {
+      description: "OTA dependency too high — direct channel underperforming.",
+      breakdown: [{ label: "OTA share", value: "74%" }, { label: "Direct share", value: "12%" }, { label: "Target direct", value: "25%" }],
+      estimatedImpact: "$11,800",
+      actions: ["View Mix Report", "Direct Strategy", "Export Data"]
+    }
+  },
+  {
+    id: "cancellation", bucket: "Demand Performance", icon: "❌", name: "Cancellation",
+    score: 63, impact: "$44.7K", status: "medium",
+    detail: {
+      description: "Cancellation rate above benchmark — revenue at risk.",
+      breakdown: [{ label: "Avg cancel rate", value: "22%" }, { label: "High risk props", value: "14" }, { label: "Peak cancel window", value: "48h pre-arrival" }],
+      estimatedImpact: "$44,700",
+      actions: ["View Cancellations", "Policy Review", "Export Report"]
+    }
+  },
+];
+
+const buckets = ["ARI Integrity", "Distribution Errors", "Content Quality", "Demand Performance"];
+
+const bucketMeta = {
+  "ARI Integrity": { color: "#6366f1", bg: "#eef2ff" },
+  "Distribution Errors": { color: "#f59e0b", bg: "#fffbeb" },
+  "Content Quality": { color: "#10b981", bg: "#ecfdf5" },
+  "Demand Performance": { color: "#3b82f6", bg: "#eff6ff" },
+};
+
+const statusConfig = {
+  critical: { label: "Critical", color: "#ef4444", bg: "#fef2f2", bar: "#ef4444", icon: "🔥" },
+  medium:   { label: "At Risk",  color: "#f59e0b", bg: "#fffbeb", bar: "#f59e0b", icon: "⚠️" },
+  healthy:  { label: "Healthy",  color: "#10b981", bg: "#f0fdf4", bar: "#10b981", icon: "✓" },
+};
+
+const topRisks = levers
+  .filter(l => l.status === "critical")
+  .sort((a, b) => parseFloat(b.impact.replace(/[^0-9.]/g, "")) - parseFloat(a.impact.replace(/[^0-9.]/g, "")))
+  .slice(0, 3);
+
+export default function LeverCockpit() {
+  const [activePanel, setActivePanel] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+
+  const activeLever = levers.find(l => l.id === activePanel);
 
   return (
-    <div className="fade-in">
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
-        <div>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
-            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,
-              color:C.t1,letterSpacing:"-0.6px"}}>16-Lever Diagnostic</h1>
-            {tenant && (
-              <div style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,
-                borderRadius:7,padding:"4px 12px",fontSize:12,color:C.brand,fontWeight:700,
-                display:"flex",alignItems:"center",gap:5}}>
-                <span style={{opacity:0.6}}>📍</span> {tenant}
-              </div>
-            )}
-          </div>
-          <div style={{fontSize:12,color:C.t3}}>Full RAG diagnostic across all 16 distribution levers · Click any lever for drill-down</div>
+    <div style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", background: "#f8f9fc", minHeight: "100vh", padding: "32px 28px" }}>
+
+      {/* Google Font */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+        .lever-card {
+          background: #fff;
+          border-radius: 14px;
+          border: 1px solid #e8eaf0;
+          padding: 20px;
+          cursor: pointer;
+          transition: box-shadow 0.18s ease, transform 0.18s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        .lever-card:hover {
+          box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+          transform: translateY(-2px);
+        }
+        .lever-card:hover .lever-cta {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .lever-cta {
+          opacity: 0;
+          transform: translateY(4px);
+          transition: opacity 0.15s ease, transform 0.15s ease;
+          font-size: 12px;
+          font-weight: 600;
+          color: #6366f1;
+          margin-top: 14px;
+          letter-spacing: 0.01em;
+        }
+        .score-bar-bg {
+          height: 5px;
+          border-radius: 99px;
+          background: #f0f1f5;
+          margin: 10px 0 14px;
+          overflow: hidden;
+        }
+        .score-bar-fill {
+          height: 100%;
+          border-radius: 99px;
+          transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .status-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 3px 9px;
+          border-radius: 99px;
+          letter-spacing: 0.02em;
+        }
+        .side-panel {
+          position: fixed;
+          top: 0; right: 0; bottom: 0;
+          width: 360px;
+          background: #fff;
+          box-shadow: -8px 0 40px rgba(0,0,0,0.10);
+          z-index: 100;
+          overflow-y: auto;
+          animation: slideIn 0.22s cubic-bezier(0.4,0,0.2,1);
+        }
+        @keyframes slideIn {
+          from { transform: translateX(40px); opacity: 0; }
+          to   { transform: translateX(0);   opacity: 1; }
+        }
+        .panel-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.08);
+          z-index: 99;
+          animation: fadeIn 0.18s ease;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; } to { opacity: 1; }
+        }
+        .action-btn {
+          display: block;
+          width: 100%;
+          text-align: left;
+          padding: 11px 16px;
+          background: #f8f9fc;
+          border: 1px solid #e8eaf0;
+          border-radius: 9px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #374151;
+          cursor: pointer;
+          transition: background 0.12s, border-color 0.12s;
+          margin-bottom: 8px;
+          font-family: inherit;
+        }
+        .action-btn:hover {
+          background: #eef2ff;
+          border-color: #c7d2fe;
+          color: #4f46e5;
+        }
+        .risk-bar-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          background: #fff;
+          border-radius: 10px;
+          border: 1px solid #e8eaf0;
+          flex: 1;
+          min-width: 160px;
+        }
+      `}</style>
+
+      {/* Header */}
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 4 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#111827", margin: 0 }}>Revenue Cockpit</h1>
+          <span style={{ fontSize: 13, color: "#9ca3af", fontWeight: 400 }}>16 levers · Last updated 14 min ago</span>
         </div>
-        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          <select onChange={e=>setTenant(e.target.value)} value={tenant||"All Tenants"}
-            style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,
-              padding:"7px 12px",fontSize:12,color:C.t1,outline:"none",boxShadow:C.shadow}}>
-            <option>All Tenants</option>
-            {TENANTS.map(t=><option key={t.id}>{t.name}</option>)}
-          </select>
-          <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",
-            fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↗ Export Grid</button>
-        </div>
+        <p style={{ fontSize: 14, color: "#6b7280", margin: 0 }}>Diagnose distribution performance across all channels and properties.</p>
       </div>
 
-      {/* RAG Summary */}
-      <SH phase="SEE" title="RAG Summary" ann="backed"/>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:22}}>
-        {[[reds,"RED","Critical — Fix Today",C.red,C.redBg,C.redBorder],
-          [ambers,"AMBER","Needs Attention",C.amber,C.amberBg,C.amberBorder],
-          [greens,"GREEN","Distribution Healthy",C.green,C.greenBg,C.greenBorder]
-        ].map(([n,l,s,c,bg,b])=>(
-          <div key={l} style={{background:bg,border:`1px solid ${b}`,borderRadius:12,
-            padding:"16px",display:"flex",alignItems:"center",gap:16,
-            boxShadow:C.shadow}}>
-            <div style={{width:52,height:52,borderRadius:"50%",
-              background:`linear-gradient(135deg,${c},${c}88)`,
-              display:"flex",alignItems:"center",justifyContent:"center",
-              fontSize:24,fontWeight:800,color:"#fff",fontFamily:C.mono,
-              flexShrink:0,boxShadow:`0 4px 12px ${c}44`}}>{n}</div>
-            <div>
-              <div style={{fontSize:14,fontWeight:800,color:c,fontFamily:C.mono}}>{l}</div>
-              <div style={{fontSize:11,color:C.t3,marginTop:3}}>{s}</div>
-              <div style={{fontSize:10,color:c,marginTop:4,fontWeight:600}}>
-                {n} of 16 levers
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* 4x4 Grid + Detail */}
-      <SH phase="PRIORITISE" title="All 16 Levers — Click any lever to drill down" ann="backed"/>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 340px",gap:14}}>
-
-        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,alignContent:"start"}}>
-          {LEVERS_DATA.map(lv=>{
-            const isSel = selLever?.id===lv.id;
-            const c  = {red:C.red,amber:C.amber,green:C.green}[lv.status];
-            const bg = {red:C.redBg,amber:C.amberBg,green:C.greenBg}[lv.status];
-            const b  = {red:C.redBorder,amber:C.amberBorder,green:C.greenBorder}[lv.status];
-            const attain = Math.min(100,(lv.val/lv.bench)*100);
-            return (
-              <div key={lv.id} onClick={()=>setSelLever(lv)}
-                className="lever-card"
-                style={{background:isSel?"#F5F3FF":bg,
-                  border:`1px solid ${isSel?C.brand:b}`,
-                  borderTop:`3px solid ${isSel?C.brand:c}`,
-                  borderRadius:10,padding:"12px",cursor:"pointer",
-                  boxShadow:isSel?`0 0 0 2px ${C.brand}33,${C.shadowMd}`:C.shadow,
-                  transition:"all 0.15s"}}>
-                <div style={{display:"flex",justifyContent:"space-between",
-                  alignItems:"center",marginBottom:8}}>
-                  <span style={{fontSize:9,fontFamily:C.mono,color:C.t4,fontWeight:600}}>
-                    L{String(lv.id).padStart(2,"0")}
-                  </span>
-                  <div style={{width:8,height:8,borderRadius:"50%",background:c,
-                    boxShadow:`0 0 0 3px ${c}22`}}/>
-                </div>
-                <div style={{fontSize:12,fontWeight:700,color:isSel?C.brand:C.t1,
-                  marginBottom:6,lineHeight:1.2}}>{lv.name}</div>
-                {/* Mini progress bar */}
-                <div style={{width:"100%",height:4,background:"rgba(0,0,0,0.06)",
-                  borderRadius:2,marginBottom:6,overflow:"hidden"}}>
-                  <div style={{width:`${attain}%`,height:"100%",background:c,borderRadius:2}}/>
-                </div>
-                <div style={{display:"flex",justifyContent:"space-between",fontSize:10}}>
-                  <span style={{fontFamily:C.mono,color:c,fontWeight:700}}>{lv.val}</span>
-                  <span style={{color:C.t4,fontFamily:C.mono}}>/{lv.bench}</span>
-                </div>
-                {lv.impact!=="—" && (
-                  <div style={{fontSize:9,color:c,fontWeight:700,marginTop:4,
-                    fontFamily:C.mono,opacity:0.8}}>{lv.impact}</div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Lever detail */}
-        {selLever && (
-          <Card key={selLever.id} style={{padding:16,display:"flex",flexDirection:"column",gap:12}} selected>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+      {/* Revenue Leakage Thermometer */}
+      {(() => {
+        const totalRisk = levers.reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
+        const criticalRisk = levers.filter(l => l.status === "critical").reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
+        const pct = Math.round((criticalRisk / totalRisk) * 100);
+        const fmt = (n) => "$" + (n >= 1000 ? (n/1000).toFixed(0) + "K" : n.toFixed(0));
+        return (
+          <div style={{ background: "#fff", border: "1px solid #e8eaf0", borderRadius: 16, padding: "28px 32px", marginBottom: 24, boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 16 }}>
               <div>
-                <div style={{fontSize:9,color:C.t4,fontFamily:C.mono,marginBottom:4,fontWeight:600,letterSpacing:0.8}}>
-                  LEVER {String(selLever.id).padStart(2,"0")}
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>Revenue Leakage Monitor</div>
+                <div style={{ fontSize: 42, fontWeight: 800, color: "#ef4444", lineHeight: 1, letterSpacing: "-0.02em" }}>
+                  {fmt(totalRisk * 1000)}
+                  <span style={{ fontSize: 16, fontWeight: 500, color: "#9ca3af", marginLeft: 8 }}>total at risk</span>
                 </div>
-                <div style={{fontSize:18,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif"}}>{selLever.name}</div>
               </div>
-              <Rag s={selLever.status}/>
-            </div>
-
-            {/* 2x2 KPIs */}
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-              {[["Current",selLever.val,{red:C.red,amber:C.amber,green:C.green}[selLever.status]],
-                ["Benchmark",selLever.bench,C.t2],
-                ["Rev. Impact",selLever.impact,selLever.impact!=="—"?C.red:C.green],
-                ["Gap",`${Math.abs(selLever.bench-selLever.val).toFixed(0)}`,
-                  selLever.val<selLever.bench?C.red:C.green]
-              ].map(([l,v,c])=>(
-                <div key={l} style={{background:`linear-gradient(145deg,#F8FAFC,${c}06)`,
-                  border:`1px solid ${C.border}`,borderRadius:8,padding:"10px 12px"}}>
-                  <div style={{fontSize:9,color:C.t3,fontWeight:600,
-                    textTransform:"uppercase",letterSpacing:0.5,marginBottom:5}}>{l}</div>
-                  <div style={{fontSize:20,fontWeight:800,fontFamily:C.mono,color:c}}>{v}</div>
+              <div style={{ display: "flex", gap: 24 }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#ef4444" }}>{levers.filter(l=>l.status==="critical").length}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Critical</div>
                 </div>
-              ))}
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b" }}>{levers.filter(l=>l.status==="medium").length}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>At Risk</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#10b981" }}>{levers.filter(l=>l.status==="healthy").length}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Healthy</div>
+                </div>
+              </div>
             </div>
-
-            {/* Attainment bar */}
             <div>
-              <div style={{display:"flex",justifyContent:"space-between",
-                fontSize:10,color:C.t3,marginBottom:5}}>
-                <span>Attainment vs benchmark</span>
-                <span style={{fontFamily:C.mono,fontWeight:700,
-                  color:{red:C.red,amber:C.amber,green:C.green}[selLever.status]}}>
-                  {Math.round((selLever.val/selLever.bench)*100)}%
-                </span>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af" }}>Healthy</span>
+                <span style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af" }}>Critical</span>
               </div>
-              <div style={{width:"100%",height:10,background:C.t6,borderRadius:5,overflow:"hidden"}}>
-                <div style={{
-                  width:`${Math.min(100,(selLever.val/selLever.bench)*100)}%`,
-                  height:"100%",
-                  background:`linear-gradient(90deg,${
-                    {red:C.red,amber:C.amber,green:C.green}[selLever.status]},${
-                    {red:C.red+"99",amber:C.amber+"99",green:C.green+"99"}[selLever.status]})`,
-                  borderRadius:5,transition:"width 0.4s ease"}}/>
+              <div style={{ height: 10, borderRadius: 99, background: "#f0f1f5", overflow: "hidden", position: "relative" }}>
+                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${100 - pct}%`, background: "linear-gradient(90deg, #10b981, #f59e0b)", borderRadius: "99px 0 0 99px" }} />
+                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: `${pct}%`, background: "linear-gradient(90deg, #f59e0b, #ef4444)", borderRadius: "0 99px 99px 0" }} />
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+                <span style={{ fontSize: 11, color: "#10b981", fontWeight: 600 }}>{fmt((totalRisk - criticalRisk) * 1000)} watch / healthy</span>
+                <span style={{ fontSize: 11, color: "#ef4444", fontWeight: 600 }}>{fmt(criticalRisk * 1000)} critical leakage</span>
               </div>
             </div>
+          </div>
+        );
+      })()}
 
-            {/* Trend */}
-            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-              borderRadius:9,padding:"12px 14px"}}>
-              <div style={{fontSize:10,color:C.t3,fontWeight:600,
-                textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>7-Day Trend <Ann type="backed"/></div>
-              <Spark
-                data={[selLever.val*0.85,selLever.val*0.9,selLever.val*0.88,
-                  selLever.val*0.95,selLever.val*0.92,selLever.val*0.97,selLever.val]}
-                color={{red:C.red,amber:C.amber,green:C.green}[selLever.status]}
-                w={270} h={48}/>
-            </div>
-
-            {selLever.status!=="green" && (
-              <div style={{background:C.amberBg,border:`1px solid ${C.amberBorder}`,
-                borderRadius:9,padding:"10px 12px"}}>
-                <div style={{fontSize:10,color:C.t3,fontWeight:600,
-                  textTransform:"uppercase",letterSpacing:0.5,marginBottom:5}}>
-                  Recommended Action <Ann type="new"/>
-                </div>
-                <div style={{fontSize:12,color:C.t2,lineHeight:1.6}}>
-                  Launch <b>"{selLever.name}"</b> playbook to diagnose root cause and begin remediation.
-                  Estimated effort: 2–4 hours.
-                </div>
+      {/* Top Risk Bar */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
+          🔥 Top Revenue Risk Today
+        </div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {topRisks.map((l, i) => (
+            <div key={l.id} className="risk-bar-item" style={{ cursor: "pointer" }} onClick={() => setActivePanel(l.id)}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#d1d5db", minWidth: 16 }}>#{i + 1}</span>
+              <span style={{ fontSize: 13 }}>{l.icon}</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{l.name}</div>
+                <div style={{ fontSize: 12, color: "#ef4444", fontWeight: 600 }}>{l.impact} at risk</div>
               </div>
-            )}
-
-            <div style={{display:"flex",gap:8}}>
-              <button className="btn-primary" onClick={()=>toast(`"${selLever.name}" playbook launched`,"success")}
-                style={{flex:1,background:C.brand,border:"none",borderRadius:8,
-                  padding:"9px",color:"#fff",fontSize:12,fontWeight:700,
-                  boxShadow:`0 2px 8px ${C.brand}33`}}>▶ Launch Playbook</button>
-              <button className="btn-ghost" style={{background:"#F8FAFC",
-                border:`1px solid ${C.border}`,borderRadius:8,padding:"9px 14px",
-                color:C.t2,fontSize:12}}>History</button>
             </div>
-          </Card>
-        )}
+          ))}
+        </div>
       </div>
+
+      {/* Bucket Sections */}
+      {buckets.map(bucket => {
+        const bucketLevers = levers.filter(l => l.bucket === bucket);
+        const meta = bucketMeta[bucket];
+        return (
+          <div key={bucket} style={{ marginBottom: 36 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: meta.color }} />
+              <span style={{ fontSize: 13, fontWeight: 700, color: meta.color, textTransform: "uppercase", letterSpacing: "0.07em" }}>{bucket}</span>
+              <div style={{ flex: 1, height: 1, background: "#e8eaf0" }} />
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14 }}>
+              {bucketLevers.map(lever => {
+                const st = statusConfig[lever.status];
+                return (
+                  <div
+                    key={lever.id}
+                    className="lever-card"
+                    onClick={() => setActivePanel(lever.id)}
+                    onMouseEnter={() => setHoveredId(lever.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                  >
+                    {/* Top color stripe */}
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: st.bar, borderRadius: "14px 14px 0 0" }} />
+
+                    {/* Icon + Name */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                      <span style={{ fontSize: 18 }}>{lever.icon}</span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{lever.name}</span>
+                    </div>
+
+                    {/* Revenue — PRIMARY */}
+                    <div style={{ marginBottom: 12 }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>Revenue at Risk</div>
+                      <div style={{ fontSize: 26, fontWeight: 800, color: lever.status === "critical" ? "#ef4444" : lever.status === "medium" ? "#f59e0b" : "#10b981", letterSpacing: "-0.01em", lineHeight: 1 }}>{lever.impact}</div>
+                    </div>
+
+                    {/* Score + Status — secondary */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <ScoreCircle score={lever.score} color={st.bar} size={52} />
+                      <div>
+                        <div style={{ fontSize: 10, fontWeight: 600, color: "#9ca3af", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.05em" }}>Health Score</div>
+                        <span className="status-badge" style={{ background: st.bg, color: st.color }}>
+                          {st.icon} {st.label}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Hover CTA */}
+                    <div className="lever-cta">→ View Diagnostics</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Side Panel Overlay */}
+      {activePanel && (
+        <>
+          <div className="panel-overlay" onClick={() => setActivePanel(null)} />
+          <div className="side-panel">
+            {activeLever && (() => {
+              const st = statusConfig[activeLever.status];
+              return (
+                <div style={{ padding: 28 }}>
+                  {/* Close */}
+                  <button
+                    onClick={() => setActivePanel(null)}
+                    style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#9ca3af", float: "right", padding: 0, lineHeight: 1 }}
+                  >✕</button>
+
+                  {/* Header */}
+                  <div style={{ marginBottom: 24 }}>
+                    <div style={{ fontSize: 26, marginBottom: 6 }}>{activeLever.icon}</div>
+                    <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111827", margin: "0 0 4px" }}>{activeLever.name}</h2>
+                    <p style={{ fontSize: 13, color: "#6b7280", margin: 0, lineHeight: 1.5 }}>{activeLever.detail.description}</p>
+                  </div>
+
+                  {/* Score */}
+                  <div style={{ background: "#f8f9fc", borderRadius: 12, padding: "16px 18px", marginBottom: 20 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Current Score</span>
+                      <span style={{ fontSize: 22, fontWeight: 700, color: "#111827" }}>{activeLever.score}<span style={{ fontSize: 12, color: "#9ca3af" }}> / 100</span></span>
+                    </div>
+                    <div className="score-bar-bg" style={{ margin: 0 }}>
+                      <div className="score-bar-fill" style={{ width: `${activeLever.score}%`, background: st.bar }} />
+                    </div>
+                  </div>
+
+                  {/* Breakdown */}
+                  <div style={{ marginBottom: 20 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>Breakdown</div>
+                    {activeLever.detail.breakdown.map((item, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "9px 0", borderBottom: i < activeLever.detail.breakdown.length - 1 ? "1px solid #f0f1f5" : "none" }}>
+                        <span style={{ fontSize: 13, color: "#6b7280" }}>{item.label}</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Estimated Impact */}
+                  <div style={{ background: st.bg, border: `1px solid ${st.color}22`, borderRadius: 10, padding: "12px 16px", marginBottom: 24 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: st.color, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>Estimated Revenue Impact</div>
+                    <div style={{ fontSize: 24, fontWeight: 700, color: st.color }}>{activeLever.detail.estimatedImpact}</div>
+                  </div>
+
+                  {/* Actions */}
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>Actions</div>
+                    {activeLever.detail.actions.map((action, i) => (
+                      <button key={i} className="action-btn">→ {action}</button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </>
+      )}
     </div>
   );
 }
