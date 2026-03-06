@@ -32,7 +32,6 @@ const PHASE_CFG = {
   PREVENT:   { bg:"#EFF6FF", color:"#2563EB", border:"#BFDBFE", dot:"#3B82F6" },
 };
 
-/* ─── MICRO COMPONENTS ───────────────────────────────────────────────────── */
 function Phase({ label }) {
   const p = PHASE_CFG[label] || PHASE_CFG.SEE;
   return (
@@ -116,7 +115,6 @@ function Spark({ data, color, w=100, h=32 }) {
   );
 }
 
-/* ─── TOAST SYSTEM ──────────────────────────────────────────────────────── */
 let _setToast = null;
 export function useToast() {
   return (msg, type="success") => _setToast && _setToast({ msg, type, id: Date.now() });
@@ -143,7 +141,6 @@ function ToastHost() {
   );
 }
 
-/* ─── DONUT MINI-GAUGE ──────────────────────────────────────────────────── */
 function Donut({ pct, color, size=80, label, sub }) {
   const r=30, cx=40, cy=40, circ=2*Math.PI*r;
   const dash = (pct/100)*circ;
@@ -166,7 +163,6 @@ function Donut({ pct, color, size=80, label, sub }) {
   );
 }
 
-/* ─── ICON BADGE ────────────────────────────────────────────────────────── */
 function IconBadge({ icon, color, size=32 }) {
   return (
     <div style={{width:size,height:size,borderRadius:8,
@@ -175,7 +171,6 @@ function IconBadge({ icon, color, size=32 }) {
       justifyContent:"center",fontSize:size*0.45,flexShrink:0}}>{icon}</div>
   );
 }
-
 
 function SH({ phase, title, ann, right, sub }) {
   const p = PHASE_CFG[phase] || PHASE_CFG.SEE;
@@ -195,7 +190,6 @@ function SH({ phase, title, ann, right, sub }) {
   );
 }
 
-/* ─── CARD WRAPPER ──────────────────────────────────────────────────────── */
 function Card({ children, style={}, accent, onClick, selected }) {
   return (
     <div onClick={onClick} style={{
@@ -215,9 +209,7 @@ function Card({ children, style={}, accent, onClick, selected }) {
   );
 }
 
-/* ─── KPI TILE ──────────────────────────────────────────────────────────── */
 function KpiTile({ label, value, sub, accent, spark, ann, badge }) {
-  const tintHex = accent ? accent + "08" : "transparent";
   return (
     <div style={{
       background:`linear-gradient(145deg, ${C.cardBg} 60%, ${accent}08 100%)`,
@@ -242,7 +234,6 @@ function KpiTile({ label, value, sub, accent, spark, ann, badge }) {
   );
 }
 
-/* ─── LOOP PROGRESS BAR ─────────────────────────────────────────────────── */
 function LoopBar({ active }) {
   const steps = ["SEE","PRIORITISE","FIX","PROVE","PREVENT"];
   const idx   = steps.indexOf(active);
@@ -288,7 +279,6 @@ function LoopBar({ active }) {
   );
 }
 
-/* ─── DATA ──────────────────────────────────────────────────────────────── */
 const TENANTS = [
   { id:1, name:"Omni Hotels & Resorts",    type:"Enterprise", health:61, err:8.1, arr:4.2, trend:-4,  status:"InProgress", rag:"amber", owner:"Priya S.",  leversRed:3 },
   { id:2, name:"Hilton / British Airways", type:"Enterprise", health:44, err:12.7,arr:6.8, trend:-11, status:"Active",     rag:"red",   owner:"Marcus T.", leversRed:6 },
@@ -330,24 +320,7 @@ const PB_LIBRARY = [
   { title:"New Partner Activation",           cat:"Activation",  effort:"6h",impact:"Medium",desc:"Credential setup, content push, test booking sequence, go-live confirmation" },
   { title:"Cancellation Rate Investigation",  cat:"Revenue",     effort:"2h",impact:"Medium",desc:"Segment cancellations by partner, identify policy triggers, escalate to CSM" },
 ];
-const LEVERS_DATA = [
-  { id:1, name:"ARI Sync",       status:"red",  val:24, bench:85,impact:"$28.4K" },
-  { id:2, name:"Rate Parity",    status:"amber",val:61, bench:90,impact:"$12.4K" },
-  { id:3, name:"Availability",   status:"green",val:92, bench:88,impact:"—"      },
-  { id:4, name:"Restrictions",   status:"red",  val:31, bench:82,impact:"$8.1K"  },
-  { id:5, name:"Content Score",  status:"amber",val:54, bench:75,impact:"$6.4K"  },
-  { id:6, name:"Images",         status:"amber",val:67, bench:80,impact:"$4.2K"  },
-  { id:7, name:"Amenities",      status:"green",val:88, bench:78,impact:"—"      },
-  { id:8, name:"Descriptions",   status:"amber",val:58, bench:76,impact:"$3.1K"  },
-  { id:9, name:"Error Rate",     status:"red",  val:19, bench:85,impact:"$28.4K" },
-  { id:10,name:"Booking Pace",   status:"green",val:81, bench:72,impact:"—"      },
-  { id:11,name:"Look-to-Book",   status:"amber",val:3.4,bench:4.8,impact:"$9.2K" },
-  { id:12,name:"Channel Mix",    status:"green",val:76, bench:70,impact:"—"      },
-  { id:13,name:"Cancellation",   status:"amber",val:18, bench:12,impact:"$11.4K" },
-  { id:14,name:"Activation",     status:"red",  val:42, bench:80,impact:"$5.8K"  },
-  { id:15,name:"Mapping",        status:"amber",val:71, bench:85,impact:"$2.9K"  },
-  { id:16,name:"Commission",     status:"green",val:94, bench:88,impact:"—"      },
-];
+
 const TOP_NAV = [
   { id:"home",      label:"Health Overview",      phase:"SEE"       },
   { id:"errors",    label:"Error Intelligence",   phase:"PRIORITISE"},
@@ -389,25 +362,18 @@ export default function App() {
         ::-webkit-scrollbar-thumb:hover{background:#94A3B8}
         button,select,input{font-family:inherit;cursor:pointer}
         table{border-collapse:collapse;width:100%}
-
-        /* ── Row interactions */
         .tr-hover:hover{background:#F5F3FF !important;transition:background 0.1s}
         .tr-sel{background:#F5F3FF !important;transition:background 0.1s}
-
-        /* ── Button utilities */
         .btn-ghost{transition:background 0.12s,color 0.12s,border-color 0.12s}
         .btn-ghost:hover{background:#F1F5F9 !important}
         .btn-primary{transition:box-shadow 0.15s,transform 0.1s,opacity 0.12s}
         .btn-primary:hover{opacity:0.88;transform:translateY(-1px)}
         .btn-primary:active{transform:translateY(0)}
-
-        /* ── Card lifts */
         .card-hover{transition:box-shadow 0.18s,transform 0.18s}
         .card-hover:hover{box-shadow:0 8px 24px rgba(15,23,42,0.11) !important;transform:translateY(-2px)}
         .lever-card{transition:box-shadow 0.15s,border-color 0.15s,transform 0.15s}
-        .lever-card:hover{box-shadow:0 4px 16px .lever-card:hover .lever-cta{opacity:1 !important;transform:translateY(0) !important;}rgba(105,65,242,0.14) !important;border-color:#C4B5FD !important;transform:translateY(-1px)}
-
-        /* ── Animations */
+        .lever-card:hover{box-shadow:0 4px 16px rgba(105,65,242,0.14) !important;border-color:#C4B5FD !important;transform:translateY(-1px)}
+        .lever-card:hover .lever-cta{opacity:1 !important;transform:translateY(0) !important;}
         @keyframes fadeIn   {from{opacity:0;transform:translateY(8px)}  to{opacity:1;transform:translateY(0)}}
         @keyframes fadeSlide{from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:translateX(0)}}
         @keyframes pulse    {0%,100%{opacity:1} 50%{opacity:0.5}}
@@ -415,29 +381,21 @@ export default function App() {
         @keyframes toastOut {from{opacity:1;transform:translateY(0)}    to{opacity:0;transform:translateY(8px)}}
         @keyframes spin     {to{transform:rotate(360deg)}}
         @keyframes dotPulse {0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.6}}
-
         .fade-in   {animation:fadeIn    0.22s ease-out both}
         .fade-slide{animation:fadeSlide 0.22s ease-out both}
         .toast-in  {animation:toastIn   0.25s cubic-bezier(0.34,1.56,0.64,1) both}
         .live-dot  {animation:dotPulse  2s ease-in-out infinite}
-
-        /* ── Phase accent bars (left border on active nav) */
         .nav-active-see       {border-bottom:2px solid #6941F2 !important;color:#6941F2 !important}
         .nav-active-prioritise{border-bottom:2px solid #DC2626 !important;color:#DC2626 !important}
         .nav-active-fix       {border-bottom:2px solid #D97706 !important;color:#D97706 !important}
         .nav-active-prove     {border-bottom:2px solid #059669 !important;color:#059669 !important}
         .nav-active-prevent   {border-bottom:2px solid #2563EB !important;color:#2563EB !important}
-
-        /* ── Subtle page grid pattern */
         body{background-image:radial-gradient(circle,#CBD5E155 1px,transparent 1px);background-size:24px 24px}
       `}</style>
 
-      {/* ── HEADER ─────────────────────────────────────────────────────── */}
       <div style={{background:C.headerBg,padding:"0 20px",height:50,display:"flex",
         alignItems:"center",gap:14,position:"sticky",top:0,zIndex:200,
         boxShadow:"0 2px 8px rgba(0,0,0,0.2)"}}>
-
-        {/* Logo */}
         <div style={{display:"flex",alignItems:"center",gap:8,marginRight:4}}>
           <div style={{width:3,height:28,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
           <div style={{lineHeight:1}}>
@@ -447,15 +405,11 @@ export default function App() {
             <div style={{fontSize:8,color:"#6B7280",fontFamily:C.mono,letterSpacing:1.2,marginTop:1}}>InsightsIQ  v1.0</div>
           </div>
         </div>
-
         <div style={{width:1,height:24,background:"rgba(255,255,255,0.1)"}}/>
-
-        {/* Client */}
         <div style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",
           borderRadius:6,padding:"4px 12px",fontSize:13,color:"#E2E8F0",fontWeight:600}}>
           Omni Hotels &amp; Resorts
         </div>
-
         {["Demand Partner","Brand"].map(l=>(
           <div key={l} style={{display:"flex",flexDirection:"column",gap:1}}>
             <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>{l}</span>
@@ -464,8 +418,6 @@ export default function App() {
             </select>
           </div>
         ))}
-
-        {/* Year nav */}
         <div style={{display:"flex",alignItems:"center",gap:5,marginLeft:4,
           background:"rgba(255,255,255,0.06)",borderRadius:6,padding:"3px 8px"}}>
           <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>‹</button>
@@ -474,10 +426,7 @@ export default function App() {
           <span style={{color:"#64748B",fontSize:11,fontFamily:C.mono}}>2027</span>
           <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>›</button>
         </div>
-
         <div style={{flex:1}}/>
-
-        {/* Role toggle */}
         <div style={{display:"flex",background:"rgba(255,255,255,0.07)",
           border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1}}>
           {[["exec","Executive"],["ops","Operator"]].map(([k,l])=>(
@@ -488,8 +437,6 @@ export default function App() {
             </button>
           ))}
         </div>
-
-        {/* Alerts */}
         <div style={{position:"relative"}}>
           <button onClick={()=>setAlertOpen(!alertOpen)}
             style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",
@@ -520,10 +467,8 @@ export default function App() {
             </div>
           )}
         </div>
-
         <button style={{background:"none",border:"none",color:"#A78BFA",
           fontSize:12,fontWeight:600,letterSpacing:"-0.1px"}}>Grow with RateGain →</button>
-
         <div style={{width:30,height:30,borderRadius:"50%",
           background:"linear-gradient(135deg,#7C3AED,#6941F2)",
           display:"flex",alignItems:"center",justifyContent:"center",
@@ -531,7 +476,6 @@ export default function App() {
           boxShadow:"0 0 0 2px rgba(255,255,255,0.15)"}}>JR</div>
       </div>
 
-      {/* ── TAB NAV ────────────────────────────────────────────────────── */}
       <div style={{background:C.cardBg,borderBottom:`1px solid ${C.border}`,
         padding:"0 20px",display:"flex",alignItems:"center",
         position:"sticky",top:50,zIndex:150,
@@ -584,10 +528,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* ── LOOP BAR ───────────────────────────────────────────────────── */}
       <LoopBar active={loopPhase}/>
 
-      {/* ── PAGE CONTENT ───────────────────────────────────────────────── */}
       <div style={{padding:"20px",minHeight:"calc(100vh - 136px)"}} className="fade-in" key={page}>
         {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
@@ -600,6 +542,8 @@ export default function App() {
   );
 }
 
+
+
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
@@ -608,51 +552,27 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
   const hs=58, circ=2*Math.PI*32;
   return (
     <div className="fade-in">
-      {/* Header */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
-          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,
-            color:C.t1,letterSpacing:"-0.6px",lineHeight:1}}>Health Overview</h1>
-          <div style={{fontSize:12,color:C.t3,marginTop:4}}>
-            {isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants"}
-          </div>
+          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",lineHeight:1}}>Health Overview</h1>
+          <div style={{fontSize:12,color:C.t3,marginTop:4}}>{isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants"}</div>
         </div>
         <div style={{display:"flex",gap:8}}>
-          <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,
-            borderRadius:8,padding:"7px 16px",fontSize:12,color:C.t2,fontWeight:500}}
-            onClick={()=>toast("Export queued — check your downloads","info")}>↗ Export</button>
-          <button className="btn-primary" style={{background:C.brand,border:"none",borderRadius:8,
-            padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,
-            boxShadow:`0 2px 8px ${C.brand}44`}}
-            onClick={()=>toast("QBR Snapshot generating…","success")}>QBR Snapshot</button>
+          <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 16px",fontSize:12,color:C.t2,fontWeight:500}} onClick={()=>toast("Export queued — check your downloads","info")}>↗ Export</button>
+          <button className="btn-primary" style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}} onClick={()=>toast("QBR Snapshot generating…","success")}>QBR Snapshot</button>
         </div>
       </div>
-
-      {/* SEE — KPI band */}
-      <SH phase="SEE" title="Portfolio Health Summary" ann="ui"
-        sub={isExec?"All segments · 84 tenants":"Your assigned tenants · 8 properties"}/>
+      <SH phase="SEE" title="Portfolio Health Summary" ann="ui" sub={isExec?"All segments · 84 tenants":"Your assigned tenants · 8 properties"}/>
       <div style={{display:"grid",gridTemplateColumns:"210px 1fr 1fr 1fr",gap:12,marginBottom:22}}>
-
-        {/* Health Score */}
-        <div style={{
-          background:`linear-gradient(145deg,${C.cardBg} 50%,${C.amber}0A 100%)`,
-          border:`1px solid ${C.border}`,borderTop:`3px solid ${C.amber}`,
-          borderRadius:12,padding:"16px",boxShadow:C.shadow,
-          display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-          <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,
-            textTransform:"uppercase",marginBottom:8,alignSelf:"flex-start"}}>
-            Health Score <Ann type="ui"/>
-          </div>
+        <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${C.amber}0A 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.amber}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+          <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:8,alignSelf:"flex-start"}}>Health Score <Ann type="ui"/></div>
           <div style={{position:"relative",width:84,height:84}}>
             <svg width="84" height="84" viewBox="0 0 84 84">
               <circle cx={42} cy={42} r={32} fill="none" stroke={C.t6} strokeWidth={9}/>
               <circle cx={42} cy={42} r={32} fill={C.amber+"08"} stroke="none"/>
-              <circle cx={42} cy={42} r={32} fill="none" stroke={C.amber} strokeWidth={9}
-                strokeDasharray={`${(hs/100)*circ} ${circ}`} strokeLinecap="round"
-                transform="rotate(-90 42 42)"/>
+              <circle cx={42} cy={42} r={32} fill="none" stroke={C.amber} strokeWidth={9} strokeDasharray={`${(hs/100)*circ} ${circ}`} strokeLinecap="round" transform="rotate(-90 42 42)"/>
             </svg>
-            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",
-              alignItems:"center",justifyContent:"center"}}>
+            <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
               <span style={{fontSize:26,fontWeight:800,color:C.amber,fontFamily:C.mono,lineHeight:1}}>{hs}</span>
               <span style={{fontSize:9,color:C.t4,fontFamily:C.mono}}>/100</span>
             </div>
@@ -660,47 +580,27 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
           <div style={{fontSize:11,color:C.amber,fontWeight:700}}>AT RISK</div>
           <div style={{fontSize:10,color:C.t4}}>▼ 3 pts vs last week</div>
         </div>
-
-        <KpiTile label="Error Index" value="8.1/1k"
-          sub="▲ 1.1 vs last period" accent={C.red}
-          spark={[6.2,6.8,7.1,6.9,7.8,8.3,7.9,8.1]} ann="backed" badge="▲ RISING"/>
-        <KpiTile label={isExec?"Revenue at Risk":"Your Revenue at Risk"} value="$47.2K"
-          sub="ARI $28.4K · Rate $12.4K · Content $6.4K" accent={C.brand} ann="new"/>
-
-        {/* Pulse tile */}
-        <div style={{
-          background:`linear-gradient(145deg,${C.cardBg} 50%,${C.cyan}08 100%)`,
-          border:`1px solid ${C.border}`,borderTop:`3px solid ${C.cyan}`,
-          borderRadius:12,padding:"16px",boxShadow:C.shadow}}>
-          <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,
-            textTransform:"uppercase",marginBottom:10}}>
-            {isExec?"Portfolio Pulse":"Operator Pulse"} <Ann type="backed"/>
-          </div>
+        <KpiTile label="Error Index" value="8.1/1k" sub="▲ 1.1 vs last period" accent={C.red} spark={[6.2,6.8,7.1,6.9,7.8,8.3,7.9,8.1]} ann="backed" badge="▲ RISING"/>
+        <KpiTile label={isExec?"Revenue at Risk":"Your Revenue at Risk"} value="$47.2K" sub="ARI $28.4K · Rate $12.4K · Content $6.4K" accent={C.brand} ann="new"/>
+        <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${C.cyan}08 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.cyan}`,borderRadius:12,padding:"16px",boxShadow:C.shadow}}>
+          <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:10}}>{isExec?"Portfolio Pulse":"Operator Pulse"} <Ann type="backed"/></div>
           {isExec ? <>
-            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>
-              9<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/84</span>
-            </div>
+            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>9<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/84</span></div>
             <div style={{fontSize:11,color:C.t3,marginBottom:10}}>tenants with critical issues</div>
             <div style={{display:"flex",flexDirection:"column",gap:5}}>
               {[[9,"Critical",C.red],[22,"At risk",C.amber],[53,"Healthy",C.green]].map(([n,l,c])=>(
                 <div key={l} style={{display:"flex",alignItems:"center",gap:8}}>
-                  <div style={{flex:1,height:4,background:C.t6,borderRadius:2}}>
-                    <div style={{width:`${(n/84)*100}%`,height:"100%",background:c,borderRadius:2}}/>
-                  </div>
+                  <div style={{flex:1,height:4,background:C.t6,borderRadius:2}}><div style={{width:`${(n/84)*100}%`,height:"100%",background:c,borderRadius:2}}/></div>
                   <span style={{fontSize:10,color:c,fontWeight:600,fontFamily:C.mono,width:14,textAlign:"right"}}>{n}</span>
                   <span style={{fontSize:10,color:C.t3,width:50}}>{l}</span>
                 </div>
               ))}
             </div>
           </> : <>
-            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>
-              3<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/8</span>
-            </div>
+            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>3<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/8</span></div>
             <div style={{fontSize:11,color:C.t3,marginBottom:10}}>need action today</div>
             {[["Wyndham","due today",C.red],["Expedia/Omni","due Mar 6",C.amber]].map(([t,d,c])=>(
-              <div key={t} style={{display:"flex",justifyContent:"space-between",
-                alignItems:"center",padding:"5px 8px",background:c+"0C",
-                borderRadius:6,marginBottom:5,border:`1px solid ${c}22`}}>
+              <div key={t} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",background:c+"0C",borderRadius:6,marginBottom:5,border:`1px solid ${c}22`}}>
                 <span style={{fontSize:11,color:C.t2,fontWeight:600}}>{t}</span>
                 <span style={{fontSize:10,color:c,fontWeight:700,fontFamily:C.mono}}>{d}</span>
               </div>
@@ -708,18 +608,11 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
           </>}
         </div>
       </div>
-
-      {/* PRIORITISE + FIX */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 368px",gap:14,marginBottom:22}}>
-
-        {/* Priority grid */}
         <Card>
-          <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,
-            background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
+          <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
             <Phase label="PRIORITISE"/>
-            <span style={{fontSize:13,fontWeight:700,color:C.t1}}>
-              {isExec ? "Priority Grid — Impact × Urgency" : "Your Assigned Tenants"}
-            </span>
+            <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{isExec ? "Priority Grid — Impact × Urgency" : "Your Assigned Tenants"}</span>
             <Ann type="ui"/>
             <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Impact ▾</span>
           </div>
@@ -728,9 +621,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
               <thead>
                 <tr style={{background:"#F8FAFC"}}>
                   {["Tenant","Tier","Health","Err/1k","ARR $M","Trend","Status","Owner",""].map(h=>(
-                    <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,
-                      fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,
-                      whiteSpace:"nowrap",letterSpacing:0.3}}>{h}</th>
+                    <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3}}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -738,34 +629,17 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
                 {[...TENANTS].sort((a,b)=>a.health-b.health).map((t,i)=>{
                   const s = sel?.id===t.id;
                   return (
-                    <tr key={t.id} onClick={()=>setSel(t)}
-                      className={s?"tr-sel":"tr-hover"}
-                      style={{background:s?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",
-                        borderBottom:`1px solid ${C.t6}`,cursor:"pointer",
-                        borderLeft:`3px solid ${s?C.brand:"transparent"}`,
-                        transition:"all 0.1s"}}>
-                      <td style={{padding:"9px 12px",fontWeight:s?700:500,
-                        color:s?C.brand:C.t1,fontSize:12}}>{t.name}</td>
-                      <td style={{padding:"9px 12px"}}>
-                        <span style={{fontSize:10,color:C.t3,background:C.t6,
-                          borderRadius:4,padding:"2px 7px"}}>{t.type}</span>
-                      </td>
+                    <tr key={t.id} onClick={()=>setSel(t)} className={s?"tr-sel":"tr-hover"} style={{background:s?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",borderLeft:`3px solid ${s?C.brand:"transparent"}`,transition:"all 0.1s"}}>
+                      <td style={{padding:"9px 12px",fontWeight:s?700:500,color:s?C.brand:C.t1,fontSize:12}}>{t.name}</td>
+                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{t.type}</span></td>
                       <td style={{padding:"9px 12px"}}><Rag s={t.rag}/></td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,
-                        color:{red:C.red,amber:C.amber,green:C.green}[t.rag]}}>{t.err}</td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:{red:C.red,amber:C.amber,green:C.green}[t.rag]}}>{t.err}</td>
                       <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{t.arr}</td>
                       <td style={{padding:"9px 12px"}}><Trend v={t.trend} invert/></td>
                       <td style={{padding:"9px 12px"}}><StatusChip s={t.status}/></td>
                       <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{t.owner}</td>
                       <td style={{padding:"9px 10px"}}>
-                        <button onClick={e=>{e.stopPropagation();goLevers(t.name);}}
-                          style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,
-                            borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,
-                            fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}}
-                          onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}}
-                          onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>
-                          ⬡ 16 →
-                        </button>
+                        <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 →</button>
                       </td>
                     </tr>
                   );
@@ -774,46 +648,28 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
             </table>
           </div>
         </Card>
-
-        {/* Detail drawer */}
         <DetailPane row={sel} tab={tab} setTab={setTab} goLevers={goLevers}/>
       </div>
-
-      {/* PREVENT */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
         <Card style={{padding:16}}>
           <SH phase="PREVENT" title="Emerging Risk Patterns" ann="new"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],
-              ["Rate restriction spikes correlate with weekend inventory windows","amber"],
-              ["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
-              <div key={txt} style={{display:"flex",alignItems:"center",gap:10,
-                padding:"10px 12px",borderRadius:8,
-                background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,
-                border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,
-                borderLeft:`3px solid ${C[s]}`}}>
+            {[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],["Rate restriction spikes correlate with weekend inventory windows","amber"],["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
+              <div key={txt} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,borderLeft:`3px solid ${C[s]}`}}>
                 <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{txt}</span>
-                <button className="btn-ghost" style={{background:C.cardBg,
-                  border:`1px solid ${C.border}`,borderRadius:6,
-                  padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>View →</button>
+                <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>View →</button>
               </div>
             ))}
           </div>
         </Card>
-
         <Card style={{padding:16}}>
           <SH phase="PREVENT" title="Recommended Preventive Playbooks" ann="ui"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {["Standardise retry policy for ARI sync across all Tier 1 tenants",
-              "Add pre-deployment health check for onboarding + content modules",
-              "Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
-              <div key={i} style={{display:"flex",alignItems:"center",gap:10,
-                padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
+            {["Standardise retry policy for ARI sync across all Tier 1 tenants","Add pre-deployment health check for onboarding + content modules","Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
                 <div style={{width:4,height:4,borderRadius:"50%",background:C.blue,flexShrink:0}}/>
                 <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{t}</span>
-                <button className="btn-ghost" style={{background:C.cardBg,
-                  border:`1px solid ${C.border}`,borderRadius:6,
-                  padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>Add →</button>
+                <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>Add →</button>
               </div>
             ))}
           </div>
@@ -823,11 +679,9 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
   );
 }
 
-/* ── Detail Pane ──────────────────────────────────────────────────────────── */
 function DetailPane({ row, tab, setTab, goLevers }) {
   if (!row) return (
-    <Card style={{display:"flex",alignItems:"center",justifyContent:"center",
-      flexDirection:"column",gap:8,padding:24,minHeight:200}}>
+    <Card style={{display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:8,padding:24,minHeight:200}}>
       <div style={{fontSize:28,opacity:0.15}}>⬡</div>
       <div style={{fontSize:12,color:C.t4}}>Select a tenant to inspect</div>
     </Card>
@@ -836,81 +690,39 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   const phaseMap={snapshot:"SEE",drivers:"PRIORITISE",actions:"FIX",impact:"PROVE"};
   return (
     <Card style={{display:"flex",flexDirection:"column",overflow:"hidden"}} selected>
-      {/* Head */}
       <div style={{padding:"14px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
-          <div style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",
-            lineHeight:1.2,flex:1,marginRight:8}}>{row.name}</div>
+          <div style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",lineHeight:1.2,flex:1,marginRight:8}}>{row.name}</div>
           <Rag s={row.rag}/>
         </div>
-        <div style={{fontSize:11,color:C.t3,marginBottom:10}}>
-          ARR: <b style={{fontFamily:C.mono,color:C.t2}}>${row.arr}M</b> · Owner: {row.owner}
-          {row.leversRed>0 && <span style={{marginLeft:8,color:C.red,fontWeight:700}}>
-            {row.leversRed} lever{row.leversRed!==1?"s":""} critical
-          </span>}
-        </div>
-        <button onClick={()=>goLevers(row.name)} style={{width:"100%",
-          background:`linear-gradient(135deg,${C.brandDim},${C.brand}18)`,
-          border:`1px solid ${C.brandBorder}`,borderRadius:8,padding:"8px",
-          fontSize:12,color:C.brand,fontWeight:700,
-          display:"flex",alignItems:"center",justifyContent:"center",gap:6,
-          transition:"all 0.15s"}}
-          onMouseEnter={e=>e.currentTarget.style.background=C.brand+"; color:#fff"}
-          onMouseLeave={e=>e.currentTarget.style.background=`linear-gradient(135deg,${C.brandDim},${C.brand}18)`}>
-          ⬡ View 16-Lever Diagnostic — {row.name.split(" ")[0]}
-          <span style={{fontSize:10,opacity:0.7}}>→</span>
-        </button>
+        <div style={{fontSize:11,color:C.t3,marginBottom:10}}>ARR: <b style={{fontFamily:C.mono,color:C.t2}}>${row.arr}M</b> · Owner: {row.owner}{row.leversRed>0 && <span style={{marginLeft:8,color:C.red,fontWeight:700}}>{row.leversRed} lever{row.leversRed!==1?"s":""} critical</span>}</div>
+        <button onClick={()=>goLevers(row.name)} style={{width:"100%",background:`linear-gradient(135deg,${C.brandDim},${C.brand}18)`,border:`1px solid ${C.brandBorder}`,borderRadius:8,padding:"8px",fontSize:12,color:C.brand,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"all 0.15s"}}>⬡ View 16-Lever Diagnostic — {row.name.split(" ")[0]}<span style={{fontSize:10,opacity:0.7}}>→</span></button>
       </div>
-      {/* Tabs */}
       <div style={{display:"flex",borderBottom:`1px solid ${C.border}`}}>
         {TABS.map(([k,l])=>{
           const active = tab===k;
           const p = PHASE_CFG[phaseMap[k]];
-          return (
-            <button key={k} onClick={()=>setTab(k)} style={{flex:1,padding:"8px 4px",
-              background:active?p.bg:"transparent",border:"none",
-              borderBottom:`2px solid ${active?p.color:"transparent"}`,
-              color:active?p.color:C.t3,fontSize:11,fontWeight:active?700:400,
-              transition:"all 0.15s"}}>
-              {l}
-            </button>
-          );
+          return <button key={k} onClick={()=>setTab(k)} style={{flex:1,padding:"8px 4px",background:active?p.bg:"transparent",border:"none",borderBottom:`2px solid ${active?p.color:"transparent"}`,color:active?p.color:C.t3,fontSize:11,fontWeight:active?700:400,transition:"all 0.15s"}}>{l}</button>;
         })}
       </div>
-      {/* Body */}
       <div style={{flex:1,overflowY:"auto",padding:14}} className="fade-in" key={tab}>
         {tab==="snapshot" && (
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-              {[["Health",row.health+"/100",C.amber],["Error /1k",row.err,C.red],
-                ["ARR","$"+row.arr+"M",C.brand],
-                ["Trend",(row.trend>0?"+":"")+row.trend+"%",row.trend<0?C.red:C.green]
-              ].map(([l,v,c])=>(
-                <div key={l} style={{background:`linear-gradient(145deg,#F8FAFC,${c}06)`,
-                  border:`1px solid ${C.border}`,borderRadius:8,padding:"10px 12px"}}>
-                  <div style={{fontSize:9,color:C.t3,fontWeight:600,
-                    textTransform:"uppercase",letterSpacing:0.5,marginBottom:5}}>{l}</div>
+              {[["Health",row.health+"/100",C.amber],["Error /1k",row.err,C.red],["ARR","$"+row.arr+"M",C.brand],["Trend",(row.trend>0?"+":"")+row.trend+"%",row.trend<0?C.red:C.green]].map(([l,v,c])=>(
+                <div key={l} style={{background:`linear-gradient(145deg,#F8FAFC,${c}06)`,border:`1px solid ${C.border}`,borderRadius:8,padding:"10px 12px"}}>
+                  <div style={{fontSize:9,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:5}}>{l}</div>
                   <div style={{fontSize:20,fontWeight:800,fontFamily:C.mono,color:c}}>{v}</div>
                 </div>
               ))}
             </div>
-            <div style={{padding:"8px 10px",background:C.t6,borderRadius:6,
-              fontSize:10,color:C.t3,fontStyle:"italic"}}>
-              Sources: RGI Bookings + Errors screens · backed by current data
-            </div>
+            <div style={{padding:"8px 10px",background:C.t6,borderRadius:6,fontSize:10,color:C.t3,fontStyle:"italic"}}>Sources: RGI Bookings + Errors screens · backed by current data</div>
           </div>
         )}
         {tab==="drivers" && (
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {[["ARI sync failure — Expedia","red","$28.4K/day"],
-              ["Rate restriction block","amber","$12.4K/day"],
-              ["Content score <55","amber","Conv −14%"]
-            ].slice(0,row.rag==="green"?1:row.rag==="amber"?2:3).map(([t,s,v])=>(
-              <div key={t} style={{padding:"10px 12px",
-                borderLeft:`3px solid ${C[s]}`,
-                background:{red:C.redBg,amber:C.amberBg}[s],
-                border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]}`,
-                borderRadius:"0 8px 8px 0"}}>
+            {[["ARI sync failure — Expedia","red","$28.4K/day"],["Rate restriction block","amber","$12.4K/day"],["Content score <55","amber","Conv −14%"]].slice(0,row.rag==="green"?1:row.rag==="amber"?2:3).map(([t,s,v])=>(
+              <div key={t} style={{padding:"10px 12px",borderLeft:`3px solid ${C[s]}`,background:{red:C.redBg,amber:C.amberBg}[s],border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]}`,borderRadius:"0 8px 8px 0"}}>
                 <div style={{fontSize:12,fontWeight:600,color:C.t1,marginBottom:4}}>{t}</div>
                 <div style={{fontSize:11,fontFamily:C.mono,color:C[s],fontWeight:700}}>{v}</div>
               </div>
@@ -920,36 +732,26 @@ function DetailPane({ row, tab, setTab, goLevers }) {
         {tab==="actions" && (
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             {PLAYBOOKS.slice(0,3).map(pb=>(
-              <div key={pb.id} style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-                borderRadius:8,padding:"10px 12px"}}>
+              <div key={pb.id} style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:8,padding:"10px 12px"}}>
                 <div style={{fontSize:12,fontWeight:600,color:C.t1,marginBottom:5}}>{pb.title}</div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <span style={{fontSize:10,color:C.t3}}>
-                    Due: <span style={{color:pb.due==="Today"?C.red:C.t2,fontWeight:600}}>{pb.due}</span>
-                    {" · "}{pb.owner}
-                  </span>
+                  <span style={{fontSize:10,color:C.t3}}>Due: <span style={{color:pb.due==="Today"?C.red:C.t2,fontWeight:600}}>{pb.due}</span>{" · "}{pb.owner}</span>
                   <StatusChip s={pb.status}/>
                 </div>
               </div>
             ))}
-            <button style={{background:"#F8FAFC",border:`1px dashed ${C.t5}`,
-              borderRadius:8,padding:"9px",color:C.t3,fontSize:11,
-              textAlign:"center"}}>+ Create New Playbook</button>
+            <button style={{background:"#F8FAFC",border:`1px dashed ${C.t5}`,borderRadius:8,padding:"9px",color:C.t3,fontSize:11,textAlign:"center"}}>+ Create New Playbook</button>
           </div>
         )}
         {tab==="impact" && (
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            <div style={{background:C.greenBg,border:`1px solid ${C.greenBorder}`,
-              borderRadius:10,padding:"14px 16px"}}>
-              <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",
-                letterSpacing:0.5,marginBottom:6}}>Est. ARR Protected (30d) <Ann type="new"/></div>
+            <div style={{background:C.greenBg,border:`1px solid ${C.greenBorder}`,borderRadius:10,padding:"14px 16px"}}>
+              <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:6}}>Est. ARR Protected (30d) <Ann type="new"/></div>
               <div style={{fontSize:30,fontWeight:800,fontFamily:C.mono,color:C.green}}>$42K</div>
               <div style={{fontSize:11,color:C.t3,marginTop:3}}>model-based estimate</div>
             </div>
-            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-              borderRadius:10,padding:"12px 14px"}}>
-              <div style={{fontSize:10,color:C.t3,fontWeight:600,marginBottom:10,
-                textTransform:"uppercase",letterSpacing:0.5}}>Error Rate Trend — 8 Weeks</div>
+            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:10,padding:"12px 14px"}}>
+              <div style={{fontSize:10,color:C.t3,fontWeight:600,marginBottom:10,textTransform:"uppercase",letterSpacing:0.5}}>Error Rate Trend — 8 Weeks</div>
               <Spark data={[14.2,13.8,12.1,13.4,11.9,10.8,9.4,8.1]} color={C.green} w={294} h={48}/>
               <div style={{fontSize:11,color:C.green,marginTop:8,fontWeight:600}}>▼ 43% since playbook applied</div>
             </div>
@@ -969,77 +771,43 @@ function ErrorPage({ sel, setSel, toast }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
         <div>
           <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Error Intelligence</h1>
-          <div style={{fontSize:12,marginTop:4}}>
-            <span style={{color:C.red,fontWeight:700}}>These aren't system bugs — these are guests who couldn't book.</span>
-            <span style={{color:C.t3}}> Every error = a lost arrival.</span>
-          </div>
+          <div style={{fontSize:12,marginTop:4}}><span style={{color:C.red,fontWeight:700}}>These aren't system bugs — these are guests who couldn't book.</span><span style={{color:C.t3}}> Every error = a lost arrival.</span></div>
         </div>
-        <button style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,
-          padding:"7px 14px",fontSize:12,color:C.t2}}>↓ Export</button>
+        <button style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 14px",fontSize:12,color:C.t2}}>↓ Export</button>
       </div>
-
-      {/* Filter bar */}
-      <Card style={{padding:"12px 16px",marginBottom:16,display:"flex",gap:16,
-        alignItems:"flex-end",flexWrap:"wrap"}}>
+      <Card style={{padding:"12px 16px",marginBottom:16,display:"flex",gap:16,alignItems:"flex-end",flexWrap:"wrap"}}>
         {[["Brand","ALL"],["Demand Partner","ALL"],["Error Type","Booking Errors"]].map(([l,v])=>(
           <div key={l}>
-            <div style={{fontSize:10,color:C.t3,fontWeight:600,marginBottom:4,
-              textTransform:"uppercase",letterSpacing:0.4}}>{l}</div>
-            <select style={{background:C.inputBg,border:`1px solid ${C.border}`,
-              color:C.t1,borderRadius:7,padding:"6px 10px",fontSize:12,outline:"none",minWidth:120}}>
-              <option>{v}</option>
-            </select>
+            <div style={{fontSize:10,color:C.t3,fontWeight:600,marginBottom:4,textTransform:"uppercase",letterSpacing:0.4}}>{l}</div>
+            <select style={{background:C.inputBg,border:`1px solid ${C.border}`,color:C.t1,borderRadius:7,padding:"6px 10px",fontSize:12,outline:"none",minWidth:120}}><option>{v}</option></select>
           </div>
         ))}
         <div>
-          <div style={{fontSize:10,color:C.t3,fontWeight:600,marginBottom:4,
-            textTransform:"uppercase",letterSpacing:0.4}}>Date Range</div>
-          <input defaultValue="1 Mar – 31 Mar '26" style={{background:C.inputBg,
-            border:`1px solid ${C.border}`,color:C.t1,borderRadius:7,
-            padding:"6px 10px",fontSize:12,outline:"none",width:160}}/>
+          <div style={{fontSize:10,color:C.t3,fontWeight:600,marginBottom:4,textTransform:"uppercase",letterSpacing:0.4}}>Date Range</div>
+          <input defaultValue="1 Mar – 31 Mar '26" style={{background:C.inputBg,border:`1px solid ${C.border}`,color:C.t1,borderRadius:7,padding:"6px 10px",fontSize:12,outline:"none",width:160}}/>
         </div>
-        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 20px",
-          fontSize:12,color:"#fff",fontWeight:700,marginLeft:"auto",
-          boxShadow:`0 2px 8px ${C.brand}44`}}>Search</button>
+        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 20px",fontSize:12,color:"#fff",fontWeight:700,marginLeft:"auto",boxShadow:`0 2px 8px ${C.brand}44`}}>Search</button>
         <Ann type="backed"/>
       </Card>
-
-      {/* Metrics */}
       <SH phase="SEE" title="Error Summary — March 2026" ann="backed"/>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:20}}>
-        {[["Total Errors MTD","601",C.red,"+18% vs Feb","backed"],
-          ["MTTR Average","4.2h",C.amber,"↓ 0.3h improving","backed"],
-          ["Tenants Impacted","9",C.red,"3 currently active","backed"],
-          ["Est. Bookings Lost","289",C.brand,"this period","new"]
-        ].map(([l,v,c,s,a])=>(
+        {[["Total Errors MTD","601",C.red,"+18% vs Feb","backed"],["MTTR Average","4.2h",C.amber,"↓ 0.3h improving","backed"],["Tenants Impacted","9",C.red,"3 currently active","backed"],["Est. Bookings Lost","289",C.brand,"this period","new"]].map(([l,v,c,s,a])=>(
           <KpiTile key={l} label={l} value={v} sub={s} accent={c} ann={a}/>
         ))}
       </div>
-
-      {/* Clusters + Detail */}
       <div style={{display:"grid",gridTemplateColumns:"310px 1fr",gap:14}}>
-        {/* Cluster list */}
         <Card>
-          <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",
-            display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div style={{display:"flex",alignItems:"center",gap:7}}>
-              <Phase label="PRIORITISE"/>
-              <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Error Clusters</span>
-            </div>
+          <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{display:"flex",alignItems:"center",gap:7}}><Phase label="PRIORITISE"/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>Error Clusters</span></div>
             <span style={{fontSize:10,color:C.t4}}>Rev Impact ▾</span>
           </div>
           {ERROR_CLUSTERS.map(ec=>{
             const isSel = sel?.id===ec.id;
             const sc = {red:C.red,amber:C.amber,green:C.green}[ec.sev];
             return (
-              <div key={ec.id} onClick={()=>setSel(ec)} style={{
-                padding:"11px 14px",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",
-                background:isSel?"#F5F3FF":"#fff",
-                borderLeft:`3px solid ${isSel?C.brand:sc}`,transition:"background 0.1s"}}>
-                <div style={{display:"flex",justifyContent:"space-between",
-                  alignItems:"flex-start",marginBottom:5}}>
-                  <span style={{fontSize:12,fontWeight:600,
-                    color:isSel?C.brand:C.t1,lineHeight:1.3,flex:1,marginRight:8}}>{ec.name}</span>
+              <div key={ec.id} onClick={()=>setSel(ec)} style={{padding:"11px 14px",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",background:isSel?"#F5F3FF":"#fff",borderLeft:`3px solid ${isSel?C.brand:sc}`,transition:"background 0.1s"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:5}}>
+                  <span style={{fontSize:12,fontWeight:600,color:isSel?C.brand:C.t1,lineHeight:1.3,flex:1,marginRight:8}}>{ec.name}</span>
                   <Rag s={ec.sev}/>
                 </div>
                 <div style={{display:"flex",gap:10,fontSize:11}}>
@@ -1051,92 +819,48 @@ function ErrorPage({ sel, setSel, toast }) {
             );
           })}
         </Card>
-
-        {/* Cluster detail */}
         {sel && (
           <Card key={sel.id} className="fade-in" style={{display:"flex",flexDirection:"column",overflow:"hidden"}}>
-            <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",
-              display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div>
-                <div style={{fontSize:15,fontWeight:800,color:C.t1,
-                  fontFamily:"'Syne',sans-serif",marginBottom:4}}>{sel.name}</div>
-                <div style={{fontSize:11,color:C.t3,display:"flex",alignItems:"center",gap:6}}>
-                  <span>Type: <b>{sel.type}</b></span><span>·</span>
-                  <span>{sel.freq} events</span><span>·</span>
-                  <span>{sel.tenants} tenants</span>
-                  <Ann type="backed"/>
-                </div>
+                <div style={{fontSize:15,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",marginBottom:4}}>{sel.name}</div>
+                <div style={{fontSize:11,color:C.t3,display:"flex",alignItems:"center",gap:6}}><span>Type: <b>{sel.type}</b></span><span>·</span><span>{sel.freq} events</span><span>·</span><span>{sel.tenants} tenants</span><Ann type="backed"/></div>
               </div>
-              <div style={{textAlign:"right"}}>
-                <Phase label="FIX"/>
-                <div style={{fontSize:24,fontWeight:800,fontFamily:C.mono,color:C.red,marginTop:4}}>{sel.impact}</div>
-              </div>
+              <div style={{textAlign:"right"}}><Phase label="FIX"/><div style={{fontSize:24,fontWeight:800,fontFamily:C.mono,color:C.red,marginTop:4}}>{sel.impact}</div></div>
             </div>
             <div style={{padding:"16px 18px",flex:1,overflowY:"auto"}}>
               <SH phase="SEE" title="Error Volume — 12-Day Trend" ann="backed"/>
-              <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-                borderRadius:10,padding:"14px 16px",marginBottom:18}}>
+              <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:10,padding:"14px 16px",marginBottom:18}}>
                 <svg width="100%" height="72" viewBox={`0 0 ${sel.bars.length*44} 72`} preserveAspectRatio="none">
                   {sel.bars.map((v,i)=>{
                     const h=Math.max(4,(v/Math.max(...sel.bars))*64);
                     const isMax = v===Math.max(...sel.bars);
-                    return (
-                      <g key={i}>
-                        <rect x={i*44+4} y={72-h} width={36} height={h} rx={4}
-                          fill={isMax?C.red+"CC":C.brand+"44"}/>
-                        {isMax && <rect x={i*44+4} y={72-h} width={36} height={3} rx={2} fill={C.red}/>}
-                      </g>
-                    );
+                    return <g key={i}><rect x={i*44+4} y={72-h} width={36} height={h} rx={4} fill={isMax?C.red+"CC":C.brand+"44"}/>{isMax && <rect x={i*44+4} y={72-h} width={36} height={3} rx={2} fill={C.red}/>}</g>;
                   })}
                 </svg>
-                <div style={{display:"flex",justifyContent:"space-between",
-                  fontSize:9,color:C.t4,fontFamily:C.mono,marginTop:6}}>
-                  {["F22","F23","F24","F25","F26","F27","F28","M1","M2","M3","M4","M5"].map(d=>
-                    <span key={d}>{d}</span>)}
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:C.t4,fontFamily:C.mono,marginTop:6}}>
+                  {["F22","F23","F24","F25","F26","F27","F28","M1","M2","M3","M4","M5"].map(d=><span key={d}>{d}</span>)}
                 </div>
               </div>
-
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:18}}>
-                <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-                  borderRadius:10,padding:"12px 14px"}}>
-                  <div style={{fontSize:10,color:C.t3,fontWeight:600,
-                    textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>
-                    Impacted Partners <Ann type="backed"/>
-                  </div>
+                <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:10,padding:"12px 14px"}}>
+                  <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>Impacted Partners <Ann type="backed"/></div>
                   {["Expedia","Booking.com","Sabre GDS"].slice(0,sel.tenants).map((p,i)=>(
-                    <div key={p} style={{display:"flex",justifyContent:"space-between",
-                      alignItems:"center",padding:"5px 0",
-                      borderBottom:i<sel.tenants-1?`1px solid ${C.t6}`:"none"}}>
+                    <div key={p} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 0",borderBottom:i<sel.tenants-1?`1px solid ${C.t6}`:"none"}}>
                       <span style={{fontSize:12,color:C.t2}}>● {p}</span>
-                      <span style={{fontFamily:C.mono,fontSize:11,color:C.red,fontWeight:700}}>
-                        {Math.floor(sel.freq/sel.tenants)}
-                      </span>
+                      <span style={{fontFamily:C.mono,fontSize:11,color:C.red,fontWeight:700}}>{Math.floor(sel.freq/sel.tenants)}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{background:C.amberBg,border:`1px solid ${C.amberBorder}`,
-                  borderRadius:10,padding:"12px 14px"}}>
-                  <div style={{fontSize:10,color:C.t3,fontWeight:600,
-                    textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>
-                    Root Cause Hints <Ann type="new"/>
-                  </div>
-                  <div style={{fontSize:12,color:C.amber,lineHeight:1.6,fontWeight:600}}>
-                    ARI date range mismatch<br/>Rate push timestamp lag<br/>
-                    <span style={{color:C.t3,fontWeight:400}}>Est. fix effort: 2h</span>
-                  </div>
+                <div style={{background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderRadius:10,padding:"12px 14px"}}>
+                  <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>Root Cause Hints <Ann type="new"/></div>
+                  <div style={{fontSize:12,color:C.amber,lineHeight:1.6,fontWeight:600}}>ARI date range mismatch<br/>Rate push timestamp lag<br/><span style={{color:C.t3,fontWeight:400}}>Est. fix effort: 2h</span></div>
                 </div>
               </div>
-
               <SH phase="FIX" title="Actions"/>
               <div style={{display:"flex",gap:8}}>
-                {[["▶ Launch Playbook",C.brand,C.brand+"22","#fff","success","Playbook launched — assigned to Marcus T."],
-                  ["Assign Owner","transparent",C.border,C.t2,"info","Owner assignment opened"],
-                  ["✓ Mark Mitigated",C.greenBg,C.greenBorder,C.green,"success","Cluster marked as mitigated"]
-                ].map(([l,bg,b,c,type,msg])=>(
-                  <button key={l} className="btn-ghost" onClick={()=>toast(msg,type)}
-                    style={{flex:1,background:bg,border:`1px solid ${b}`,borderRadius:8,
-                      padding:"9px",color:c,fontSize:12,fontWeight:l.includes("Launch")?700:500,
-                      boxShadow:l.includes("Launch")?`0 2px 8px ${C.brand}33`:undefined}}>{l}</button>
+                {[["▶ Launch Playbook",C.brand,C.brand+"22","#fff","success","Playbook launched — assigned to Marcus T."],["Assign Owner","transparent",C.border,C.t2,"info","Owner assignment opened"],["✓ Mark Mitigated",C.greenBg,C.greenBorder,C.green,"success","Cluster marked as mitigated"]].map(([l,bg,b,c,type,msg])=>(
+                  <button key={l} className="btn-ghost" onClick={()=>toast(msg,type)} style={{flex:1,background:bg,border:`1px solid ${b}`,borderRadius:8,padding:"9px",color:c,fontSize:12,fontWeight:l.includes("Launch")?700:500,boxShadow:l.includes("Launch")?`0 2px 8px ${C.brand}33`:undefined}}>{l}</button>
                 ))}
               </div>
             </div>
@@ -1156,76 +880,38 @@ function RevenuePage({ role, sel, setSel, toast }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
         <div>
           <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue at Risk</h1>
-          <div style={{fontSize:12,color:C.t3,marginTop:4}}>
-            Quantify and prioritise financial impact · {role==="exec"?"All tenants":"Your tenants"} · Renewal risk overlay
-          </div>
+          <div style={{fontSize:12,color:C.t3,marginTop:4}}>Quantify and prioritise financial impact · {role==="exec"?"All tenants":"Your tenants"} · Renewal risk overlay</div>
         </div>
-        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",
-          fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↓ Export to QBR</button>
+        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↓ Export to QBR</button>
       </div>
-
       <SH phase="SEE" title="Risk Summary" ann="new"/>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
-        {[["TOTAL ARR AT RISK","$29.5M",C.red,"12 high-risk tenants"],
-          ["IMMINENT RENEWALS","3",C.amber,"<90 days · $16.1M combined"],
-          ["ARR PROTECTED (30d)","$2.1M",C.green,"via active playbooks · est."]
-        ].map(([l,v,c,s])=>(
-          <div key={l} style={{
-            background:`linear-gradient(145deg,${C.cardBg} 40%,${c}08 100%)`,
-            border:`1px solid ${C.border}`,borderTop:`3px solid ${c}`,
-            borderRadius:12,padding:"18px",boxShadow:C.shadow,textAlign:"center"}}>
-            <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,
-              textTransform:"uppercase",marginBottom:12}}>{l} <Ann type="new"/></div>
-            <div style={{fontSize:38,fontWeight:800,fontFamily:C.mono,color:c,
-              letterSpacing:"-1.5px",lineHeight:1}}>{v}</div>
+        {[["TOTAL ARR AT RISK","$29.5M",C.red,"12 high-risk tenants"],["IMMINENT RENEWALS","3",C.amber,"<90 days · $16.1M combined"],["ARR PROTECTED (30d)","$2.1M",C.green,"via active playbooks · est."]].map(([l,v,c,s])=>(
+          <div key={l} style={{background:`linear-gradient(145deg,${C.cardBg} 40%,${c}08 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${c}`,borderRadius:12,padding:"18px",boxShadow:C.shadow,textAlign:"center"}}>
+            <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:12}}>{l} <Ann type="new"/></div>
+            <div style={{fontSize:38,fontWeight:800,fontFamily:C.mono,color:c,letterSpacing:"-1.5px",lineHeight:1}}>{v}</div>
             <div style={{fontSize:11,color:C.t3,marginTop:8}}>{s}</div>
           </div>
         ))}
       </div>
-
       <div style={{display:"grid",gridTemplateColumns:"1fr 300px",gap:14}}>
         <Card>
-          <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",
-            display:"flex",alignItems:"center",gap:8}}>
-            <Phase label="PRIORITISE"/>
-            <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Revenue Risk Grid</span>
-            <Ann type="backed"/>
-          </div>
+          <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}><Phase label="PRIORITISE"/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>Revenue Risk Grid</span><Ann type="backed"/></div>
           <table>
             <thead>
-              <tr style={{background:"#F8FAFC"}}>
-                {["Tenant","ARR $M","Risk Score","Key Drivers","Renewal","Owner","Trend"].map(h=>(
-                  <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,
-                    fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`}}>{h}</th>
-                ))}
-              </tr>
+              <tr style={{background:"#F8FAFC"}}>{["Tenant","ARR $M","Risk Score","Key Drivers","Renewal","Owner","Trend"].map(h=><th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`}}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {RISK_ROWS.map((r,i)=>{
                 const isSel = sel?.tenant===r.tenant;
                 const rc = r.risk>80?C.red:r.risk>50?C.amber:C.green;
                 return (
-                  <tr key={r.tenant} onClick={()=>setSel(r)}
-                    className={isSel?"tr-sel":"tr-hover"}
-                    style={{background:isSel?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",
-                      borderBottom:`1px solid ${C.t6}`,cursor:"pointer",
-                      borderLeft:`3px solid ${isSel?C.brand:"transparent"}`}}>
-                    <td style={{padding:"9px 12px",fontWeight:isSel?700:500,
-                      color:isSel?C.brand:C.t1,fontSize:12}}>{r.tenant}</td>
+                  <tr key={r.tenant} onClick={()=>setSel(r)} className={isSel?"tr-sel":"tr-hover"} style={{background:isSel?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",borderLeft:`3px solid ${isSel?C.brand:"transparent"}`}}>
+                    <td style={{padding:"9px 12px",fontWeight:isSel?700:500,color:isSel?C.brand:C.t1,fontSize:12}}>{r.tenant}</td>
                     <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:600,color:C.t2,fontSize:12}}>{r.arr}</td>
-                    <td style={{padding:"9px 12px"}}>
-                      <div style={{display:"flex",alignItems:"center",gap:7}}>
-                        <div style={{width:56,height:6,background:C.t6,borderRadius:3,overflow:"hidden"}}>
-                          <div style={{width:`${r.risk}%`,height:"100%",background:rc,
-                            borderRadius:3,transition:"width 0.3s"}}/>
-                        </div>
-                        <span style={{fontFamily:C.mono,fontSize:11,color:rc,fontWeight:700}}>{r.risk}</span>
-                      </div>
-                    </td>
+                    <td style={{padding:"9px 12px"}}><div style={{display:"flex",alignItems:"center",gap:7}}><div style={{width:56,height:6,background:C.t6,borderRadius:3,overflow:"hidden"}}><div style={{width:`${r.risk}%`,height:"100%",background:rc,borderRadius:3}}/></div><span style={{fontFamily:C.mono,fontSize:11,color:rc,fontWeight:700}}>{r.risk}</span></div></td>
                     <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{r.drivers[0]}</td>
-                    <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:11,
-                      color:r.renewal.includes("Apr")||r.renewal.includes("May")?C.amber:C.t3,
-                      fontWeight:r.renewal.includes("Apr")?700:400}}>{r.renewal}</td>
+                    <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:11,color:r.renewal.includes("Apr")||r.renewal.includes("May")?C.amber:C.t3,fontWeight:r.renewal.includes("Apr")?700:400}}>{r.renewal}</td>
                     <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{r.owner}</td>
                     <td style={{padding:"9px 12px"}}><Trend v={r.trend} invert/></td>
                   </tr>
@@ -1234,52 +920,23 @@ function RevenuePage({ role, sel, setSel, toast }) {
             </tbody>
           </table>
         </Card>
-
         {sel && (
           <Card key={sel.tenant} style={{padding:16,overflowY:"auto"}} selected>
             <Phase label="PROVE"/>
-            <div style={{fontSize:15,fontWeight:800,color:C.t1,
-              fontFamily:"'Syne',sans-serif",margin:"10px 0 4px"}}>{sel.tenant}</div>
-            <div style={{fontSize:11,color:C.t3,marginBottom:14}}>
-              ARR: <b style={{fontFamily:C.mono}}>${sel.arr}M</b> · Renewal: <b style={{color:C.amber}}>{sel.renewal}</b>
+            <div style={{fontSize:15,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",margin:"10px 0 4px"}}>{sel.tenant}</div>
+            <div style={{fontSize:11,color:C.t3,marginBottom:14}}>ARR: <b style={{fontFamily:C.mono}}>${sel.arr}M</b> · Renewal: <b style={{color:C.amber}}>{sel.renewal}</b></div>
+            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:10,padding:"12px",marginBottom:12}}>
+              <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>Risk Score <Ann type="new"/></div>
+              <div style={{width:"100%",height:8,background:C.t6,borderRadius:4,marginBottom:8,overflow:"hidden"}}><div style={{width:`${sel.risk}%`,height:"100%",background:`linear-gradient(90deg,${sel.risk>80?C.red:C.amber},${sel.risk>80?C.red+"88":C.amber+"88"})`,borderRadius:4}}/></div>
+              <span style={{fontSize:24,fontWeight:800,fontFamily:C.mono,color:sel.risk>80?C.red:sel.risk>50?C.amber:C.green}}>{sel.risk}</span><span style={{fontSize:12,color:C.t3}}>/100</span>
             </div>
-            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-              borderRadius:10,padding:"12px",marginBottom:12}}>
-              <div style={{fontSize:10,color:C.t3,fontWeight:600,
-                textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>Risk Score <Ann type="new"/></div>
-              <div style={{width:"100%",height:8,background:C.t6,borderRadius:4,marginBottom:8,overflow:"hidden"}}>
-                <div style={{width:`${sel.risk}%`,height:"100%",
-                  background:`linear-gradient(90deg,${sel.risk>80?C.red:C.amber},${sel.risk>80?C.red+"88":C.amber+"88"})`,
-                  borderRadius:4,transition:"width 0.4s"}}/>
-              </div>
-              <span style={{fontSize:24,fontWeight:800,fontFamily:C.mono,
-                color:sel.risk>80?C.red:sel.risk>50?C.amber:C.green}}>{sel.risk}</span>
-              <span style={{fontSize:12,color:C.t3}}>/100</span>
-            </div>
-            <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",
-              letterSpacing:0.5,marginBottom:8}}>Key Drivers</div>
-            {sel.drivers.map(d=>(
-              <div key={d} style={{background:C.amberBg,border:`1px solid ${C.amberBorder}`,
-                borderRadius:7,padding:"7px 10px",marginBottom:7,fontSize:12,color:C.t2}}>
-                ⚠ {d}
-              </div>
-            ))}
-            <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",
-              letterSpacing:0.5,margin:"12px 0 8px"}}>ARR Trend <Ann type="backed"/></div>
-            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-              borderRadius:8,padding:"10px"}}>
-              <Spark data={[sel.arr*1.1,sel.arr*1.08,sel.arr*1.05,sel.arr*1.04,
-                sel.arr*1.02,sel.arr*1.01,sel.arr]} color={C.amber} w={234} h={42}/>
-            </div>
+            <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>Key Drivers</div>
+            {sel.drivers.map(d=><div key={d} style={{background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderRadius:7,padding:"7px 10px",marginBottom:7,fontSize:12,color:C.t2}}>⚠ {d}</div>)}
+            <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,margin:"12px 0 8px"}}>ARR Trend <Ann type="backed"/></div>
+            <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:8,padding:"10px"}}><Spark data={[sel.arr*1.1,sel.arr*1.08,sel.arr*1.05,sel.arr*1.04,sel.arr*1.02,sel.arr*1.01,sel.arr]} color={C.amber} w={234} h={42}/></div>
             <div style={{display:"flex",gap:8,marginTop:14}}>
-              <button className="btn-primary" onClick={()=>toast("Playbook assigned — check Action Queue","success")}
-                style={{flex:1,background:C.brand,border:"none",borderRadius:8,
-                  padding:"8px",color:"#fff",fontSize:12,fontWeight:700,
-                  boxShadow:`0 2px 8px ${C.brand}33`}}>Assign Playbook</button>
-              <button className="btn-ghost" onClick={()=>toast("CSM alert sent to "+sel.owner,"info")}
-                style={{flex:1,background:"#F8FAFC",
-                  border:`1px solid ${C.border}`,borderRadius:8,padding:"8px",
-                  color:C.t2,fontSize:12}}>CSM Alert</button>
+              <button className="btn-primary" onClick={()=>toast("Playbook assigned — check Action Queue","success")} style={{flex:1,background:C.brand,border:"none",borderRadius:8,padding:"8px",color:"#fff",fontSize:12,fontWeight:700,boxShadow:`0 2px 8px ${C.brand}33`}}>Assign Playbook</button>
+              <button className="btn-ghost" onClick={()=>toast("CSM alert sent to "+sel.owner,"info")} style={{flex:1,background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:8,padding:"8px",color:C.t2,fontSize:12}}>CSM Alert</button>
             </div>
           </Card>
         )}
@@ -1292,12 +949,7 @@ function RevenuePage({ role, sel, setSel, toast }) {
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
 ══════════════════════════════════════════════════════════════════════════ */
 function PlaybooksPage({ tab, setTab, kanban, setKanban, toast }) {
-  const kanbanCols = [
-    ["To Review","Unassigned","PRIORITISE"],
-    ["In Progress","InProgress","FIX"],
-    ["Proved","Mitigated","PROVE"],
-    ["Preventive","Active","PREVENT"],
-  ];
+  const kanbanCols = [["To Review","Unassigned","PRIORITISE"],["In Progress","InProgress","FIX"],["Proved","Mitigated","PROVE"],["Preventive","Active","PREVENT"]];
   return (
     <div className="fade-in">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
@@ -1305,167 +957,93 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, toast }) {
           <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Playbooks & Action Queue</h1>
           <div style={{fontSize:12,color:C.t3,marginTop:4}}>Operationalise remediation · Track recovery · Build preventive standards</div>
         </div>
-        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",
-          fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>+ New Action</button>
+        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>+ New Action</button>
       </div>
-
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:18}}>
-        <div style={{display:"flex",background:C.cardBg,border:`1px solid ${C.border}`,
-          borderRadius:9,padding:3,gap:2,boxShadow:C.shadow}}>
+        <div style={{display:"flex",background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:9,padding:3,gap:2,boxShadow:C.shadow}}>
           {[["queue","Action Queue"],["library","Playbook Library"]].map(([k,l])=>(
-            <button key={k} onClick={()=>setTab(k)} style={{
-              background:tab===k?C.brand:"transparent",border:"none",borderRadius:7,
-              padding:"6px 18px",fontSize:12,color:tab===k?"#fff":C.t3,
-              fontWeight:tab===k?700:500,transition:"all 0.15s"}}>{l}
-            </button>
+            <button key={k} onClick={()=>setTab(k)} style={{background:tab===k?C.brand:"transparent",border:"none",borderRadius:7,padding:"6px 18px",fontSize:12,color:tab===k?"#fff":C.t3,fontWeight:tab===k?700:500,transition:"all 0.15s"}}>{l}</button>
           ))}
         </div>
-        {tab==="queue" && (
-          <button onClick={()=>setKanban(!kanban)} className="btn-ghost"
-            style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,
-              padding:"6px 14px",fontSize:12,color:kanban?C.brand:C.t3,
-              fontWeight:kanban?700:400}}>
-            {kanban ? "⊞ List View" : "⬡ Kanban View"}
-          </button>
-        )}
+        {tab==="queue" && <button onClick={()=>setKanban(!kanban)} className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"6px 14px",fontSize:12,color:kanban?C.brand:C.t3,fontWeight:kanban?700:400}}>{kanban ? "⊞ List View" : "⬡ Kanban View"}</button>}
       </div>
-
-      {tab==="queue" && !kanban && (
-        <>
-          <SH phase="FIX" title="Open Actions" ann="ui"/>
-          <Card>
-            <table>
-              <thead>
-                <tr style={{background:"#F8FAFC"}}>
-                  {["Action","Tenant","Category","Owner","Due","Status","Impact"].map(h=>(
-                    <th key={h} style={{padding:"9px 12px",textAlign:"left",color:C.t4,
-                      fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {PLAYBOOKS.map((pb,i)=>(
-                  <tr key={pb.id} className="tr-hover"
-                    style={{background:i%2===0?"#fff":"#FAFBFD",
-                      borderBottom:`1px solid ${C.t6}`}}>
-                    <td style={{padding:"10px 12px",fontWeight:600,color:C.t1,fontSize:12}}>{pb.title}</td>
-                    <td style={{padding:"10px 12px",color:C.t2,fontSize:12}}>{pb.tenant}</td>
-                    <td style={{padding:"10px 12px"}}>
-                      <span style={{fontSize:10,background:"#F1F5F9",border:`1px solid ${C.border}`,
-                        borderRadius:5,padding:"2px 8px",color:C.t3}}>{pb.cat}</span>
-                    </td>
-                    <td style={{padding:"10px 12px",color:C.t3,fontSize:11}}>{pb.owner}</td>
-                    <td style={{padding:"10px 12px",fontFamily:C.mono,fontSize:11,
-                      color:pb.due==="Today"?C.red:C.t2,fontWeight:pb.due==="Today"?700:400}}>{pb.due}</td>
-                    <td style={{padding:"10px 12px"}}><StatusChip s={pb.status}/></td>
-                    <td style={{padding:"10px 12px",fontFamily:C.mono,color:C.green,fontWeight:700,fontSize:11}}>{pb.impact}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Card>
-        </>
-      )}
-
-      {tab==="queue" && kanban && (
-        <>
-          <SH phase="FIX" title="Kanban — SEE → PROVE → PREVENT Flow" ann="ui"/>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
-            {kanbanCols.map(([col,stat,ph])=>{
-              const items = PLAYBOOKS.filter(p=>p.status===stat);
-              const p = PHASE_CFG[ph];
-              return (
-                <div key={col} style={{background:C.cardBg,border:`1px solid ${C.border}`,
-                  borderTop:`3px solid ${p.color}`,borderRadius:12,
-                  boxShadow:C.shadow,overflow:"hidden"}}>
-                  <div style={{padding:"10px 12px",borderBottom:`1px solid ${C.border}`,
-                    background:p.bg,display:"flex",alignItems:"center",
-                    justifyContent:"space-between"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:7}}>
-                      <Phase label={ph}/>
-                      <span style={{fontSize:12,fontWeight:700,color:C.t1}}>{col}</span>
-                    </div>
-                    <span style={{fontFamily:C.mono,fontSize:11,color:C.t4,
-                      background:"#fff",borderRadius:4,padding:"1px 7px",
-                      border:`1px solid ${C.border}`}}>{items.length}</span>
-                  </div>
-                  <div style={{padding:10,display:"flex",flexDirection:"column",gap:8,minHeight:100}}>
-                    {items.map(pb=>(
-                      <div key={pb.id} className="card-hover"
-                        style={{background:"#F8FAFC",border:`1px solid ${C.border}`,
-                          borderRadius:9,padding:"10px 12px"}}>
-                        <div style={{fontSize:12,fontWeight:600,color:C.t1,marginBottom:4,lineHeight:1.3}}>{pb.title}</div>
-                        <div style={{fontSize:11,color:C.t3,marginBottom:7}}>{pb.tenant}</div>
-                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                          <span style={{fontSize:9,background:"#F1F5F9",borderRadius:4,
-                            padding:"2px 7px",color:C.t3,border:`1px solid ${C.border}`}}>{pb.cat}</span>
-                          <span style={{fontSize:11,fontFamily:C.mono,color:C.green,fontWeight:700}}>{pb.impact}</span>
-                        </div>
-                        <div style={{fontSize:10,color:pb.due==="Today"?C.red:C.t4,
-                          marginTop:6,fontFamily:C.mono}}>Due: {pb.due}</div>
+      {tab==="queue" && !kanban && (<>
+        <SH phase="FIX" title="Open Actions" ann="ui"/>
+        <Card>
+          <table>
+            <thead><tr style={{background:"#F8FAFC"}}>{["Action","Tenant","Category","Owner","Due","Status","Impact"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`}}>{h}</th>)}</tr></thead>
+            <tbody>{PLAYBOOKS.map((pb,i)=>(
+              <tr key={pb.id} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
+                <td style={{padding:"10px 12px",fontWeight:600,color:C.t1,fontSize:12}}>{pb.title}</td>
+                <td style={{padding:"10px 12px",color:C.t2,fontSize:12}}>{pb.tenant}</td>
+                <td style={{padding:"10px 12px"}}><span style={{fontSize:10,background:"#F1F5F9",border:`1px solid ${C.border}`,borderRadius:5,padding:"2px 8px",color:C.t3}}>{pb.cat}</span></td>
+                <td style={{padding:"10px 12px",color:C.t3,fontSize:11}}>{pb.owner}</td>
+                <td style={{padding:"10px 12px",fontFamily:C.mono,fontSize:11,color:pb.due==="Today"?C.red:C.t2,fontWeight:pb.due==="Today"?700:400}}>{pb.due}</td>
+                <td style={{padding:"10px 12px"}}><StatusChip s={pb.status}/></td>
+                <td style={{padding:"10px 12px",fontFamily:C.mono,color:C.green,fontWeight:700,fontSize:11}}>{pb.impact}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </Card>
+      </>)}
+      {tab==="queue" && kanban && (<>
+        <SH phase="FIX" title="Kanban — SEE → PROVE → PREVENT Flow" ann="ui"/>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
+          {kanbanCols.map(([col,stat,ph])=>{
+            const items = PLAYBOOKS.filter(p=>p.status===stat);
+            const p = PHASE_CFG[ph];
+            return (
+              <div key={col} style={{background:C.cardBg,border:`1px solid ${C.border}`,borderTop:`3px solid ${p.color}`,borderRadius:12,boxShadow:C.shadow,overflow:"hidden"}}>
+                <div style={{padding:"10px 12px",borderBottom:`1px solid ${C.border}`,background:p.bg,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:7}}><Phase label={ph}/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>{col}</span></div>
+                  <span style={{fontFamily:C.mono,fontSize:11,color:C.t4,background:"#fff",borderRadius:4,padding:"1px 7px",border:`1px solid ${C.border}`}}>{items.length}</span>
+                </div>
+                <div style={{padding:10,display:"flex",flexDirection:"column",gap:8,minHeight:100}}>
+                  {items.map(pb=>(
+                    <div key={pb.id} className="card-hover" style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:9,padding:"10px 12px"}}>
+                      <div style={{fontSize:12,fontWeight:600,color:C.t1,marginBottom:4,lineHeight:1.3}}>{pb.title}</div>
+                      <div style={{fontSize:11,color:C.t3,marginBottom:7}}>{pb.tenant}</div>
+                      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                        <span style={{fontSize:9,background:"#F1F5F9",borderRadius:4,padding:"2px 7px",color:C.t3,border:`1px solid ${C.border}`}}>{pb.cat}</span>
+                        <span style={{fontSize:11,fontFamily:C.mono,color:C.green,fontWeight:700}}>{pb.impact}</span>
                       </div>
-                    ))}
-                    {items.length===0 && (
-                      <div style={{textAlign:"center",padding:"24px 0",
-                        color:C.t5,fontSize:12}}>No items</div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {tab==="library" && (
-        <>
-          <SH phase="PREVENT" title="Reusable Playbook Library" ann="ui"/>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
-            {PB_LIBRARY.map((pb,i)=>(
-              <div key={i} className="card-hover"
-                style={{background:C.cardBg,border:`1px solid ${C.border}`,
-                  borderRadius:12,padding:"16px",boxShadow:C.shadow,
-                  display:"flex",flexDirection:"column",gap:10}}>
-                <div style={{display:"flex",justifyContent:"space-between",
-                  alignItems:"flex-start",gap:8}}>
-                  <span style={{fontSize:13,fontWeight:700,color:C.t1,
-                    lineHeight:1.3,flex:1}}>{pb.title}</span>
-                  <span style={{fontSize:10,background:"#F1F5F9",
-                    border:`1px solid ${C.border}`,borderRadius:5,
-                    padding:"2px 9px",color:C.t3,flexShrink:0}}>{pb.cat}</span>
-                </div>
-                <div style={{fontSize:12,color:C.t3,lineHeight:1.6,flex:1}}>{pb.desc}</div>
-                <div style={{display:"flex",gap:12,fontSize:11,alignItems:"center"}}>
-                  <span style={{color:C.t3}}>⏱ {pb.effort}</span>
-                  <span style={{
-                    fontWeight:700,
-                    color:pb.impact==="High"?C.red:C.amber,
-                    background:pb.impact==="High"?C.redBg:C.amberBg,
-                    border:`1px solid ${pb.impact==="High"?C.redBorder:C.amberBorder}`,
-                    borderRadius:4,padding:"1px 8px",fontSize:10
-                  }}>Impact: {pb.impact}</span>
-                </div>
-                <div style={{display:"flex",gap:8}}>
-                  <button className="btn-primary" onClick={()=>toast(`"${pb.title}" added to Action Queue`,"success")}
-                    style={{flex:1,background:C.brand,border:"none",borderRadius:8,
-                      padding:"7px",color:"#fff",fontSize:12,fontWeight:700,
-                      boxShadow:`0 2px 8px ${C.brand}33`}}>Apply Playbook</button>
-                  <button className="btn-ghost" style={{background:"#F8FAFC",
-                    border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 12px",
-                    color:C.t2,fontSize:12}}>View</button>
+                      <div style={{fontSize:10,color:pb.due==="Today"?C.red:C.t4,marginTop:6,fontFamily:C.mono}}>Due: {pb.due}</div>
+                    </div>
+                  ))}
+                  {items.length===0 && <div style={{textAlign:"center",padding:"24px 0",color:C.t5,fontSize:12}}>No items</div>}
                 </div>
               </div>
-            ))}
-          </div>
-        </>
-      )}
+            );
+          })}
+        </div>
+      </>)}
+      {tab==="library" && (<>
+        <SH phase="PREVENT" title="Reusable Playbook Library" ann="ui"/>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
+          {PB_LIBRARY.map((pb,i)=>(
+            <div key={i} className="card-hover" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,display:"flex",flexDirection:"column",gap:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
+                <span style={{fontSize:13,fontWeight:700,color:C.t1,lineHeight:1.3,flex:1}}>{pb.title}</span>
+                <span style={{fontSize:10,background:"#F1F5F9",border:`1px solid ${C.border}`,borderRadius:5,padding:"2px 9px",color:C.t3,flexShrink:0}}>{pb.cat}</span>
+              </div>
+              <div style={{fontSize:12,color:C.t3,lineHeight:1.6,flex:1}}>{pb.desc}</div>
+              <div style={{display:"flex",gap:12,fontSize:11,alignItems:"center"}}>
+                <span style={{color:C.t3}}>⏱ {pb.effort}</span>
+                <span style={{fontWeight:700,color:pb.impact==="High"?C.red:C.amber,background:pb.impact==="High"?C.redBg:C.amberBg,border:`1px solid ${pb.impact==="High"?C.redBorder:C.amberBorder}`,borderRadius:4,padding:"1px 8px",fontSize:10}}>Impact: {pb.impact}</span>
+              </div>
+              <div style={{display:"flex",gap:8}}>
+                <button className="btn-primary" onClick={()=>toast(`"${pb.title}" added to Action Queue`,"success")} style={{flex:1,background:C.brand,border:"none",borderRadius:8,padding:"7px",color:"#fff",fontSize:12,fontWeight:700,boxShadow:`0 2px 8px ${C.brand}33`}}>Apply Playbook</button>
+                <button className="btn-ghost" style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 12px",color:C.t2,fontSize:12}}>View</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>)}
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   import { useState } from "react";
-
+/* ── ScoreCircle (for LeversPage v2) ──────────────────────────────────── */
 function ScoreCircle({ score, color, size = 64 }) {
   const r = (size - 10) / 2;
   const circ = 2 * Math.PI * r;
@@ -1479,517 +1057,274 @@ function ScoreCircle({ score, color, size = 64 }) {
           style={{ transition: "stroke-dasharray 0.6s cubic-bezier(0.4,0,0.2,1)" }} />
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 15, fontWeight: 800, color: "#111827", lineHeight: 1 }}>{score}</span>
+        <span style={{ fontSize: size > 56 ? 15 : 12, fontWeight: 800, color: "#111827", lineHeight: 1 }}>{score}</span>
         <span style={{ fontSize: 9, color: "#9ca3af", fontWeight: 600 }}>/100</span>
       </div>
     </div>
   );
 }
 
-const levers = [
-  // ARI Integrity
+const LEVER_BUCKETS = [
   {
-    id: "ari-sync", bucket: "ARI Integrity", icon: "🔄", name: "ARI Sync",
-    score: 24, impact: "$34.4K", status: "critical",
-    detail: {
-      description: "ARI (Availability, Rates, Inventory) sync failures across OTAs.",
-      breakdown: [{ label: "Booking.com lag", value: "4.2h avg" }, { label: "Expedia sync fails", value: "18%" }, { label: "Agoda mismatch", value: "31 properties" }],
-      estimatedImpact: "$34,400",
-      actions: ["View Sync Logs", "Force Resync", "Export Report"]
-    }
+    name: "ARI Integrity", color: "#6366f1",
+    levers: [
+      { id:"ari-sync",    icon:"🔄", name:"ARI Sync",     score:24, impact:"$34.4K", status:"critical",
+        detail:{ description:"ARI sync failures across OTAs causing lost inventory.", breakdown:[{label:"Booking.com lag",value:"4.2h avg"},{label:"Expedia sync fails",value:"18%"},{label:"Agoda mismatch",value:"31 props"}], estimatedImpact:"$34,400", actions:["View Sync Logs","Force Resync","Export Report"] }},
+      { id:"availability",icon:"📅", name:"Availability", score:61, impact:"$61.2K", status:"medium",
+        detail:{ description:"Open sell dates not reflected on distribution channels.", breakdown:[{label:"Closed dates",value:"142"},{label:"Channels affected",value:"5"},{label:"Lost nights",value:"89"}], estimatedImpact:"$61,200", actions:["View Calendar","Push Availability","Export Gaps"] }},
+      { id:"restrictions",icon:"⛔", name:"Restrictions",  score:78, impact:"$12.1K", status:"medium",
+        detail:{ description:"Min stay / CTA restrictions blocking bookings.", breakdown:[{label:"Min stay violations",value:"34"},{label:"CTA blocks",value:"12"},{label:"Channels impacted",value:"3"}], estimatedImpact:"$12,100", actions:["Review Restrictions","Edit Rules","Export Data"] }},
+      { id:"rate-parity", icon:"⚖️", name:"Rate Parity",  score:61, impact:"$82.4K", status:"critical",
+        detail:{ description:"Rate disparities detected across OTAs vs direct channel.", breakdown:[{label:"Booking.com",value:"14 violations"},{label:"Expedia",value:"8 violations"},{label:"Agoda",value:"5 violations"}], estimatedImpact:"$82,430", actions:["View Listings","Export Violations","Create Fix Ticket"] }},
+    ]
   },
   {
-    id: "availability", bucket: "ARI Integrity", icon: "📅", name: "Availability",
-    score: 61, impact: "$61.2K", status: "medium",
-    detail: {
-      description: "Open sell dates not reflected on distribution channels.",
-      breakdown: [{ label: "Closed dates", value: "142" }, { label: "Channels affected", value: "5" }, { label: "Lost nights", value: "89" }],
-      estimatedImpact: "$61,200",
-      actions: ["View Calendar", "Push Availability", "Export Gaps"]
-    }
+    name: "Distribution Errors", color: "#f59e0b",
+    levers: [
+      { id:"error-rate",  icon:"⚠️", name:"Error Rate",   score:45, impact:"$28.7K", status:"critical",
+        detail:{ description:"API and channel manager errors causing failed transactions.", breakdown:[{label:"API errors",value:"247/day"},{label:"Booking failures",value:"3.2%"},{label:"Retry rate",value:"18%"}], estimatedImpact:"$28,700", actions:["View Error Logs","Alert Engineering","Download Report"] }},
+      { id:"activation",  icon:"⚙️", name:"Activation",   score:83, impact:"$8.2K",  status:"healthy",
+        detail:{ description:"Properties not yet fully activated across all channels.", breakdown:[{label:"Pending activation",value:"11 props"},{label:"Partial setup",value:"6"},{label:"Avg days",value:"4.1"}], estimatedImpact:"$8,200", actions:["View Queue","Send Reminder","Export List"] }},
+      { id:"mapping",     icon:"🔗", name:"Mapping",       score:52, impact:"$42.1K", status:"critical",
+        detail:{ description:"Room type / rate plan mapping errors causing mismatches.", breakdown:[{label:"Unmapped rooms",value:"38"},{label:"Rate mismatch",value:"21"},{label:"OTAs affected",value:"4"}], estimatedImpact:"$42,100", actions:["Review Mappings","Auto-Remap","Export Errors"] }},
+      { id:"commission",  icon:"💰", name:"Commission",    score:74, impact:"$19.3K", status:"medium",
+        detail:{ description:"Commission rate anomalies vs contracted rates.", breakdown:[{label:"Overcharged",value:"9 props"},{label:"Avg overcharge",value:"1.8%"},{label:"Channels",value:"Booking.com, Expedia"}], estimatedImpact:"$19,300", actions:["View Contracts","Flag Discrepancies","Export Report"] }},
+    ]
   },
   {
-    id: "restrictions", bucket: "ARI Integrity", icon: "⛔", name: "Restrictions",
-    score: 78, impact: "$12.1K", status: "medium",
-    detail: {
-      description: "Minimum stay / closed-to-arrival restrictions blocking bookings.",
-      breakdown: [{ label: "Min stay violations", value: "34" }, { label: "CTA blocks", value: "12" }, { label: "Channels impacted", value: "3" }],
-      estimatedImpact: "$12,100",
-      actions: ["Review Restrictions", "Edit Rules", "Export Data"]
-    }
+    name: "Content Quality", color: "#10b981",
+    levers: [
+      { id:"images",      icon:"📷", name:"Images",        score:68, impact:"$15.4K", status:"medium",
+        detail:{ description:"Properties with insufficient or low-quality image coverage.", breakdown:[{label:"Below 10 images",value:"22 props"},{label:"No exterior shot",value:"8"},{label:"Low res flagged",value:"14"}], estimatedImpact:"$15,400", actions:["View Gallery","Upload Images","Request Photos"] }},
+      { id:"amenities",   icon:"🏨", name:"Amenities",     score:81, impact:"$6.8K",  status:"healthy",
+        detail:{ description:"Missing or incorrect amenity listings reducing search ranking.", breakdown:[{label:"Missing amenities",value:"31 props"},{label:"Incorrect data",value:"9"},{label:"OTAs impacted",value:"3"}], estimatedImpact:"$6,800", actions:["Review Amenities","Bulk Update","Export Gaps"] }},
+      { id:"descriptions",icon:"📝", name:"Descriptions",  score:72, impact:"$9.1K",  status:"medium",
+        detail:{ description:"Properties with short, missing or duplicate descriptions.", breakdown:[{label:"Under 150 words",value:"18 props"},{label:"Missing entirely",value:"4"},{label:"Duplicate content",value:"7"}], estimatedImpact:"$9,100", actions:["Edit Descriptions","AI-Generate Draft","Export List"] }},
+      { id:"content-score",icon:"🖼️",name:"Content Score", score:58, impact:"$22.6K", status:"medium",
+        detail:{ description:"Overall OTA content score below threshold, reducing visibility.", breakdown:[{label:"Below 70 score",value:"27 props"},{label:"Below 50 score",value:"11"},{label:"Avg score",value:"61/100"}], estimatedImpact:"$22,600", actions:["View Scores","Content Action Plan","Export Report"] }},
+    ]
   },
   {
-    id: "rate-parity", bucket: "ARI Integrity", icon: "⚖️", name: "Rate Parity",
-    score: 61, impact: "$82.4K", status: "critical",
-    detail: {
-      description: "Rate disparities detected across OTAs vs direct channel.",
-      breakdown: [{ label: "Booking.com", value: "14 violations" }, { label: "Expedia", value: "8 violations" }, { label: "Agoda", value: "5 violations" }],
-      estimatedImpact: "$82,430",
-      actions: ["View Listings", "Export Violations", "Create Fix Ticket"]
-    }
-  },
-
-  // Distribution Errors
-  {
-    id: "error-rate", bucket: "Distribution Errors", icon: "⚠️", name: "Error Rate",
-    score: 45, impact: "$28.7K", status: "critical",
-    detail: {
-      description: "API and channel manager errors causing failed transactions.",
-      breakdown: [{ label: "API errors", value: "247 / day" }, { label: "Booking failures", value: "3.2%" }, { label: "Retry rate", value: "18%" }],
-      estimatedImpact: "$28,700",
-      actions: ["View Error Logs", "Alert Engineering", "Download Report"]
-    }
-  },
-  {
-    id: "activation", bucket: "Distribution Errors", icon: "⚙️", name: "Activation",
-    score: 83, impact: "$8.2K", status: "healthy",
-    detail: {
-      description: "Properties not yet fully activated across all channels.",
-      breakdown: [{ label: "Pending activation", value: "11 properties" }, { label: "Partial setup", value: "6" }, { label: "Avg days to activate", value: "4.1" }],
-      estimatedImpact: "$8,200",
-      actions: ["View Queue", "Send Reminder", "Export List"]
-    }
-  },
-  {
-    id: "mapping", bucket: "Distribution Errors", icon: "🔗", name: "Mapping",
-    score: 52, impact: "$42.1K", status: "critical",
-    detail: {
-      description: "Room type / rate plan mapping errors causing inventory mismatches.",
-      breakdown: [{ label: "Unmapped rooms", value: "38" }, { label: "Rate mismatch", value: "21" }, { label: "OTAs affected", value: "4" }],
-      estimatedImpact: "$42,100",
-      actions: ["Review Mappings", "Auto-Remap", "Export Errors"]
-    }
-  },
-  {
-    id: "commission", bucket: "Distribution Errors", icon: "💰", name: "Commission",
-    score: 74, impact: "$19.3K", status: "medium",
-    detail: {
-      description: "Commission rate anomalies vs contracted rates.",
-      breakdown: [{ label: "Overcharged", value: "9 properties" }, { label: "Avg overcharge", value: "1.8%" }, { label: "Channels", value: "Booking.com, Expedia" }],
-      estimatedImpact: "$19,300",
-      actions: ["View Contracts", "Flag Discrepancies", "Export Report"]
-    }
-  },
-
-  // Content Quality
-  {
-    id: "images", bucket: "Content Quality", icon: "📷", name: "Images",
-    score: 68, impact: "$15.4K", status: "medium",
-    detail: {
-      description: "Properties with insufficient or low-quality image coverage.",
-      breakdown: [{ label: "Below 10 images", value: "22 properties" }, { label: "No exterior shot", value: "8" }, { label: "Low res flagged", value: "14" }],
-      estimatedImpact: "$15,400",
-      actions: ["View Gallery", "Upload Images", "Request Photos"]
-    }
-  },
-  {
-    id: "amenities", bucket: "Content Quality", icon: "🏨", name: "Amenities",
-    score: 81, impact: "$6.8K", status: "healthy",
-    detail: {
-      description: "Missing or incorrect amenity listings reducing search ranking.",
-      breakdown: [{ label: "Missing amenities", value: "31 properties" }, { label: "Incorrect data", value: "9" }, { label: "OTAs impacted", value: "3" }],
-      estimatedImpact: "$6,800",
-      actions: ["Review Amenities", "Bulk Update", "Export Gaps"]
-    }
-  },
-  {
-    id: "descriptions", bucket: "Content Quality", icon: "📝", name: "Descriptions",
-    score: 72, impact: "$9.1K", status: "medium",
-    detail: {
-      description: "Properties with short, missing or duplicate descriptions.",
-      breakdown: [{ label: "Under 150 words", value: "18 properties" }, { label: "Missing entirely", value: "4" }, { label: "Duplicate content", value: "7" }],
-      estimatedImpact: "$9,100",
-      actions: ["Edit Descriptions", "AI-Generate Draft", "Export List"]
-    }
-  },
-  {
-    id: "content-score", bucket: "Content Quality", icon: "🖼️", name: "Content Score",
-    score: 58, impact: "$22.6K", status: "medium",
-    detail: {
-      description: "Overall OTA content score below threshold, reducing search visibility.",
-      breakdown: [{ label: "Below 70 score", value: "27 properties" }, { label: "Below 50 score", value: "11" }, { label: "Avg score", value: "61 / 100" }],
-      estimatedImpact: "$22,600",
-      actions: ["View Scores", "Content Action Plan", "Export Report"]
-    }
-  },
-
-  // Demand Performance
-  {
-    id: "look-to-book", bucket: "Demand Performance", icon: "🔍", name: "Look-to-Book",
-    score: 55, impact: "$37.9K", status: "medium",
-    detail: {
-      description: "High search impressions not converting to bookings.",
-      breakdown: [{ label: "Avg L2B ratio", value: "1:142" }, { label: "Below threshold", value: "19 properties" }, { label: "Top miss channel", value: "Expedia" }],
-      estimatedImpact: "$37,900",
-      actions: ["View Analytics", "Rate Review", "Export Data"]
-    }
-  },
-  {
-    id: "booking-pace", bucket: "Demand Performance", icon: "📈", name: "Booking Pace",
-    score: 47, impact: "$54.2K", status: "critical",
-    detail: {
-      description: "Booking velocity tracking behind prior period and forecast.",
-      breakdown: [{ label: "Behind forecast", value: "31 properties" }, { label: "Avg gap", value: "-18%" }, { label: "Critical windows", value: "Next 14 days" }],
-      estimatedImpact: "$54,200",
-      actions: ["View Pace Report", "Apply Promotions", "Alert Revenue Mgr"]
-    }
-  },
-  {
-    id: "channel-mix", bucket: "Demand Performance", icon: "🌐", name: "Channel Mix",
-    score: 76, impact: "$11.8K", status: "healthy",
-    detail: {
-      description: "OTA dependency too high — direct channel underperforming.",
-      breakdown: [{ label: "OTA share", value: "74%" }, { label: "Direct share", value: "12%" }, { label: "Target direct", value: "25%" }],
-      estimatedImpact: "$11,800",
-      actions: ["View Mix Report", "Direct Strategy", "Export Data"]
-    }
-  },
-  {
-    id: "cancellation", bucket: "Demand Performance", icon: "❌", name: "Cancellation",
-    score: 63, impact: "$44.7K", status: "medium",
-    detail: {
-      description: "Cancellation rate above benchmark — revenue at risk.",
-      breakdown: [{ label: "Avg cancel rate", value: "22%" }, { label: "High risk props", value: "14" }, { label: "Peak cancel window", value: "48h pre-arrival" }],
-      estimatedImpact: "$44,700",
-      actions: ["View Cancellations", "Policy Review", "Export Report"]
-    }
+    name: "Demand Performance", color: "#3b82f6",
+    levers: [
+      { id:"look-to-book",icon:"🔍", name:"Look-to-Book",  score:55, impact:"$37.9K", status:"medium",
+        detail:{ description:"High search impressions not converting to bookings.", breakdown:[{label:"Avg L2B ratio",value:"1:142"},{label:"Below threshold",value:"19 props"},{label:"Top miss channel",value:"Expedia"}], estimatedImpact:"$37,900", actions:["View Analytics","Rate Review","Export Data"] }},
+      { id:"booking-pace",icon:"📈", name:"Booking Pace",  score:47, impact:"$54.2K", status:"critical",
+        detail:{ description:"Booking velocity tracking behind prior period and forecast.", breakdown:[{label:"Behind forecast",value:"31 props"},{label:"Avg gap",value:"-18%"},{label:"Critical window",value:"Next 14 days"}], estimatedImpact:"$54,200", actions:["View Pace Report","Apply Promotions","Alert Revenue Mgr"] }},
+      { id:"channel-mix", icon:"🌐", name:"Channel Mix",   score:76, impact:"$11.8K", status:"healthy",
+        detail:{ description:"OTA dependency too high — direct channel underperforming.", breakdown:[{label:"OTA share",value:"74%"},{label:"Direct share",value:"12%"},{label:"Target direct",value:"25%"}], estimatedImpact:"$11,800", actions:["View Mix Report","Direct Strategy","Export Data"] }},
+      { id:"cancellation",icon:"❌", name:"Cancellation",  score:63, impact:"$44.7K", status:"medium",
+        detail:{ description:"Cancellation rate above benchmark — revenue at risk.", breakdown:[{label:"Avg cancel rate",value:"22%"},{label:"High risk props",value:"14"},{label:"Peak window",value:"48h pre-arrival"}], estimatedImpact:"$44,700", actions:["View Cancellations","Policy Review","Export Report"] }},
+    ]
   },
 ];
 
-const buckets = ["ARI Integrity", "Distribution Errors", "Content Quality", "Demand Performance"];
-
-const bucketMeta = {
-  "ARI Integrity": { color: "#6366f1", bg: "#eef2ff" },
-  "Distribution Errors": { color: "#f59e0b", bg: "#fffbeb" },
-  "Content Quality": { color: "#10b981", bg: "#ecfdf5" },
-  "Demand Performance": { color: "#3b82f6", bg: "#eff6ff" },
+const LEVER_STATUS_CFG = {
+  critical: { label:"Critical", color:"#ef4444", bg:"#fef2f2", bar:"#ef4444", icon:"🔥" },
+  medium:   { label:"At Risk",  color:"#f59e0b", bg:"#fffbeb", bar:"#f59e0b", icon:"⚠️" },
+  healthy:  { label:"Healthy",  color:"#10b981", bg:"#f0fdf4", bar:"#10b981", icon:"✓"  },
 };
 
-const statusConfig = {
-  critical: { label: "Critical", color: "#ef4444", bg: "#fef2f2", bar: "#ef4444", icon: "🔥" },
-  medium:   { label: "At Risk",  color: "#f59e0b", bg: "#fffbeb", bar: "#f59e0b", icon: "⚠️" },
-  healthy:  { label: "Healthy",  color: "#10b981", bg: "#f0fdf4", bar: "#10b981", icon: "✓" },
-};
-
-const topRisks = levers
-  .filter(l => l.status === "critical")
-  .sort((a, b) => parseFloat(b.impact.replace(/[^0-9.]/g, "")) - parseFloat(a.impact.replace(/[^0-9.]/g, "")))
-  .slice(0, 3);
-
-export default function LeverCockpit() {
+/* ══════════════════════════════════════════════════════════════════════════
+   PAGE 5 — 16-LEVER GRID (v2)
+══════════════════════════════════════════════════════════════════════════ */
+function LeversPage({ tenant, setTenant, toast }) {
   const [activePanel, setActivePanel] = useState(null);
-  const [hoveredId, setHoveredId] = useState(null);
+  const allLevers = LEVER_BUCKETS.flatMap(b => b.levers);
+  const activeLever = allLevers.find(l => l.id === activePanel);
 
-  const activeLever = levers.find(l => l.id === activePanel);
+  const totalRisk = allLevers.reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
+  const criticalRisk = allLevers.filter(l => l.status === "critical").reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
+  const criticalPct = Math.round((criticalRisk / totalRisk) * 100);
+  const fmt = (n) => "$" + (n >= 1000 ? (n/1000).toFixed(0) + "K" : n.toFixed(0));
+
+  const topRisks = [...allLevers]
+    .filter(l => l.status === "critical")
+    .sort((a,b) => parseFloat(b.impact.replace(/[^0-9.]/g,"")) - parseFloat(a.impact.replace(/[^0-9.]/g,"")))
+    .slice(0,3);
 
   return (
-    <div style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", background: "#f8f9fc", minHeight: "100vh", padding: "32px 28px" }}>
-
-      {/* Google Font */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
-        .lever-card {
-          background: #fff;
-          border-radius: 14px;
-          border: 1px solid #e8eaf0;
-          padding: 20px;
-          cursor: pointer;
-          transition: box-shadow 0.18s ease, transform 0.18s ease;
-          position: relative;
-          overflow: hidden;
-        }
-        .lever-card:hover {
-          box-shadow: 0 8px 28px rgba(0,0,0,0.10);
-          transform: translateY(-2px);
-        }
-        .lever-card:hover .lever-cta {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .lever-cta {
-          opacity: 0;
-          transform: translateY(4px);
-          transition: opacity 0.15s ease, transform 0.15s ease;
-          font-size: 12px;
-          font-weight: 600;
-          color: #6366f1;
-          margin-top: 14px;
-          letter-spacing: 0.01em;
-        }
-        .score-bar-bg {
-          height: 5px;
-          border-radius: 99px;
-          background: #f0f1f5;
-          margin: 10px 0 14px;
-          overflow: hidden;
-        }
-        .score-bar-fill {
-          height: 100%;
-          border-radius: 99px;
-          transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-        }
-        .status-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 11px;
-          font-weight: 600;
-          padding: 3px 9px;
-          border-radius: 99px;
-          letter-spacing: 0.02em;
-        }
-        .side-panel {
-          position: fixed;
-          top: 0; right: 0; bottom: 0;
-          width: 360px;
-          background: #fff;
-          box-shadow: -8px 0 40px rgba(0,0,0,0.10);
-          z-index: 100;
-          overflow-y: auto;
-          animation: slideIn 0.22s cubic-bezier(0.4,0,0.2,1);
-        }
-        @keyframes slideIn {
-          from { transform: translateX(40px); opacity: 0; }
-          to   { transform: translateX(0);   opacity: 1; }
-        }
-        .panel-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.08);
-          z-index: 99;
-          animation: fadeIn 0.18s ease;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; } to { opacity: 1; }
-        }
-        .action-btn {
-          display: block;
-          width: 100%;
-          text-align: left;
-          padding: 11px 16px;
-          background: #f8f9fc;
-          border: 1px solid #e8eaf0;
-          border-radius: 9px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #374151;
-          cursor: pointer;
-          transition: background 0.12s, border-color 0.12s;
-          margin-bottom: 8px;
-          font-family: inherit;
-        }
-        .action-btn:hover {
-          background: #eef2ff;
-          border-color: #c7d2fe;
-          color: #4f46e5;
-        }
-        .risk-bar-item {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 14px;
-          background: #fff;
-          border-radius: 10px;
-          border: 1px solid #e8eaf0;
-          flex: 1;
-          min-width: 160px;
-        }
-      `}</style>
-
-      {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 4 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 700, color: "#111827", margin: 0 }}>Revenue Cockpit</h1>
-          <span style={{ fontSize: 13, color: "#9ca3af", fontWeight: 400 }}>16 levers · Last updated 14 min ago</span>
+    <div className="fade-in">
+      {/* Page header */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
+            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue Cockpit</h1>
+            {tenant && (
+              <div style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:7,padding:"4px 12px",fontSize:12,color:C.brand,fontWeight:700}}>
+                📍 {tenant}
+              </div>
+            )}
+          </div>
+          <div style={{fontSize:12,color:C.t3}}>16 levers across 4 domains · Click any card to drill down</div>
         </div>
-        <p style={{ fontSize: 14, color: "#6b7280", margin: 0 }}>Diagnose distribution performance across all channels and properties.</p>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <select onChange={e=>setTenant(e.target.value)} value={tenant||"All Tenants"}
+            style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 12px",fontSize:12,color:C.t1,outline:"none",boxShadow:C.shadow}}>
+            <option>All Tenants</option>
+            {TENANTS.map(t=><option key={t.id}>{t.name}</option>)}
+          </select>
+          <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↗ Export Grid</button>
+        </div>
       </div>
 
-      {/* Revenue Leakage Thermometer */}
-      {(() => {
-        const totalRisk = levers.reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
-        const criticalRisk = levers.filter(l => l.status === "critical").reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
-        const pct = Math.round((criticalRisk / totalRisk) * 100);
-        const fmt = (n) => "$" + (n >= 1000 ? (n/1000).toFixed(0) + "K" : n.toFixed(0));
-        return (
-          <div style={{ background: "#fff", border: "1px solid #e8eaf0", borderRadius: 16, padding: "28px 32px", marginBottom: 24, boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 16 }}>
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>Revenue Leakage Monitor</div>
-                <div style={{ fontSize: 42, fontWeight: 800, color: "#ef4444", lineHeight: 1, letterSpacing: "-0.02em" }}>
-                  {fmt(totalRisk * 1000)}
-                  <span style={{ fontSize: 16, fontWeight: 500, color: "#9ca3af", marginLeft: 8 }}>total at risk</span>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 24 }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#ef4444" }}>{levers.filter(l=>l.status==="critical").length}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Critical</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b" }}>{levers.filter(l=>l.status==="medium").length}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>At Risk</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#10b981" }}>{levers.filter(l=>l.status==="healthy").length}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Healthy</div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af" }}>Healthy</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af" }}>Critical</span>
-              </div>
-              <div style={{ height: 10, borderRadius: 99, background: "#f0f1f5", overflow: "hidden", position: "relative" }}>
-                <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${100 - pct}%`, background: "linear-gradient(90deg, #10b981, #f59e0b)", borderRadius: "99px 0 0 99px" }} />
-                <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: `${pct}%`, background: "linear-gradient(90deg, #f59e0b, #ef4444)", borderRadius: "0 99px 99px 0" }} />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-                <span style={{ fontSize: 11, color: "#10b981", fontWeight: 600 }}>{fmt((totalRisk - criticalRisk) * 1000)} watch / healthy</span>
-                <span style={{ fontSize: 11, color: "#ef4444", fontWeight: 600 }}>{fmt(criticalRisk * 1000)} critical leakage</span>
-              </div>
+      {/* ── THERMOMETER HERO ─────────────────────────────────────────── */}
+      <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:16,padding:"24px 28px",marginBottom:20,boxShadow:C.shadowMd}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18,flexWrap:"wrap",gap:16}}>
+          <div>
+            <div style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:6}}>Revenue Leakage Monitor</div>
+            <div style={{fontSize:40,fontWeight:800,color:C.red,lineHeight:1,letterSpacing:"-0.02em",fontFamily:"'IBM Plex Mono',monospace"}}>
+              {fmt(totalRisk * 1000)}
+              <span style={{fontSize:15,fontWeight:500,color:C.t4,marginLeft:10,fontFamily:"'DM Sans',sans-serif"}}>total at risk</span>
             </div>
           </div>
-        );
-      })()}
-
-      {/* Top Risk Bar */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>
-          🔥 Top Revenue Risk Today
+          <div style={{display:"flex",gap:24}}>
+            {[
+              [allLevers.filter(l=>l.status==="critical").length, "Critical", C.red],
+              [allLevers.filter(l=>l.status==="medium").length,   "At Risk",  C.amber],
+              [allLevers.filter(l=>l.status==="healthy").length,  "Healthy",  C.green],
+            ].map(([n,l,c]) => (
+              <div key={l} style={{textAlign:"center"}}>
+                <div style={{fontSize:28,fontWeight:800,color:c,fontFamily:"'IBM Plex Mono',monospace",lineHeight:1}}>{n}</div>
+                <div style={{fontSize:10,fontWeight:600,color:C.t4,textTransform:"uppercase",letterSpacing:"0.05em",marginTop:3}}>{l}</div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          {topRisks.map((l, i) => (
-            <div key={l.id} className="risk-bar-item" style={{ cursor: "pointer" }} onClick={() => setActivePanel(l.id)}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#d1d5db", minWidth: 16 }}>#{i + 1}</span>
-              <span style={{ fontSize: 13 }}>{l.icon}</span>
+        <div>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+            <span style={{fontSize:10,fontWeight:600,color:C.t4}}>Healthy</span>
+            <span style={{fontSize:10,fontWeight:600,color:C.t4}}>Critical</span>
+          </div>
+          <div style={{height:10,borderRadius:99,background:C.t6,overflow:"hidden",position:"relative"}}>
+            <div style={{position:"absolute",left:0,top:0,bottom:0,width:`${100-criticalPct}%`,background:`linear-gradient(90deg,${C.green},${C.amber})`,borderRadius:"99px 0 0 99px"}}/>
+            <div style={{position:"absolute",right:0,top:0,bottom:0,width:`${criticalPct}%`,background:`linear-gradient(90deg,${C.amber},${C.red})`,borderRadius:"0 99px 99px 0"}}/>
+          </div>
+          <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
+            <span style={{fontSize:10,color:C.green,fontWeight:600}}>{fmt((totalRisk-criticalRisk)*1000)} watch / healthy</span>
+            <span style={{fontSize:10,color:C.red,fontWeight:600}}>{fmt(criticalRisk*1000)} critical leakage</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── TOP RISKS ────────────────────────────────────────────────── */}
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:10,fontWeight:700,color:C.t4,letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:10}}>🔥 Top Revenue Risk Today</div>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          {topRisks.map((l,i) => (
+            <div key={l.id} onClick={() => setActivePanel(l.id)}
+              style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:10,padding:"10px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:10,flex:1,minWidth:180,boxShadow:C.shadow,transition:"box-shadow 0.15s,transform 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.boxShadow=C.shadowMd;e.currentTarget.style.transform="translateY(-1px)"}}
+              onMouseLeave={e=>{e.currentTarget.style.boxShadow=C.shadow;e.currentTarget.style.transform="translateY(0)"}}>
+              <span style={{fontSize:13,fontWeight:800,color:C.t5,minWidth:18}}>#{i+1}</span>
+              <span style={{fontSize:16}}>{l.icon}</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{l.name}</div>
-                <div style={{ fontSize: 12, color: "#ef4444", fontWeight: 600 }}>{l.impact} at risk</div>
+                <div style={{fontSize:13,fontWeight:700,color:C.t1}}>{l.name}</div>
+                <div style={{fontSize:12,color:C.red,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace"}}>{l.impact} at risk</div>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Bucket Sections */}
-      {buckets.map(bucket => {
-        const bucketLevers = levers.filter(l => l.bucket === bucket);
-        const meta = bucketMeta[bucket];
-        return (
-          <div key={bucket} style={{ marginBottom: 36 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: meta.color }} />
-              <span style={{ fontSize: 13, fontWeight: 700, color: meta.color, textTransform: "uppercase", letterSpacing: "0.07em" }}>{bucket}</span>
-              <div style={{ flex: 1, height: 1, background: "#e8eaf0" }} />
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 14 }}>
-              {bucketLevers.map(lever => {
-                const st = statusConfig[lever.status];
-                return (
-                  <div
-                    key={lever.id}
-                    className="lever-card"
-                    onClick={() => setActivePanel(lever.id)}
-                    onMouseEnter={() => setHoveredId(lever.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                  >
-                    {/* Top color stripe */}
-                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: st.bar, borderRadius: "14px 14px 0 0" }} />
-
-                    {/* Icon + Name */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                      <span style={{ fontSize: 18 }}>{lever.icon}</span>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{lever.name}</span>
-                    </div>
-
-                    {/* Revenue — PRIMARY */}
-                    <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>Revenue at Risk</div>
-                      <div style={{ fontSize: 26, fontWeight: 800, color: lever.status === "critical" ? "#ef4444" : lever.status === "medium" ? "#f59e0b" : "#10b981", letterSpacing: "-0.01em", lineHeight: 1 }}>{lever.impact}</div>
-                    </div>
-
-                    {/* Score + Status — secondary */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                      <ScoreCircle score={lever.score} color={st.bar} size={52} />
-                      <div>
-                        <div style={{ fontSize: 10, fontWeight: 600, color: "#9ca3af", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.05em" }}>Health Score</div>
-                        <span className="status-badge" style={{ background: st.bg, color: st.color }}>
-                          {st.icon} {st.label}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Hover CTA */}
-                    <div className="lever-cta">→ View Diagnostics</div>
-                  </div>
-                );
-              })}
-            </div>
+      {/* ── BUCKET SECTIONS ──────────────────────────────────────────── */}
+      {LEVER_BUCKETS.map(bucket => (
+        <div key={bucket.name} style={{marginBottom:32}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+            <div style={{width:9,height:9,borderRadius:"50%",background:bucket.color}}/>
+            <span style={{fontSize:11,fontWeight:700,color:bucket.color,textTransform:"uppercase",letterSpacing:"0.07em"}}>{bucket.name}</span>
+            <div style={{flex:1,height:1,background:C.border}}/>
           </div>
-        );
-      })}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:12}}>
+            {bucket.levers.map(lever => {
+              const st = LEVER_STATUS_CFG[lever.status];
+              return (
+                <div key={lever.id} className="lever-card"
+                  onClick={() => setActivePanel(lever.id)}
+                  style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,padding:"18px",cursor:"pointer",position:"relative",overflow:"hidden",boxShadow:C.shadow}}>
+                  {/* Status stripe */}
+                  <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:st.bar,borderRadius:"14px 14px 0 0"}}/>
+                  {/* Icon + Name */}
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+                    <span style={{fontSize:17}}>{lever.icon}</span>
+                    <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{lever.name}</span>
+                  </div>
+                  {/* Revenue — PRIMARY */}
+                  <div style={{marginBottom:12}}>
+                    <div style={{fontSize:9,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:2}}>Revenue at Risk</div>
+                    <div style={{fontSize:24,fontWeight:800,color:st.color,letterSpacing:"-0.01em",lineHeight:1,fontFamily:"'IBM Plex Mono',monospace"}}>{lever.impact}</div>
+                  </div>
+                  {/* Score circle + status — SECONDARY */}
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <ScoreCircle score={lever.score} color={st.bar} size={52}/>
+                    <div>
+                      <div style={{fontSize:9,fontWeight:600,color:C.t4,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.05em"}}>Health Score</div>
+                      <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:10,fontWeight:700,padding:"3px 9px",borderRadius:99,background:st.bg,color:st.color,border:`1px solid ${st.color}33`}}>
+                        {st.icon} {st.label}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Hover CTA */}
+                  <div className="lever-cta" style={{fontSize:11,fontWeight:700,color:C.brand,marginTop:12,opacity:0,transform:"translateY(4px)",transition:"opacity 0.15s,transform 0.15s"}}>→ View Diagnostics</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
 
-      {/* Side Panel Overlay */}
+      {/* ── SLIDE PANEL ──────────────────────────────────────────────── */}
       {activePanel && (
         <>
-          <div className="panel-overlay" onClick={() => setActivePanel(null)} />
-          <div className="side-panel">
+          <div onClick={() => setActivePanel(null)}
+            style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.08)",zIndex:400,animation:"fadeIn 0.18s ease"}}/>
+          <div style={{position:"fixed",top:0,right:0,bottom:0,width:360,background:C.cardBg,boxShadow:C.shadowLg,zIndex:401,overflowY:"auto",animation:"fadeSlide 0.22s cubic-bezier(0.4,0,0.2,1)"}}>
             {activeLever && (() => {
-              const st = statusConfig[activeLever.status];
+              const st = LEVER_STATUS_CFG[activeLever.status];
               return (
-                <div style={{ padding: 28 }}>
-                  {/* Close */}
-                  <button
-                    onClick={() => setActivePanel(null)}
-                    style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#9ca3af", float: "right", padding: 0, lineHeight: 1 }}
-                  >✕</button>
-
-                  {/* Header */}
-                  <div style={{ marginBottom: 24 }}>
-                    <div style={{ fontSize: 26, marginBottom: 6 }}>{activeLever.icon}</div>
-                    <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111827", margin: "0 0 4px" }}>{activeLever.name}</h2>
-                    <p style={{ fontSize: 13, color: "#6b7280", margin: 0, lineHeight: 1.5 }}>{activeLever.detail.description}</p>
+                <div style={{padding:26}}>
+                  <button onClick={() => setActivePanel(null)}
+                    style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t4,float:"right",padding:0,lineHeight:1}}>✕</button>
+                  <div style={{marginBottom:22}}>
+                    <div style={{fontSize:26,marginBottom:6}}>{activeLever.icon}</div>
+                    <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 4px",fontFamily:"'Syne',sans-serif"}}>{activeLever.name}</h2>
+                    <p style={{fontSize:13,color:C.t3,margin:0,lineHeight:1.5}}>{activeLever.detail.description}</p>
                   </div>
-
                   {/* Score */}
-                  <div style={{ background: "#f8f9fc", borderRadius: 12, padding: "16px 18px", marginBottom: 20 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Current Score</span>
-                      <span style={{ fontSize: 22, fontWeight: 700, color: "#111827" }}>{activeLever.score}<span style={{ fontSize: 12, color: "#9ca3af" }}> / 100</span></span>
+                  <div style={{background:"#F8FAFC",borderRadius:12,padding:"14px 16px",marginBottom:18}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+                      <span style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.05em"}}>Health Score</span>
+                      <span style={{fontSize:22,fontWeight:800,color:C.t1,fontFamily:"'IBM Plex Mono',monospace"}}>{activeLever.score}<span style={{fontSize:11,color:C.t4}}>/100</span></span>
                     </div>
-                    <div className="score-bar-bg" style={{ margin: 0 }}>
-                      <div className="score-bar-fill" style={{ width: `${activeLever.score}%`, background: st.bar }} />
+                    <div style={{height:6,borderRadius:99,background:C.t6,overflow:"hidden"}}>
+                      <div style={{width:`${activeLever.score}%`,height:"100%",background:st.bar,borderRadius:99,transition:"width 0.5s ease"}}/>
                     </div>
                   </div>
-
                   {/* Breakdown */}
-                  <div style={{ marginBottom: 20 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>Breakdown</div>
-                    {activeLever.detail.breakdown.map((item, i) => (
-                      <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "9px 0", borderBottom: i < activeLever.detail.breakdown.length - 1 ? "1px solid #f0f1f5" : "none" }}>
-                        <span style={{ fontSize: 13, color: "#6b7280" }}>{item.label}</span>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{item.value}</span>
+                  <div style={{marginBottom:18}}>
+                    <div style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:10}}>Breakdown</div>
+                    {activeLever.detail.breakdown.map((item,i) => (
+                      <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:i<activeLever.detail.breakdown.length-1?`1px solid ${C.t6}`:"none"}}>
+                        <span style={{fontSize:13,color:C.t3}}>{item.label}</span>
+                        <span style={{fontSize:13,fontWeight:700,color:C.t1,fontFamily:"'IBM Plex Mono',monospace"}}>{item.value}</span>
                       </div>
                     ))}
                   </div>
-
-                  {/* Estimated Impact */}
-                  <div style={{ background: st.bg, border: `1px solid ${st.color}22`, borderRadius: 10, padding: "12px 16px", marginBottom: 24 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: st.color, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>Estimated Revenue Impact</div>
-                    <div style={{ fontSize: 24, fontWeight: 700, color: st.color }}>{activeLever.detail.estimatedImpact}</div>
+                  {/* Impact */}
+                  <div style={{background:st.bg,border:`1px solid ${st.color}33`,borderRadius:10,padding:"12px 16px",marginBottom:22}}>
+                    <div style={{fontSize:10,fontWeight:700,color:st.color,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Estimated Revenue Impact</div>
+                    <div style={{fontSize:28,fontWeight:800,color:st.color,fontFamily:"'IBM Plex Mono',monospace"}}>{activeLever.detail.estimatedImpact}</div>
                   </div>
-
                   {/* Actions */}
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>Actions</div>
-                    {activeLever.detail.actions.map((action, i) => (
-                      <button key={i} className="action-btn">→ {action}</button>
-                    ))}
-                  </div>
+                  <div style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:10}}>Actions</div>
+                  {activeLever.detail.actions.map((action,i) => (
+                    <button key={i} onClick={() => toast(`"${action}" opened`,"info")}
+                      style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:9,fontSize:13,fontWeight:600,color:C.t2,cursor:"pointer",marginBottom:8,fontFamily:"inherit",transition:"background 0.12s,border-color 0.12s,color 0.12s"}}
+                      onMouseEnter={e=>{e.currentTarget.style.background=C.brandDim;e.currentTarget.style.borderColor=C.brandBorder;e.currentTarget.style.color=C.brand}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="#F8FAFC";e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.t2}}>
+                      → {action}
+                    </button>
+                  ))}
                 </div>
               );
             })()}
