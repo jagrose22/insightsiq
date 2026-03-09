@@ -295,11 +295,24 @@ const DEFAULT_CLIENT    = "Wyndham Hotels";
 const DEFAULT_PARTNERS  = ["Hotel Key","Tricept"];
 const DEFAULT_BRANDS    = ["All Brands"];
 
+// Auto-select partners per account (from real pairing data)
+const ACCOUNT_PARTNER_MAP = {
+  "Wyndham Hotels":         ["Hotel Key","Tricept"],
+  "Best Western Hotels":    ["Delta Vacation"],
+  "Choice Hotels":          ["Agoda"],
+  "Hilton Worldwide":       ["British Airways"],
+  "Hyatt Hotels":           ["Trisept Solutions"],
+  "Marriott International": ["British Airways"],
+  "IHG Hotels & Resorts":   ["Hotel Tonight"],
+  "Omni Hotels & Resorts":  ["Agoda"],
+};
+
 const DEMAND_PARTNERS = [
-  "Agoda","Airbnb","Booking.com","Despegar",
-  "Expedia","Hopper Capital One","Hopper Travel Services",
-  "Hotel Key","Intel","MMT","Sabre",
-  "Tricept","Traveloka","Trip.com",
+  "Agoda","Airbnb","Booking.com","British Airways",
+  "Delta Vacation","Despegar","Expedia",
+  "Hopper Capital One","Hopper Travel Services",
+  "Hotel Key","Hotel Tonight","Intel","MMT","Sabre",
+  "Tricept","Traveloka","Trisept Solutions","Trip.com",
 ];
 
 const BRAND_MAP = {
@@ -536,7 +549,7 @@ export default function App() {
                 <button key={a.id} onClick={()=>{
                   setActiveClient(a);
                   setActiveBrands(DEFAULT_BRANDS);
-                  setActivePartners(a.name===DEFAULT_CLIENT ? DEFAULT_PARTNERS : ["All Brands"]);
+                  setActivePartners(ACCOUNT_PARTNER_MAP[a.name] || ["All Brands"]);
                   setClientOpen(false);
                 }} style={{display:"block",width:"100%",padding:"8px 14px",background:activeClient.name===a.name?"rgba(105,65,242,0.2)":"transparent",
                   border:"none",color:activeClient.name===a.name?"#A78BFA":"#E2E8F0",fontSize:12,fontWeight:activeClient.name===a.name?700:400,
@@ -658,8 +671,9 @@ export default function App() {
             padding:"5px 14px",fontSize:12,color:"#fff",fontWeight:700,
             boxShadow:`0 1px 3px ${C.brand}55`}}>Search</button>
           <button className="btn-ghost" onClick={()=>{
-              setActiveClient(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
-              setActivePartners(DEFAULT_PARTNERS);
+              const resetClient = ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT);
+              setActiveClient(resetClient);
+              setActivePartners(ACCOUNT_PARTNER_MAP[resetClient.name] || DEFAULT_PARTNERS);
               setActiveBrands(DEFAULT_BRANDS);
               setDpOpen(false); setBrandOpen(false); setClientOpen(false);
               setPage("levers");
