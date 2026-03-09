@@ -279,15 +279,45 @@ function LoopBar({ active }) {
   );
 }
 
+const ENTERPRISE_ACCOUNTS = [
+  { id:1,  name:"Omni Hotels & Resorts",  short:"Omni"        },
+  { id:2,  name:"Best Western Hotels",    short:"Best Western" },
+  { id:3,  name:"Choice Hotels",          short:"Choice"       },
+  { id:4,  name:"IHG Hotels & Resorts",   short:"IHG"          },
+  { id:5,  name:"Hyatt Hotels",           short:"Hyatt"        },
+  { id:6,  name:"Hilton Worldwide",       short:"Hilton"       },
+  { id:7,  name:"Marriott International", short:"Marriott"     },
+  { id:8,  name:"Wyndham Hotels",         short:"Wyndham"      },
+];
+
+const DEMAND_PARTNERS = [
+  "All Demand Partners",
+  "Tricept","Hotel Key","Agoda","Booking.com",
+  "Expedia","Traveloka","Sabre","Airbnb",
+  "Intel","Hopper Capital One","Hopper Travel Services",
+  "MMT","Despegar","Trip.com",
+];
+
+const BRAND_MAP = {
+  "Best Western Hotels":    ["All Brands","Best Western Plus","Best Western Premier"],
+  "Choice Hotels":          ["All Brands","Comfort Inn","Cambria Hotels"],
+  "IHG Hotels & Resorts":   ["All Brands","Holiday Inn","InterContinental Hotels & Resorts"],
+  "Hilton Worldwide":        ["All Brands","Hilton Hotels & Resorts","Hampton by Hilton"],
+  "Hyatt Hotels":            ["All Brands","Grand Hyatt","Hyatt Regency"],
+  "Wyndham Hotels":          ["All Brands","Wyndham Hotels & Resorts","Ramada"],
+  "Marriott International":  ["All Brands","Marriott Hotels","Courtyard by Marriott"],
+  "Omni Hotels & Resorts":   ["All Brands","Omni Hotels & Resorts","Omni PGA Frisco Resort"],
+};
+
 const TENANTS = [
-  { id:1, name:"Omni Hotels & Resorts",    type:"Enterprise", health:61, err:8.1, arr:4.2, trend:-4,  status:"InProgress", rag:"amber", owner:"Priya S.",  leversRed:3 },
-  { id:2, name:"Hilton / British Airways", type:"Enterprise", health:44, err:12.7,arr:6.8, trend:-11, status:"Active",     rag:"red",   owner:"Marcus T.", leversRed:6 },
-  { id:3, name:"Choice Hotels",            type:"Mid-Market", health:78, err:3.4, arr:2.1, trend:+6,  status:"Mitigated",  rag:"green", owner:"Lisa K.",   leversRed:0 },
-  { id:4, name:"Expedia / Omni Dallas",    type:"Mid-Market", health:52, err:9.8, arr:3.3, trend:-7,  status:"InProgress", rag:"amber", owner:"Priya S.",  leversRed:2 },
-  { id:5, name:"Wyndham Hotels",           type:"Enterprise", health:38, err:15.2,arr:5.9, trend:-14, status:"Unassigned", rag:"red",   owner:"—",         leversRed:7 },
-  { id:6, name:"IHG / Hotwire",            type:"Enterprise", health:71, err:5.6, arr:4.1, trend:+2,  status:"Mitigated",  rag:"green", owner:"Marcus T.", leversRed:0 },
-  { id:7, name:"Marriott Bonvoy",          type:"Enterprise", health:59, err:7.9, arr:7.2, trend:-3,  status:"InProgress", rag:"amber", owner:"Lisa K.",   leversRed:2 },
-  { id:8, name:"Accor / Booking.com",      type:"Mid-Market", health:66, err:6.2, arr:1.8, trend:+1,  status:"Mitigated",  rag:"green", owner:"Priya S.",  leversRed:1 },
+  { id:1, name:"Omni Hotels & Resorts",   type:"Enterprise", health:61, err:8.1, arr:4.2, trend:-4,  status:"InProgress", rag:"amber", owner:"Priya S.",  leversRed:3 },
+  { id:2, name:"Best Western Hotels",     type:"Enterprise", health:55, err:9.4, arr:3.8, trend:-6,  status:"InProgress", rag:"amber", owner:"Lisa K.",   leversRed:4 },
+  { id:3, name:"Choice Hotels",           type:"Enterprise", health:78, err:3.4, arr:2.1, trend:+6,  status:"Mitigated",  rag:"green", owner:"Lisa K.",   leversRed:0 },
+  { id:4, name:"IHG Hotels & Resorts",    type:"Enterprise", health:71, err:5.6, arr:4.1, trend:+2,  status:"Mitigated",  rag:"green", owner:"Marcus T.", leversRed:0 },
+  { id:5, name:"Hyatt Hotels",            type:"Enterprise", health:66, err:6.8, arr:5.2, trend:-2,  status:"InProgress", rag:"amber", owner:"Priya S.",  leversRed:2 },
+  { id:6, name:"Hilton Worldwide",        type:"Enterprise", health:44, err:12.7,arr:6.8, trend:-11, status:"Active",     rag:"red",   owner:"Marcus T.", leversRed:6 },
+  { id:7, name:"Marriott International",  type:"Enterprise", health:59, err:7.9, arr:7.2, trend:-3,  status:"InProgress", rag:"amber", owner:"Lisa K.",   leversRed:2 },
+  { id:8, name:"Wyndham Hotels",          type:"Enterprise", health:38, err:15.2,arr:5.9, trend:-14, status:"Unassigned", rag:"red",   owner:"—",         leversRed:7 },
 ];
 const ERROR_CLUSTERS = [
   { id:"E1", name:"ARI Sync Failure — Expedia",           type:"ARI",     freq:247,tenants:3,trend:-18,impact:"$28.4K/day",sev:"red",  bars:[12,18,22,15,31,28,24,47,38,41,52,47] },
@@ -337,7 +367,10 @@ const TOP_NAV = [
 export default function App() {
   const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
-  const [selTenant, setSelTenant]   = useState(TENANTS[4]);
+  const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS[7]); // Wyndham default
+  const [activeDemandPartner, setActiveDemandPartner] = useState("All Demand Partners");
+  const [activeBrand, setActiveBrand]           = useState("All Brands");
+  const [selTenant, setSelTenant]   = useState(TENANTS[7]);
   const [detailTab, setDetailTab]   = useState("snapshot");
   const [selCluster, setSelCluster] = useState(ERROR_CLUSTERS[0]);
   const [selRisk, setSelRisk]       = useState(RISK_ROWS[0]);
@@ -374,6 +407,11 @@ export default function App() {
         .lever-card{transition:box-shadow 0.15s,border-color 0.15s,transform 0.15s}
         .lever-card:hover{box-shadow:0 4px 16px rgba(105,65,242,0.14) !important;border-color:#C4B5FD !important;transform:translateY(-1px)}
         .lever-card:hover .lever-cta{opacity:1 !important;transform:translateY(0) !important;}
+        .lever-actions{display:flex;gap:6px;margin-top:12px;opacity:0;transform:translateY(4px);transition:opacity 0.15s,transform 0.15s;}
+        .lever-card:hover .lever-actions{opacity:1 !important;transform:translateY(0) !important;}
+        .lever-btn{flex:1;padding:5px 0;border-radius:6px;font-size:10px;font-weight:700;border:none;cursor:pointer;transition:opacity 0.12s,transform 0.1s;letter-spacing:0.02em;}
+        .lever-btn:hover{opacity:0.85;transform:translateY(-1px);}
+        .lever-btn:active{transform:translateY(0);}
         @keyframes fadeIn   {from{opacity:0;transform:translateY(8px)}  to{opacity:1;transform:translateY(0)}}
         @keyframes fadeSlide{from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:translateX(0)}}
         @keyframes pulse    {0%,100%{opacity:1} 50%{opacity:0.5}}
@@ -406,18 +444,29 @@ export default function App() {
           </div>
         </div>
         <div style={{width:1,height:24,background:"rgba(255,255,255,0.1)"}}/>
-        <div style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.12)",
-          borderRadius:6,padding:"4px 12px",fontSize:13,color:"#E2E8F0",fontWeight:600}}>
-          Omni Hotels &amp; Resorts
+        <div style={{display:"flex",flexDirection:"column",gap:1}}>
+          <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Client</span>
+          <select value={activeClient.name} onChange={e=>{ setActiveClient(ENTERPRISE_ACCOUNTS.find(a=>a.name===e.target.value)); setActiveBrand("All Brands"); }}
+            style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",
+              borderRadius:6,padding:"3px 10px",fontSize:12,color:"#E2E8F0",fontWeight:600,outline:"none",
+              cursor:"pointer",minWidth:160}}>
+            {ENTERPRISE_ACCOUNTS.map(a=><option key={a.id} value={a.name}>{a.name}</option>)}
+          </select>
         </div>
-        {["Demand Partner","Brand"].map(l=>(
-          <div key={l} style={{display:"flex",flexDirection:"column",gap:1}}>
-            <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>{l}</span>
-            <select style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none"}}>
-              <option>ALL</option>
-            </select>
-          </div>
-        ))}
+        <div style={{display:"flex",flexDirection:"column",gap:1}}>
+          <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Demand Partner</span>
+          <select value={activeDemandPartner} onChange={e=>setActiveDemandPartner(e.target.value)}
+            style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",cursor:"pointer"}}>
+            {DEMAND_PARTNERS.map(p=><option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:1}}>
+          <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Brand</span>
+          <select value={activeBrand} onChange={e=>setActiveBrand(e.target.value)}
+            style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",cursor:"pointer"}}>
+            {(BRAND_MAP[activeClient.name] || ["All Brands"]).map(b=><option key={b} value={b}>{b}</option>)}
+          </select>
+        </div>
         <div style={{display:"flex",alignItems:"center",gap:5,marginLeft:4,
           background:"rgba(255,255,255,0.06)",borderRadius:6,padding:"3px 8px"}}>
           <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>‹</button>
@@ -535,7 +584,7 @@ export default function App() {
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} toast={toast}/>}
-        {page==="levers"   && <LeversPage tenant={leversFor} setTenant={setLeversFor} toast={toast}/>}
+        {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} toast={toast}/>}
       </div>
       <ToastHost/>
     </div>
@@ -1128,6 +1177,21 @@ const LEVER_STATUS_CFG = {
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 5 — 16-LEVER GRID (v2)
 ══════════════════════════════════════════════════════════════════════════ */
+function downloadLeverCSV(lever, tenantName) {
+  const rows = [
+    ["Tenant","Lever","Metric","Value","Status"],
+    [tenantName, lever.name, "Revenue at Risk", lever.impact, lever.status],
+    [tenantName, lever.name, "Health Score", lever.score + "/100", lever.status],
+    ...(lever.breakdown || []).map(b => [tenantName, lever.name, b.label, b.value, lever.status]),
+  ];
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type:"text/csv" });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement("a"), { href:url, download:`${tenantName}_${lever.name.replace(/\s+/g,"_")}.csv` });
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function LeversPage({ tenant, setTenant, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const allLevers = LEVER_BUCKETS.flatMap(b => b.levers);
@@ -1264,8 +1328,15 @@ function LeversPage({ tenant, setTenant, toast }) {
                       </span>
                     </div>
                   </div>
-                  {/* Hover CTA */}
-                  <div className="lever-cta" style={{fontSize:11,fontWeight:700,color:C.brand,marginTop:12,opacity:0,transform:"translateY(4px)",transition:"opacity 0.15s,transform 0.15s"}}>→ View Diagnostics</div>
+                  {/* Hover action buttons */}
+                  <div className="lever-actions">
+                    <button className="lever-btn"
+                      onClick={e => { e.stopPropagation(); downloadLeverCSV(lever, tenant || "Account"); }}
+                      style={{background:C.brandDim,color:C.brand}}>⬇ Download</button>
+                    <button className="lever-btn"
+                      onClick={e => { e.stopPropagation(); setActivePanel(lever.id); }}
+                      style={{background:C.brand,color:"#fff"}}>→ Diagnose</button>
+                  </div>
                 </div>
               );
             })}
