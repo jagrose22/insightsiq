@@ -280,32 +280,36 @@ function LoopBar({ active }) {
 }
 
 const ENTERPRISE_ACCOUNTS = [
-  { id:1,  name:"Omni Hotels & Resorts",  short:"Omni"        },
-  { id:2,  name:"Best Western Hotels",    short:"Best Western" },
-  { id:3,  name:"Choice Hotels",          short:"Choice"       },
-  { id:4,  name:"IHG Hotels & Resorts",   short:"IHG"          },
-  { id:5,  name:"Hyatt Hotels",           short:"Hyatt"        },
-  { id:6,  name:"Hilton Worldwide",       short:"Hilton"       },
-  { id:7,  name:"Marriott International", short:"Marriott"     },
+  { id:1,  name:"Best Western Hotels",    short:"Best Western" },
+  { id:2,  name:"Choice Hotels",          short:"Choice"       },
+  { id:3,  name:"Hilton Worldwide",       short:"Hilton"       },
+  { id:4,  name:"Hyatt Hotels",           short:"Hyatt"        },
+  { id:5,  name:"IHG Hotels & Resorts",   short:"IHG"          },
+  { id:6,  name:"Marriott International", short:"Marriott"     },
+  { id:7,  name:"Omni Hotels & Resorts",  short:"Omni"         },
   { id:8,  name:"Wyndham Hotels",         short:"Wyndham"      },
 ];
 
+// Demo defaults
+const DEFAULT_CLIENT    = "Wyndham Hotels";
+const DEFAULT_PARTNERS  = ["Hotel Key","Tricept"];
+const DEFAULT_BRANDS    = ["All Brands"];
+
 const DEMAND_PARTNERS = [
-  "All Demand Partners",
-  "Tricept","Hotel Key","Agoda","Booking.com",
-  "Expedia","Traveloka","Sabre","Airbnb",
-  "Intel","Hopper Capital One","Hopper Travel Services",
-  "MMT","Despegar","Trip.com",
+  "Agoda","Airbnb","Booking.com","Despegar",
+  "Expedia","Hopper Capital One","Hopper Travel Services",
+  "Hotel Key","Intel","MMT","Sabre",
+  "Tricept","Traveloka","Trip.com",
 ];
 
 const BRAND_MAP = {
   "Best Western Hotels":    ["All Brands","Best Western Plus","Best Western Premier"],
-  "Choice Hotels":          ["All Brands","Comfort Inn","Cambria Hotels"],
+  "Choice Hotels":          ["All Brands","Cambria Hotels","Comfort Inn"],
   "IHG Hotels & Resorts":   ["All Brands","Holiday Inn","InterContinental Hotels & Resorts"],
-  "Hilton Worldwide":        ["All Brands","Hilton Hotels & Resorts","Hampton by Hilton"],
+  "Hilton Worldwide":        ["All Brands","Hampton by Hilton","Hilton Hotels & Resorts"],
   "Hyatt Hotels":            ["All Brands","Grand Hyatt","Hyatt Regency"],
-  "Wyndham Hotels":          ["All Brands","Wyndham Hotels & Resorts","Ramada"],
-  "Marriott International":  ["All Brands","Marriott Hotels","Courtyard by Marriott"],
+  "Wyndham Hotels":          ["All Brands","Ramada","Wyndham Hotels & Resorts"],
+  "Marriott International":  ["All Brands","Courtyard by Marriott","Marriott Hotels"],
   "Omni Hotels & Resorts":   ["All Brands","Omni Hotels & Resorts","Omni PGA Frisco Resort"],
 };
 
@@ -361,15 +365,79 @@ const TOP_NAV = [
   { id:"qbr",       label:"Reporting / QBR",      stub:true         },
 ];
 
+
+/* ── MultiSelect dropdown ─────────────────────────────────────────────── */
+function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
+  const allSelected = selected.includes("All Brands") || selected.includes("All");
+  const displayLabel = selected.length === 0 ? "None"
+    : allSelected ? "All"
+    : selected.length === 1 ? selected[0]
+    : `${selected.length} selected`;
+
+  const toggle = (opt) => {
+    if (opt === "All Brands" || opt === "All") {
+      onChange(["All Brands"]);
+      return;
+    }
+    const next = selected.filter(s => s !== "All Brands" && s !== "All");
+    if (next.includes(opt)) {
+      const removed = next.filter(s => s !== opt);
+      onChange(removed.length === 0 ? ["All Brands"] : removed);
+    } else {
+      onChange([...next, opt]);
+    }
+  };
+
+  return (
+    <div style={{position:"relative",display:"flex",flexDirection:"column",gap:1}}>
+      <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>{label}</span>
+      <button onClick={e=>{e.stopPropagation();setOpen(!isOpen);}}
+        style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",
+          cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:4,padding:0,
+          maxWidth:140,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+        <span style={{overflow:"hidden",textOverflow:"ellipsis"}}>{displayLabel}</span>
+        <span style={{fontSize:8,opacity:0.6,flexShrink:0}}>{isOpen?"▲":"▼"}</span>
+      </button>
+      {isOpen && (
+        <div style={{position:"absolute",top:"100%",left:0,marginTop:6,background:"#1E2433",
+          border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,minWidth:200,zIndex:500,
+          boxShadow:"0 8px 24px rgba(0,0,0,0.4)",overflow:"hidden"}}>
+          <div style={{padding:"6px 0",maxHeight:280,overflowY:"auto"}}>
+            {[...(options.some(o=>o==="All Brands")?[]:["All Brands"]), ...options].map(opt => {
+              const checked = selected.includes(opt) || (opt==="All Brands" && allSelected);
+              return (
+                <label key={opt} onClick={()=>toggle(opt)}
+                  style={{display:"flex",alignItems:"center",gap:8,padding:"7px 14px",
+                    cursor:"pointer",fontSize:12,color:"#E2E8F0",
+                    background:checked?"rgba(105,65,242,0.15)":"transparent",
+                    transition:"background 0.1s"}}>
+                  <span style={{width:14,height:14,borderRadius:3,border:`1.5px solid ${checked?"#6941F2":"rgba(255,255,255,0.25)"}`,
+                    background:checked?"#6941F2":"transparent",display:"flex",alignItems:"center",
+                    justifyContent:"center",flexShrink:0,fontSize:9,color:"#fff",transition:"all 0.1s"}}>
+                    {checked && "✓"}
+                  </span>
+                  {opt}
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    ROOT APP
 ══════════════════════════════════════════════════════════════════════════ */
 export default function App() {
   const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
-  const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS[7]); // Wyndham default
-  const [activeDemandPartner, setActiveDemandPartner] = useState("All Demand Partners");
-  const [activeBrand, setActiveBrand]           = useState("All Brands");
+  const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
+  const [activePartners, setActivePartners]     = useState(DEFAULT_PARTNERS);
+  const [activeBrands, setActiveBrands]         = useState(DEFAULT_BRANDS);
+  const [dpOpen, setDpOpen]                     = useState(false);
+  const [brandOpen, setBrandOpen]               = useState(false);
   const [selTenant, setSelTenant]   = useState(TENANTS[7]);
   const [detailTab, setDetailTab]   = useState("snapshot");
   const [selCluster, setSelCluster] = useState(ERROR_CLUSTERS[0]);
@@ -380,6 +448,12 @@ export default function App() {
   const [kanban, setKanban]         = useState(false);
 
   const goLevers = (name) => { setLeversFor(name); setPage("levers"); };
+  // Close multi-select dropdowns on outside click
+  useEffect(() => {
+    const handler = () => { setDpOpen(false); setBrandOpen(false); };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, []);
   const toast    = useToast();
   const curNav   = TOP_NAV.find(n=>n.id===page);
   const loopPhase = curNav?.phase || "SEE";
@@ -446,27 +520,26 @@ export default function App() {
         <div style={{width:1,height:24,background:"rgba(255,255,255,0.1)"}}/>
         <div style={{display:"flex",flexDirection:"column",gap:1}}>
           <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Client</span>
-          <select value={activeClient.name} onChange={e=>{ setActiveClient(ENTERPRISE_ACCOUNTS.find(a=>a.name===e.target.value)); setActiveBrand("All Brands"); }}
+          <select value={activeClient.name}
+            onChange={e=>{
+              const acct = ENTERPRISE_ACCOUNTS.find(a=>a.name===e.target.value);
+              setActiveClient(acct);
+              setActiveBrands(DEFAULT_BRANDS);
+              setActivePartners(acct.name===DEFAULT_CLIENT ? DEFAULT_PARTNERS : ["All Brands"]);
+              setDpOpen(false); setBrandOpen(false);
+            }}
             style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",
               borderRadius:6,padding:"3px 10px",fontSize:12,color:"#E2E8F0",fontWeight:600,outline:"none",
               cursor:"pointer",minWidth:160}}>
             {ENTERPRISE_ACCOUNTS.map(a=><option key={a.id} value={a.name}>{a.name}</option>)}
           </select>
         </div>
-        <div style={{display:"flex",flexDirection:"column",gap:1}}>
-          <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Demand Partner</span>
-          <select value={activeDemandPartner} onChange={e=>setActiveDemandPartner(e.target.value)}
-            style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",cursor:"pointer"}}>
-            {DEMAND_PARTNERS.map(p=><option key={p} value={p}>{p}</option>)}
-          </select>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:1}}>
-          <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Brand</span>
-          <select value={activeBrand} onChange={e=>setActiveBrand(e.target.value)}
-            style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",cursor:"pointer"}}>
-            {(BRAND_MAP[activeClient.name] || ["All Brands"]).map(b=><option key={b} value={b}>{b}</option>)}
-          </select>
-        </div>
+        <MultiSelect label="Demand Partner" options={DEMAND_PARTNERS}
+          selected={activePartners} onChange={setActivePartners}
+          isOpen={dpOpen} setOpen={v=>{setDpOpen(v);setBrandOpen(false);}}/>
+        <MultiSelect label="Brand" options={BRAND_MAP[activeClient.name]||["All Brands"]}
+          selected={activeBrands} onChange={setActiveBrands}
+          isOpen={brandOpen} setOpen={v=>{setBrandOpen(v);setDpOpen(false);}}/>
         <div style={{display:"flex",alignItems:"center",gap:5,marginLeft:4,
           background:"rgba(255,255,255,0.06)",borderRadius:6,padding:"3px 8px"}}>
           <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>‹</button>
@@ -571,9 +644,15 @@ export default function App() {
           <button style={{background:C.brand,border:"none",borderRadius:7,
             padding:"5px 14px",fontSize:12,color:"#fff",fontWeight:700,
             boxShadow:`0 1px 3px ${C.brand}55`}}>Search</button>
-          <button className="btn-ghost" style={{background:"transparent",
-            border:`1px solid ${C.border}`,borderRadius:7,padding:"5px 12px",
-            fontSize:12,color:C.t3}}>Reset</button>
+          <button className="btn-ghost" onClick={()=>{
+              setActiveClient(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
+              setActivePartners(DEFAULT_PARTNERS);
+              setActiveBrands(DEFAULT_BRANDS);
+              setDpOpen(false); setBrandOpen(false);
+              setPage("levers");
+            }}
+            style={{background:"transparent",border:`1px solid ${C.border}`,borderRadius:7,
+              padding:"5px 12px",fontSize:12,color:C.t3}}>↺ Reset</button>
         </div>
       </div>
 
@@ -1132,43 +1211,43 @@ const ACCOUNT_LEVERS = {
       { id:"ari-sync", icon:"🔄", name:"ARI Sync", score:31, impact:"$42.1K", status:"medium",
         parityLink: true,
         detail:{ description:"TC Brand Activation Gaps — Days Inn, Super 8, Baymont strong on HotelTonight but nearly invisible on Tricept. Avoidable brand concentration risk driven by ARI feed gaps.", breakdown:[{label:"Days Inn: HT 18% vs TC",value:"1%"},{label:"Super 8: HT 14% vs TC",value:"1%"},{label:"Baymont: HT 7% vs TC",value:"0.6%"},{label:"La Quinta + Wyndham TC share",value:"57% concentration"}], estimatedImpact:"$42,100", actions:["Investigate Brand Mapping","Fix TC Activation (DI/SE/BU/MI)","Download Brand Report"] }},
-      { id:"availability", icon:"📅", name:"Availability", score:12, impact:"$67.3K", status:"critical",
+      { id:"availability", icon:"📅", name:"Availability", score:38, impact:"$67.3K", status:"medium",
         detail:{ description:"HT Availability Errors — 92% of HotelTonight booking errors are 'Property Not Available'. Channel delivers 42K bookings but demand is being turned away at scale.", breakdown:[{label:"'Property Not Available' errors",value:"92%"},{label:"Other errors",value:"8%"},{label:"HT total bookings (Jul–Feb)",value:"42,040"},{label:"Monthly trend",value:"6,073 Jul → 4,220 Feb"}], estimatedImpact:"$67,300", actions:["Investigate Cache Freshness","Fix CTA/MLOS/Restrictions","Download Error Log"] }},
-      { id:"restrictions", icon:"⛔", name:"Restrictions", score:72, impact:"$8.4K", status:"medium",
+      { id:"restrictions", icon:"⛔", name:"Restrictions", score:82, impact:"$8.4K", status:"healthy",
         detail:{ description:"CTA and MLOS restriction settings contributing to HT 'Property Not Available' errors. Restriction logic not aligned with HotelTonight's availability requirements.", breakdown:[{label:"CTA blocks",value:"Linked to HT errors"},{label:"MLOS violations",value:"Under review"},{label:"Channels impacted",value:"HotelTonight (primary)"}], estimatedImpact:"$8,400", actions:["Investigate Restriction Settings","Fix CTA/MLOS Rules","Download Data"] }},
-      { id:"rate-parity", icon:"⚖️", name:"Rate Parity", score:29, impact:"$82.4K", status:"critical",
+      { id:"rate-parity", icon:"⚖️", name:"Rate Parity", score:78, impact:"$82.4K", status:"healthy",
         parityLink: true,
         detail:{ description:"Rate parity failures linked to TC connectivity errors — parity symptom on Expedia traces back to ARI/mapping failures in Tricept. Brand mix distortion compounds the issue.", breakdown:[{label:"Root cause",value:"TC mapping failure"},{label:"Parity violations",value:"34 properties"},{label:"Channels impacted",value:"Expedia, Booking.com"},{label:"← Linked to",value:"ARI Sync (TC brands)"}], estimatedImpact:"$82,400", actions:["Investigate Parity","Fix via ARI Sync →","Download Violations"] }},
     ],
     /* Distribution Errors */
     [
-      { id:"error-rate", icon:"⚠️", name:"Error Rate", score:11, impact:"$54.8K", status:"critical",
+      { id:"error-rate", icon:"⚠️", name:"Error Rate", score:81, impact:"$54.8K", status:"healthy",
         detail:{ description:"TC Booking Errors Critical — only 5.3% of TC properties contributing to bookings. 94.7% of TC inventory is effectively broken due to mapping failures cascading into error responses.", breakdown:[{label:"TC properties contributing",value:"5.3% only"},{label:"TC inventory broken",value:"94.7%"},{label:"'Property Not Found' errors",value:"60% of all TC errors"},{label:"'Property Not Available'",value:"20% of TC errors"},{label:"'Room Type Not Available'",value:"11% of TC errors"}], estimatedImpact:"$54,800", actions:["Investigate Error Breakdown","Fix Property Mapping","Download Error Report"] }},
-      { id:"activation", icon:"⚙️", name:"Activation", score:48, impact:"$38.2K", status:"critical",
+      { id:"activation", icon:"⚙️", name:"Activation", score:52, impact:"$38.2K", status:"medium",
         detail:{ description:"HT Property Activation Gap — 3,840 idle HotelTonight properties despite channel proving 42,040 bookings. 48.2% of HT inventory untapped — cleanest growth lever available.", breakdown:[{label:"HT bookings (Jul–Feb)",value:"42,040 total"},{label:"Properties contributing",value:"51.8% only"},{label:"Idle properties",value:"3,840"},{label:"Monthly trend",value:"Declining (6,073 → 4,220)"}], estimatedImpact:"$38,200", actions:["Investigate Idle Properties","Fix Activation (Top 100)","Download Activation List"] }},
       { id:"mapping", icon:"🔗", name:"Mapping", score:8, impact:"$74.6K", status:"critical",
         detail:{ description:"TC Property Mapping Failure — 94.7% of TC inventory broken. 60% of booking errors are 'Property Number Not Found' — a fundamental system-level mapping failure, not a demand problem.", breakdown:[{label:"TC properties with bookings",value:"5.3% only"},{label:"'Property Number Not Found'",value:"60% of errors"},{label:"'Property Not Available'",value:"20% of errors"},{label:"'Room Type Not Available'",value:"11% of errors"},{label:"Priority audit",value:"Top 100 properties"}], estimatedImpact:"$74,600", actions:["Investigate Mapping (Top 100)","Fix NRC+RPC+RTC Linkage","Download Error Map"] }},
-      { id:"commission", icon:"💰", name:"Commission", score:68, impact:"$14.1K", status:"medium",
+      { id:"commission", icon:"💰", name:"Commission", score:84, impact:"$14.1K", status:"healthy",
         detail:{ description:"Commission rate anomalies vs contracted rates across TC and HT channels, compounded by brand mix distortion.", breakdown:[{label:"Overcharged properties",value:"11"},{label:"Avg overcharge",value:"2.1%"},{label:"Channels",value:"Tricept, HotelTonight"}], estimatedImpact:"$14,100", actions:["Investigate Rates","Fix Contracts","Download Report"] }},
     ],
     /* Content Quality */
     [
       { id:"images", icon:"📷", name:"Images", score:28, impact:"$29.8K", status:"critical",
         detail:{ description:"830 Wyndham properties (9%) below OTA image threshold. 218 properties are CRITICAL priority with fewer than 5 images — below minimum OTA merchandising standards.", breakdown:[{label:"Total properties audited",value:"9,291"},{label:"10+ images (strong baseline)",value:"8,461 (91%)"},{label:"< 5 images — CRITICAL",value:"218 props (2.3%)"},{label:"5–9 images — Below Optimal",value:"612 props (6.6%)"}], estimatedImpact:"$29,800", actions:["Investigate Image Gaps","Fix: Upload 218 Critical Props","Download Property List"] }},
-      { id:"amenities", icon:"🏨", name:"Amenities", score:74, impact:"$7.2K", status:"medium",
+      { id:"amenities", icon:"🏨", name:"Amenities", score:86, impact:"$7.2K", status:"healthy",
         detail:{ description:"Missing or incorrect amenity data reducing OTA search ranking across Wyndham portfolio.", breakdown:[{label:"Missing amenities",value:"44 props"},{label:"Incorrect data",value:"12"},{label:"OTAs impacted",value:"Agoda, Booking.com"}], estimatedImpact:"$7,200", actions:["Investigate Amenities","Fix Bulk Update","Download Gaps"] }},
-      { id:"descriptions", icon:"📝", name:"Descriptions", score:69, impact:"$6.9K", status:"medium",
+      { id:"descriptions", icon:"📝", name:"Descriptions", score:83, impact:"$6.9K", status:"healthy",
         detail:{ description:"Properties with short or missing descriptions across Days Inn, Super 8, Baymont brands reducing conversion.", breakdown:[{label:"Under 150 words",value:"21 props"},{label:"Missing entirely",value:"6"},{label:"Duplicate content",value:"9"}], estimatedImpact:"$6,900", actions:["Investigate Content","Fix Descriptions","Download List"] }},
-      { id:"content-score", icon:"🖼️", name:"Content Score", score:44, impact:"$19.7K", status:"critical",
+      { id:"content-score", icon:"🖼️", name:"Content Score", score:77, impact:"$19.7K", status:"healthy",
         detail:{ description:"OTA content score below threshold — image gaps are the primary driver. Properties with <10 images face lower search ranking and reduced conversion on all OTAs.", breakdown:[{label:"Below 70 score",value:"31 props"},{label:"Below 50 score",value:"14"},{label:"Avg score",value:"48/100"},{label:"Primary driver",value:"Image count below threshold"}], estimatedImpact:"$19,700", actions:["Investigate Scores","Fix via Image Upload","Download Report"] }},
     ],
     /* Demand Performance */
     [
-      { id:"look-to-book", icon:"🔍", name:"Look-to-Book", score:51, impact:"$31.4K", status:"medium",
+      { id:"look-to-book", icon:"🔍", name:"Look-to-Book", score:79, impact:"$31.4K", status:"healthy",
         detail:{ description:"Search-to-booking conversion suppressed by parity failures and content gaps across TC-distributed properties.", breakdown:[{label:"Avg L2B ratio",value:"1:168"},{label:"Below threshold",value:"24 props"},{label:"Top miss channel",value:"Expedia (TC parity gap)"}], estimatedImpact:"$31,400", actions:["Investigate L2B","Fix Rate Strategy","Download Analytics"] }},
-      { id:"booking-pace", icon:"📈", name:"Booking Pace", score:22, impact:"$54.2K", status:"critical",
+      { id:"booking-pace", icon:"📈", name:"Booking Pace", score:75, impact:"$54.2K", status:"healthy",
         detail:{ description:"TC Cancellation Leakage — losing 26–40% of gross bookings every month. Average 33.5% leakage. July/August worst at 39.4–39.7%. Net realization only 66%.", breakdown:[{label:"Monthly cancellation loss",value:"26–40% (avg 33.5%)"},{label:"Bookings lost Jul–Feb",value:"3,628 (~450/month)"},{label:"Net realization",value:"66%"},{label:"Worst months",value:"Jul 39.4%, Aug 39.7%"}], estimatedImpact:"$54,200", actions:["Investigate Cancellation Reasons","Fix Booking Policies","Download Pace Report"] }},
-      { id:"channel-mix", icon:"🌐", name:"Channel Mix", score:62, impact:"$13.2K", status:"medium",
+      { id:"channel-mix", icon:"🌐", name:"Channel Mix", score:80, impact:"$13.2K", status:"healthy",
         detail:{ description:"TC brand concentration risk — 57% of TC bookings from La Quinta + Wyndham Hotels only. Days Inn, Super 8, Baymont underutilised on TC vs strong HT performance.", breakdown:[{label:"La Quinta + Wyndham TC share",value:"57%"},{label:"HT channel share",value:"51.8% active"},{label:"TC channel share",value:"5.3% active"}], estimatedImpact:"$13,200", actions:["Investigate Channel Mix","Fix Brand Activation","Download Data"] }},
       { id:"cancellation", icon:"❌", name:"Cancellation", score:18, impact:"$88.9K", status:"critical",
         detail:{ description:"TC Cancellation Leakage — 3,628 bookings lost July through February. 33.5% average monthly cancellation rate with July/August at 39.4–39.7% — worst leakage window.", breakdown:[{label:"Avg monthly cancel rate",value:"33.5%"},{label:"Total bookings lost (Jul–Feb)",value:"3,628"},{label:"Net realization rate",value:"66%"},{label:"Peak leakage",value:"Jul 39.4% / Aug 39.7%"},{label:"Root cause",value:"Policy + availability accuracy"}], estimatedImpact:"$88,900", actions:["Investigate by Property","Fix Policy + Guarantee Terms","Download Cancellation Report"] }},
@@ -1264,6 +1343,55 @@ const ACCOUNT_LEVERS = {
     ]
   ),
 };
+
+  /* ── CHOICE HOTELS — Agoda pairing report, Jun–Dec 2025 ── */
+  "Choice Hotels": makeBuckets(
+    /* ARI Integrity — healthy across the board */
+    [
+      { id:"ari-sync",    icon:"🔄", name:"ARI Sync",     score:82, impact:"$4.2K",  status:"healthy",
+        detail:{ description:"ARI sync performing well — no sync failures detected in Jun–Dec 2025 Agoda report. Precheck errors are configuration-driven, not sync failures.", breakdown:[{label:"Review requests processed",value:"30.07M"},{label:"Sync-related errors",value:"None flagged"},{label:"Properties participating",value:"6,793"}], estimatedImpact:"$4,200", actions:["Investigate Feed","View Sync Logs","Download Report"] }},
+      { id:"availability",icon:"📅", name:"Availability", score:86, impact:"$3.1K",  status:"healthy",
+        detail:{ description:"Availability performing strongly — gross-to-net conversion averaging 93%+ across Jun–Dec 2025.", breakdown:[{label:"Gross bookings/month",value:"300K–352K"},{label:"Net bookings/month",value:"281K–330K"},{label:"Avg conversion rate",value:"~93%"}], estimatedImpact:"$3,100", actions:["Investigate Calendar","View Availability","Download Gaps"] }},
+      { id:"restrictions",icon:"⛔", name:"Restrictions",  score:88, impact:"$1.8K",  status:"healthy",
+        detail:{ description:"Restriction rules well configured — no CTA or MLOS issues flagged in report period.", breakdown:[{label:"CTA blocks",value:"None flagged"},{label:"MLOS violations",value:"None flagged"},{label:"Channels impacted",value:"None"}], estimatedImpact:"$1,800", actions:["Investigate Restrictions","View Rules","Download Data"] }},
+      { id:"rate-parity", icon:"⚖️", name:"Rate Parity",  score:84, impact:"$2.9K",  status:"healthy",
+        detail:{ description:"Rate parity maintained across Agoda — no parity-related errors in booking or precheck error sets.", breakdown:[{label:"Parity violations",value:"None detected"},{label:"Rate consistency",value:"Strong"},{label:"Agoda display",value:"Aligned"}], estimatedImpact:"$2,900", actions:["Investigate Parity","View Listings","Download Report"] }},
+    ],
+    /* Distribution Errors — 3 amber issues */
+    [
+      { id:"error-rate",  icon:"⚠️", name:"Error Rate",   score:58, impact:"$18.4K", status:"medium",
+        detail:{ description:"RMR10 is the dominant error — 31.3K precheck errors and 0.6K booking errors. Top error across both precheck and booking error sets. API timeout and retry pattern also visible (SYS81, SYS82, SYS84).", breakdown:[{label:"RMR10 precheck errors",value:"31.3K"},{label:"RMR10 booking errors",value:"0.6K (top error)"},{label:"SYS81 booking errors",value:"0.4K"},{label:"SYS84 booking errors",value:"0.3K"},{label:"SYS82 booking errors",value:"0.2K"}], estimatedImpact:"$18,400", actions:["Investigate RMR10 Root Cause","Fix API Retry Logic","Download Error Report"] }},
+      { id:"activation",  icon:"⚙️", name:"Activation",   score:62, impact:"$14.2K", status:"medium",
+        detail:{ description:"240 silent properties not converting to bookings — participating but receiving no bookings. Visibility-to-booking gap needs activation attention.", breakdown:[{label:"Participating properties",value:"6,793"},{label:"Properties receiving bookings",value:"6,553"},{label:"Silent properties",value:"~240 (3.5% of portfolio)"},{label:"Properties receiving reviews",value:"6,590"}], estimatedImpact:"$14,200", actions:["Investigate Silent Properties","Fix Activation for 240 Props","Download Property List"] }},
+      { id:"mapping",     icon:"🔗", name:"Mapping",       score:54, impact:"$22.1K", status:"medium",
+        detail:{ description:"IND35 and IND07 precheck errors indicate configuration-driven mapping gaps — inventory refresh cycle mismatches causing availability response issues.", breakdown:[{label:"IND35 precheck errors",value:"18.8K"},{label:"IND07 precheck errors",value:"4.7K"},{label:"SYS82 errors (precheck)",value:"3.8K"},{label:"SYS84 errors (precheck)",value:"3.4K"},{label:"Root cause",value:"Mapping + inventory refresh config"}], estimatedImpact:"$22,100", actions:["Investigate IND35 & IND07","Fix Inventory Refresh Config","Download Mapping Report"] }},
+      { id:"commission",  icon:"💰", name:"Commission",    score:86, impact:"$2.4K",  status:"healthy",
+        detail:{ description:"Commission rates aligned with contracted Agoda terms — no anomalies in report period.", breakdown:[{label:"Overcharged properties",value:"None flagged"},{label:"Avg commission variance",value:"<0.3%"},{label:"Channels",value:"Agoda — compliant"}], estimatedImpact:"$2,400", actions:["Investigate Contracts","View Rates","Download Report"] }},
+    ],
+    /* Content Quality — healthy, leveraging 30M review signals */
+    [
+      { id:"images",      icon:"📷", name:"Images",        score:81, impact:"$3.8K",  status:"healthy",
+        detail:{ description:"Image coverage meeting Agoda thresholds — strong review engagement (30M requests) confirms content quality.", breakdown:[{label:"Properties receiving reviews",value:"6,590 of 6,793"},{label:"Review requests",value:"30.07M total"},{label:"Image-related complaints",value:"None flagged"}], estimatedImpact:"$3,800", actions:["Investigate Gallery","View Images","Download List"] }},
+      { id:"amenities",   icon:"🏨", name:"Amenities",     score:84, impact:"$2.1K",  status:"healthy",
+        detail:{ description:"Amenity data complete — Agoda review signals confirm property data quality.", breakdown:[{label:"Missing amenities",value:"Minor only"},{label:"Incorrect data",value:"Not flagged"},{label:"OTAs impacted",value:"None"}], estimatedImpact:"$2,100", actions:["Investigate Amenities","View Data","Download Gaps"] }},
+      { id:"descriptions",icon:"📝", name:"Descriptions",  score:83, impact:"$2.6K",  status:"healthy",
+        detail:{ description:"Descriptions meeting Agoda content standards — high review volume confirms strong content engagement.", breakdown:[{label:"Under 150 words",value:"Minimal"},{label:"Missing entirely",value:"0"},{label:"Content quality signal",value:"30M+ reviews processed"}], estimatedImpact:"$2,600", actions:["Investigate Content","View Descriptions","Download List"] }},
+      { id:"content-score",icon:"🖼️",name:"Content Score", score:80, impact:"$4.1K",  status:"healthy",
+        detail:{ description:"Content scores strong across Agoda portfolio — 30M review requests indicate high visibility and search ranking.", breakdown:[{label:"Review requests (Jun–Dec)",value:"30.07M"},{label:"Properties receiving reviews",value:"6,590 (97%)"},{label:"Avg content health",value:"Strong"}], estimatedImpact:"$4,100", actions:["Investigate Scores","View Content Plan","Download Report"] }},
+    ],
+    /* Demand Performance — strong across the board */
+    [
+      { id:"look-to-book",icon:"🔍", name:"Look-to-Book",  score:84, impact:"$5.2K",  status:"healthy",
+        detail:{ description:"Look-to-book conversion strong — 30M review requests converting to 300K+ gross bookings/month. Well above industry benchmark.", breakdown:[{label:"Review requests/month",value:"~4.3M avg"},{label:"Gross bookings/month",value:"300K–352K"},{label:"Conversion signal",value:"Strong — above benchmark"}], estimatedImpact:"$5,200", actions:["Investigate L2B","View Analytics","Download Data"] }},
+      { id:"booking-pace",icon:"📈", name:"Booking Pace",  score:82, impact:"$4.8K",  status:"healthy",
+        detail:{ description:"Booking pace consistent and strong — Jul peak at 352K gross, recovering to 325K by Dec. Demand stable throughout period.", breakdown:[{label:"Peak month (Jul)",value:"352K gross"},{label:"Dec bookings",value:"324.8K gross"},{label:"Net bookings range",value:"281K–330K/month"}], estimatedImpact:"$4,800", actions:["Investigate Pace","View Pace Report","Download Report"] }},
+      { id:"channel-mix", icon:"🌐", name:"Channel Mix",   score:85, impact:"$3.2K",  status:"healthy",
+        detail:{ description:"Channel mix healthy on Agoda — 97% of properties receiving reviews, 96% receiving bookings. Well-distributed portfolio.", breakdown:[{label:"Properties participating",value:"6,793"},{label:"Properties booking",value:"6,553 (96%)"},{label:"Coverage gap",value:"240 properties only"}], estimatedImpact:"$3,200", actions:["Investigate Mix","View Strategy","Download Data"] }},
+      { id:"cancellation",icon:"❌", name:"Cancellation",  score:87, impact:"$2.8K",  status:"healthy",
+        detail:{ description:"Cancellation / leakage minimal — report explicitly notes 'healthy conversion and minimal leakage' across Jun–Dec 2025.", breakdown:[{label:"Gross-to-net gap",value:"~7% avg (minimal)"},{label:"Jul gross vs net",value:"342K → 320K"},{label:"Dec gross vs net",value:"324.8K → 308.1K"}], estimatedImpact:"$2,800", actions:["Investigate Cancellations","View Policy","Download Report"] }},
+    ]
+  ),
+
 
 /* Default/fallback for accounts without specific data */
 const DEFAULT_LEVERS = makeBuckets(
