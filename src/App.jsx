@@ -1342,8 +1342,6 @@ const ACCOUNT_LEVERS = {
         detail:{ description:"Cancellation rate marginally above benchmark.", breakdown:[{label:"Avg cancel rate",value:"14%"},{label:"High risk props",value:"4"},{label:"Peak window",value:"48h pre-arrival"}], estimatedImpact:"$7,800", actions:["Investigate Cancellations","Fix Policy","Download Report"] }},
     ]
   ),
-};
-
   /* ── CHOICE HOTELS — Agoda pairing report, Jun–Dec 2025 ── */
   "Choice Hotels": makeBuckets(
     /* ARI Integrity — healthy across the board */
@@ -1391,6 +1389,8 @@ const ACCOUNT_LEVERS = {
         detail:{ description:"Cancellation / leakage minimal — report explicitly notes 'healthy conversion and minimal leakage' across Jun–Dec 2025.", breakdown:[{label:"Gross-to-net gap",value:"~7% avg (minimal)"},{label:"Jul gross vs net",value:"342K → 320K"},{label:"Dec gross vs net",value:"324.8K → 308.1K"}], estimatedImpact:"$2,800", actions:["Investigate Cancellations","View Policy","Download Report"] }},
     ]
   ),
+};
+
 
 
 /* Default/fallback for accounts without specific data */
@@ -1450,11 +1450,7 @@ const FIX_STATUS_CFG = {
 };
 const FIX_STATUS_CYCLE = ["Open","In Progress","Resolved"];
 
-const LEVER_STATUS_CFG = {
-  critical: { label:"Critical", color:"#ef4444", bg:"#fef2f2", bar:"#ef4444", icon:"🔥" },
-  medium:   { label:"At Risk",  color:"#f59e0b", bg:"#fffbeb", bar:"#f59e0b", icon:"⚠️" },
-  healthy:  { label:"Healthy",  color:"#10b981", bg:"#f0fdf4", bar:"#10b981", icon:"✓"  },
-};
+
 
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 5 — 16-LEVER GRID (v2)
