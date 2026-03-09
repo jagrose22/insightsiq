@@ -561,7 +561,15 @@ export default function App() {
           )}
         </div>
         <MultiSelect label="Demand Partner" options={DEMAND_PARTNERS}
-          selected={activePartners} onChange={setActivePartners}
+          selected={activePartners} onChange={next => {
+            // If the newly-added partner has a dedicated pairing key, swap to it exclusively
+            const added = next.filter(p => !activePartners.includes(p));
+            if (added.length === 1 && ALL_LEVERS[`${activeClient.name}|${added[0]}`]) {
+              setActivePartners([added[0]]);
+            } else {
+              setActivePartners(next);
+            }
+          }}
           isOpen={dpOpen} setOpen={v=>{setDpOpen(v);setBrandOpen(false);}}/>
         <MultiSelect label="Brand" options={BRAND_MAP[activeClient.name]||["All Brands"]}
           selected={activeBrands} onChange={setActiveBrands}
