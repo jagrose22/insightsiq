@@ -1113,60 +1113,214 @@ function ScoreCircle({ score, color, size = 64 }) {
   );
 }
 
-const LEVER_BUCKETS = [
-  {
-    name: "ARI Integrity", color: "#6366f1",
-    levers: [
-      { id:"ari-sync",    icon:"🔄", name:"ARI Sync",     score:24, impact:"$34.4K", status:"critical",
-        detail:{ description:"ARI sync failures across OTAs causing lost inventory.", breakdown:[{label:"Booking.com lag",value:"4.2h avg"},{label:"Expedia sync fails",value:"18%"},{label:"Agoda mismatch",value:"31 props"}], estimatedImpact:"$34,400", actions:["View Sync Logs","Force Resync","Export Report"] }},
-      { id:"availability",icon:"📅", name:"Availability", score:61, impact:"$61.2K", status:"medium",
-        detail:{ description:"Open sell dates not reflected on distribution channels.", breakdown:[{label:"Closed dates",value:"142"},{label:"Channels affected",value:"5"},{label:"Lost nights",value:"89"}], estimatedImpact:"$61,200", actions:["View Calendar","Push Availability","Export Gaps"] }},
-      { id:"restrictions",icon:"⛔", name:"Restrictions",  score:78, impact:"$12.1K", status:"medium",
-        detail:{ description:"Min stay / CTA restrictions blocking bookings.", breakdown:[{label:"Min stay violations",value:"34"},{label:"CTA blocks",value:"12"},{label:"Channels impacted",value:"3"}], estimatedImpact:"$12,100", actions:["Review Restrictions","Edit Rules","Export Data"] }},
-      { id:"rate-parity", icon:"⚖️", name:"Rate Parity",  score:61, impact:"$82.4K", status:"critical",
-        detail:{ description:"Rate disparities detected across OTAs vs direct channel.", breakdown:[{label:"Booking.com",value:"14 violations"},{label:"Expedia",value:"8 violations"},{label:"Agoda",value:"5 violations"}], estimatedImpact:"$82,430", actions:["View Listings","Export Violations","Create Fix Ticket"] }},
+
+/* ─── Per-account lever data ─────────────────────────────────────────────── */
+function makeBuckets(ari, dist, content, demand) {
+  return [
+    { name:"ARI Integrity",      color:"#6366f1", levers: ari     },
+    { name:"Distribution Errors",color:"#f59e0b", levers: dist    },
+    { name:"Content Quality",    color:"#10b981", levers: content },
+    { name:"Demand Performance", color:"#3b82f6", levers: demand  },
+  ];
+}
+
+const ACCOUNT_LEVERS = {
+  /* ── WYNDHAM — real POC data (HK + Tricept combined, March 2026) ── */
+  "Wyndham Hotels": makeBuckets(
+    /* ARI Integrity */
+    [
+      { id:"ari-sync", icon:"🔄", name:"ARI Sync", score:31, impact:"$42.1K", status:"medium",
+        parityLink: true,
+        detail:{ description:"TC Brand Activation Gaps — Days Inn, Super 8, Baymont strong on HotelTonight but nearly invisible on Tricept. Avoidable brand concentration risk driven by ARI feed gaps.", breakdown:[{label:"Days Inn: HT 18% vs TC",value:"1%"},{label:"Super 8: HT 14% vs TC",value:"1%"},{label:"Baymont: HT 7% vs TC",value:"0.6%"},{label:"La Quinta + Wyndham TC share",value:"57% concentration"}], estimatedImpact:"$42,100", actions:["Investigate Brand Mapping","Fix TC Activation (DI/SE/BU/MI)","Download Brand Report"] }},
+      { id:"availability", icon:"📅", name:"Availability", score:12, impact:"$67.3K", status:"critical",
+        detail:{ description:"HT Availability Errors — 92% of HotelTonight booking errors are 'Property Not Available'. Channel delivers 42K bookings but demand is being turned away at scale.", breakdown:[{label:"'Property Not Available' errors",value:"92%"},{label:"Other errors",value:"8%"},{label:"HT total bookings (Jul–Feb)",value:"42,040"},{label:"Monthly trend",value:"6,073 Jul → 4,220 Feb"}], estimatedImpact:"$67,300", actions:["Investigate Cache Freshness","Fix CTA/MLOS/Restrictions","Download Error Log"] }},
+      { id:"restrictions", icon:"⛔", name:"Restrictions", score:72, impact:"$8.4K", status:"medium",
+        detail:{ description:"CTA and MLOS restriction settings contributing to HT 'Property Not Available' errors. Restriction logic not aligned with HotelTonight's availability requirements.", breakdown:[{label:"CTA blocks",value:"Linked to HT errors"},{label:"MLOS violations",value:"Under review"},{label:"Channels impacted",value:"HotelTonight (primary)"}], estimatedImpact:"$8,400", actions:["Investigate Restriction Settings","Fix CTA/MLOS Rules","Download Data"] }},
+      { id:"rate-parity", icon:"⚖️", name:"Rate Parity", score:29, impact:"$82.4K", status:"critical",
+        parityLink: true,
+        detail:{ description:"Rate parity failures linked to TC connectivity errors — parity symptom on Expedia traces back to ARI/mapping failures in Tricept. Brand mix distortion compounds the issue.", breakdown:[{label:"Root cause",value:"TC mapping failure"},{label:"Parity violations",value:"34 properties"},{label:"Channels impacted",value:"Expedia, Booking.com"},{label:"← Linked to",value:"ARI Sync (TC brands)"}], estimatedImpact:"$82,400", actions:["Investigate Parity","Fix via ARI Sync →","Download Violations"] }},
+    ],
+    /* Distribution Errors */
+    [
+      { id:"error-rate", icon:"⚠️", name:"Error Rate", score:11, impact:"$54.8K", status:"critical",
+        detail:{ description:"TC Booking Errors Critical — only 5.3% of TC properties contributing to bookings. 94.7% of TC inventory is effectively broken due to mapping failures cascading into error responses.", breakdown:[{label:"TC properties contributing",value:"5.3% only"},{label:"TC inventory broken",value:"94.7%"},{label:"'Property Not Found' errors",value:"60% of all TC errors"},{label:"'Property Not Available'",value:"20% of TC errors"},{label:"'Room Type Not Available'",value:"11% of TC errors"}], estimatedImpact:"$54,800", actions:["Investigate Error Breakdown","Fix Property Mapping","Download Error Report"] }},
+      { id:"activation", icon:"⚙️", name:"Activation", score:48, impact:"$38.2K", status:"critical",
+        detail:{ description:"HT Property Activation Gap — 3,840 idle HotelTonight properties despite channel proving 42,040 bookings. 48.2% of HT inventory untapped — cleanest growth lever available.", breakdown:[{label:"HT bookings (Jul–Feb)",value:"42,040 total"},{label:"Properties contributing",value:"51.8% only"},{label:"Idle properties",value:"3,840"},{label:"Monthly trend",value:"Declining (6,073 → 4,220)"}], estimatedImpact:"$38,200", actions:["Investigate Idle Properties","Fix Activation (Top 100)","Download Activation List"] }},
+      { id:"mapping", icon:"🔗", name:"Mapping", score:8, impact:"$74.6K", status:"critical",
+        detail:{ description:"TC Property Mapping Failure — 94.7% of TC inventory broken. 60% of booking errors are 'Property Number Not Found' — a fundamental system-level mapping failure, not a demand problem.", breakdown:[{label:"TC properties with bookings",value:"5.3% only"},{label:"'Property Number Not Found'",value:"60% of errors"},{label:"'Property Not Available'",value:"20% of errors"},{label:"'Room Type Not Available'",value:"11% of errors"},{label:"Priority audit",value:"Top 100 properties"}], estimatedImpact:"$74,600", actions:["Investigate Mapping (Top 100)","Fix NRC+RPC+RTC Linkage","Download Error Map"] }},
+      { id:"commission", icon:"💰", name:"Commission", score:68, impact:"$14.1K", status:"medium",
+        detail:{ description:"Commission rate anomalies vs contracted rates across TC and HT channels, compounded by brand mix distortion.", breakdown:[{label:"Overcharged properties",value:"11"},{label:"Avg overcharge",value:"2.1%"},{label:"Channels",value:"Tricept, HotelTonight"}], estimatedImpact:"$14,100", actions:["Investigate Rates","Fix Contracts","Download Report"] }},
+    ],
+    /* Content Quality */
+    [
+      { id:"images", icon:"📷", name:"Images", score:28, impact:"$29.8K", status:"critical",
+        detail:{ description:"830 Wyndham properties (9%) below OTA image threshold. 218 properties are CRITICAL priority with fewer than 5 images — below minimum OTA merchandising standards.", breakdown:[{label:"Total properties audited",value:"9,291"},{label:"10+ images (strong baseline)",value:"8,461 (91%)"},{label:"< 5 images — CRITICAL",value:"218 props (2.3%)"},{label:"5–9 images — Below Optimal",value:"612 props (6.6%)"}], estimatedImpact:"$29,800", actions:["Investigate Image Gaps","Fix: Upload 218 Critical Props","Download Property List"] }},
+      { id:"amenities", icon:"🏨", name:"Amenities", score:74, impact:"$7.2K", status:"medium",
+        detail:{ description:"Missing or incorrect amenity data reducing OTA search ranking across Wyndham portfolio.", breakdown:[{label:"Missing amenities",value:"44 props"},{label:"Incorrect data",value:"12"},{label:"OTAs impacted",value:"Agoda, Booking.com"}], estimatedImpact:"$7,200", actions:["Investigate Amenities","Fix Bulk Update","Download Gaps"] }},
+      { id:"descriptions", icon:"📝", name:"Descriptions", score:69, impact:"$6.9K", status:"medium",
+        detail:{ description:"Properties with short or missing descriptions across Days Inn, Super 8, Baymont brands reducing conversion.", breakdown:[{label:"Under 150 words",value:"21 props"},{label:"Missing entirely",value:"6"},{label:"Duplicate content",value:"9"}], estimatedImpact:"$6,900", actions:["Investigate Content","Fix Descriptions","Download List"] }},
+      { id:"content-score", icon:"🖼️", name:"Content Score", score:44, impact:"$19.7K", status:"critical",
+        detail:{ description:"OTA content score below threshold — image gaps are the primary driver. Properties with <10 images face lower search ranking and reduced conversion on all OTAs.", breakdown:[{label:"Below 70 score",value:"31 props"},{label:"Below 50 score",value:"14"},{label:"Avg score",value:"48/100"},{label:"Primary driver",value:"Image count below threshold"}], estimatedImpact:"$19,700", actions:["Investigate Scores","Fix via Image Upload","Download Report"] }},
+    ],
+    /* Demand Performance */
+    [
+      { id:"look-to-book", icon:"🔍", name:"Look-to-Book", score:51, impact:"$31.4K", status:"medium",
+        detail:{ description:"Search-to-booking conversion suppressed by parity failures and content gaps across TC-distributed properties.", breakdown:[{label:"Avg L2B ratio",value:"1:168"},{label:"Below threshold",value:"24 props"},{label:"Top miss channel",value:"Expedia (TC parity gap)"}], estimatedImpact:"$31,400", actions:["Investigate L2B","Fix Rate Strategy","Download Analytics"] }},
+      { id:"booking-pace", icon:"📈", name:"Booking Pace", score:22, impact:"$54.2K", status:"critical",
+        detail:{ description:"TC Cancellation Leakage — losing 26–40% of gross bookings every month. Average 33.5% leakage. July/August worst at 39.4–39.7%. Net realization only 66%.", breakdown:[{label:"Monthly cancellation loss",value:"26–40% (avg 33.5%)"},{label:"Bookings lost Jul–Feb",value:"3,628 (~450/month)"},{label:"Net realization",value:"66%"},{label:"Worst months",value:"Jul 39.4%, Aug 39.7%"}], estimatedImpact:"$54,200", actions:["Investigate Cancellation Reasons","Fix Booking Policies","Download Pace Report"] }},
+      { id:"channel-mix", icon:"🌐", name:"Channel Mix", score:62, impact:"$13.2K", status:"medium",
+        detail:{ description:"TC brand concentration risk — 57% of TC bookings from La Quinta + Wyndham Hotels only. Days Inn, Super 8, Baymont underutilised on TC vs strong HT performance.", breakdown:[{label:"La Quinta + Wyndham TC share",value:"57%"},{label:"HT channel share",value:"51.8% active"},{label:"TC channel share",value:"5.3% active"}], estimatedImpact:"$13,200", actions:["Investigate Channel Mix","Fix Brand Activation","Download Data"] }},
+      { id:"cancellation", icon:"❌", name:"Cancellation", score:18, impact:"$88.9K", status:"critical",
+        detail:{ description:"TC Cancellation Leakage — 3,628 bookings lost July through February. 33.5% average monthly cancellation rate with July/August at 39.4–39.7% — worst leakage window.", breakdown:[{label:"Avg monthly cancel rate",value:"33.5%"},{label:"Total bookings lost (Jul–Feb)",value:"3,628"},{label:"Net realization rate",value:"66%"},{label:"Peak leakage",value:"Jul 39.4% / Aug 39.7%"},{label:"Root cause",value:"Policy + availability accuracy"}], estimatedImpact:"$88,900", actions:["Investigate by Property","Fix Policy + Guarantee Terms","Download Cancellation Report"] }},
     ]
-  },
-  {
-    name: "Distribution Errors", color: "#f59e0b",
-    levers: [
-      { id:"error-rate",  icon:"⚠️", name:"Error Rate",   score:45, impact:"$28.7K", status:"critical",
-        detail:{ description:"API and channel manager errors causing failed transactions.", breakdown:[{label:"API errors",value:"247/day"},{label:"Booking failures",value:"3.2%"},{label:"Retry rate",value:"18%"}], estimatedImpact:"$28,700", actions:["View Error Logs","Alert Engineering","Download Report"] }},
-      { id:"activation",  icon:"⚙️", name:"Activation",   score:83, impact:"$8.2K",  status:"healthy",
-        detail:{ description:"Properties not yet fully activated across all channels.", breakdown:[{label:"Pending activation",value:"11 props"},{label:"Partial setup",value:"6"},{label:"Avg days",value:"4.1"}], estimatedImpact:"$8,200", actions:["View Queue","Send Reminder","Export List"] }},
-      { id:"mapping",     icon:"🔗", name:"Mapping",       score:52, impact:"$42.1K", status:"critical",
-        detail:{ description:"Room type / rate plan mapping errors causing mismatches.", breakdown:[{label:"Unmapped rooms",value:"38"},{label:"Rate mismatch",value:"21"},{label:"OTAs affected",value:"4"}], estimatedImpact:"$42,100", actions:["Review Mappings","Auto-Remap","Export Errors"] }},
-      { id:"commission",  icon:"💰", name:"Commission",    score:74, impact:"$19.3K", status:"medium",
-        detail:{ description:"Commission rate anomalies vs contracted rates.", breakdown:[{label:"Overcharged",value:"9 props"},{label:"Avg overcharge",value:"1.8%"},{label:"Channels",value:"Booking.com, Expedia"}], estimatedImpact:"$19,300", actions:["View Contracts","Flag Discrepancies","Export Report"] }},
+  ),
+
+  /* ── HILTON — elevated errors, mostly amber/red ── */
+  "Hilton Worldwide": makeBuckets(
+    [
+      { id:"ari-sync",    icon:"🔄", name:"ARI Sync",     score:41, impact:"$28.4K", status:"critical",
+        detail:{ description:"ARI sync failures on Expedia causing lost inventory windows.", breakdown:[{label:"Expedia sync lag",value:"3.8h avg"},{label:"Sync fail rate",value:"12%"},{label:"Properties affected",value:"84"}], estimatedImpact:"$28,400", actions:["Investigate ARI Feed","Fix Sync","Download Report"] }},
+      { id:"availability",icon:"📅", name:"Availability", score:58, impact:"$44.1K", status:"medium",
+        detail:{ description:"Closed date windows not updating across all demand partners.", breakdown:[{label:"Closed dates",value:"98"},{label:"Channels affected",value:"4"},{label:"Lost nights",value:"61"}], estimatedImpact:"$44,100", actions:["Investigate Calendar","Fix Availability","Download Gaps"] }},
+      { id:"restrictions",icon:"⛔", name:"Restrictions",  score:71, impact:"$9.2K",  status:"medium",
+        detail:{ description:"CTA restrictions blocking weekend bookings on premium inventory.", breakdown:[{label:"CTA blocks",value:"18"},{label:"Weekend impact",value:"High"},{label:"Revenue window",value:"Fri–Sun"}], estimatedImpact:"$9,200", actions:["Investigate Restrictions","Fix Rules","Download Data"] }},
+      { id:"rate-parity", icon:"⚖️", name:"Rate Parity",  score:48, impact:"$51.7K", status:"critical",
+        parityLink: true,
+        detail:{ description:"Rate parity gap between Hilton.com and OTA display rates.", breakdown:[{label:"Booking.com",value:"9 violations"},{label:"Expedia",value:"14 violations"},{label:"Root cause",value:"ARI Sync lag"}], estimatedImpact:"$51,700", actions:["Investigate Parity","Fix via ARI Sync →","Download Violations"] }},
+    ],
+    [
+      { id:"error-rate",  icon:"⚠️", name:"Error Rate",   score:44, impact:"$31.2K", status:"critical",
+        detail:{ description:"Booking failure rate elevated — API timeout pattern on Hampton properties.", breakdown:[{label:"API errors",value:"134/day"},{label:"Booking failures",value:"2.8%"},{label:"Hampton affected",value:"41 props"}], estimatedImpact:"$31,200", actions:["Investigate Errors","Fix API Config","Download Report"] }},
+      { id:"activation",  icon:"⚙️", name:"Activation",   score:79, impact:"$6.8K",  status:"medium",
+        detail:{ description:"Hampton by Hilton new property activations pending channel setup.", breakdown:[{label:"Pending activation",value:"8 props"},{label:"Partial setup",value:"4"},{label:"Avg days",value:"5.2"}], estimatedImpact:"$6,800", actions:["Investigate Queue","Fix Activation","Download List"] }},
+      { id:"mapping",     icon:"🔗", name:"Mapping",       score:61, impact:"$22.4K", status:"medium",
+        detail:{ description:"Room type mapping inconsistency between Hilton Hotels & Resorts and OTA display.", breakdown:[{label:"Unmapped rooms",value:"19"},{label:"Rate mismatch",value:"11"},{label:"OTAs affected",value:"3"}], estimatedImpact:"$22,400", actions:["Investigate Mappings","Fix Room Types","Download Errors"] }},
+      { id:"commission",  icon:"💰", name:"Commission",    score:76, impact:"$11.9K", status:"medium",
+        detail:{ description:"Commission overcharges identified on Booking.com for Hampton properties.", breakdown:[{label:"Overcharged",value:"7 props"},{label:"Avg overcharge",value:"1.4%"},{label:"Channels",value:"Booking.com"}], estimatedImpact:"$11,900", actions:["Investigate Contracts","Fix Rates","Download Report"] }},
+    ],
+    [
+      { id:"images",      icon:"📷", name:"Images",        score:72, impact:"$9.4K",  status:"medium",
+        detail:{ description:"Hampton by Hilton properties with insufficient image coverage.", breakdown:[{label:"Below 10 images",value:"14 props"},{label:"No exterior shot",value:"3"},{label:"Low res flagged",value:"8"}], estimatedImpact:"$9,400", actions:["Investigate Gallery","Fix Image Push","Download List"] }},
+      { id:"amenities",   icon:"🏨", name:"Amenities",     score:84, impact:"$4.1K",  status:"healthy",
+        detail:{ description:"Minor amenity gaps on select Hilton Hotels & Resorts properties.", breakdown:[{label:"Missing amenities",value:"11 props"},{label:"Incorrect data",value:"4"},{label:"OTAs impacted",value:"Agoda"}], estimatedImpact:"$4,100", actions:["Investigate Amenities","Fix Data","Download Gaps"] }},
+      { id:"descriptions",icon:"📝", name:"Descriptions",  score:78, impact:"$5.2K",  status:"medium",
+        detail:{ description:"Short descriptions on Hampton properties reducing search ranking.", breakdown:[{label:"Under 150 words",value:"9 props"},{label:"Missing entirely",value:"2"},{label:"Duplicate content",value:"4"}], estimatedImpact:"$5,200", actions:["Investigate Content","Fix Descriptions","Download List"] }},
+      { id:"content-score",icon:"🖼️",name:"Content Score", score:66, impact:"$14.8K", status:"medium",
+        detail:{ description:"OTA content score below threshold on Hampton by Hilton properties.", breakdown:[{label:"Below 70 score",value:"18 props"},{label:"Below 50 score",value:"6"},{label:"Avg score",value:"64/100"}], estimatedImpact:"$14,800", actions:["Investigate Scores","Fix Content Plan","Download Report"] }},
+    ],
+    [
+      { id:"look-to-book",icon:"🔍", name:"Look-to-Book",  score:59, impact:"$24.1K", status:"medium",
+        detail:{ description:"Search-to-booking conversion below benchmark on Expedia.", breakdown:[{label:"Avg L2B ratio",value:"1:128"},{label:"Below threshold",value:"14 props"},{label:"Top miss channel",value:"Expedia"}], estimatedImpact:"$24,100", actions:["Investigate L2B","Fix Rate Strategy","Download Analytics"] }},
+      { id:"booking-pace",icon:"📈", name:"Booking Pace",  score:51, impact:"$38.7K", status:"medium",
+        detail:{ description:"Booking velocity tracking behind prior year for Hampton properties.", breakdown:[{label:"Behind forecast",value:"18 props"},{label:"Avg gap",value:"-12%"},{label:"Critical window",value:"Next 21 days"}], estimatedImpact:"$38,700", actions:["Investigate Pace","Fix Promotions","Download Report"] }},
+      { id:"channel-mix", icon:"🌐", name:"Channel Mix",   score:74, impact:"$8.9K",  status:"medium",
+        detail:{ description:"OTA dependency moderate — direct channel underperforming for Hilton brand.", breakdown:[{label:"OTA share",value:"68%"},{label:"Direct share",value:"18%"},{label:"Target direct",value:"28%"}], estimatedImpact:"$8,900", actions:["Investigate Mix","Fix Strategy","Download Data"] }},
+      { id:"cancellation",icon:"❌", name:"Cancellation",  score:67, impact:"$19.4K", status:"medium",
+        detail:{ description:"Cancellation rate slightly above benchmark on Hampton properties.", breakdown:[{label:"Avg cancel rate",value:"17%"},{label:"High risk props",value:"8"},{label:"Peak window",value:"72h pre-arrival"}], estimatedImpact:"$19,400", actions:["Investigate Cancellations","Fix Policy","Download Report"] }},
     ]
-  },
-  {
-    name: "Content Quality", color: "#10b981",
-    levers: [
-      { id:"images",      icon:"📷", name:"Images",        score:68, impact:"$15.4K", status:"medium",
-        detail:{ description:"Properties with insufficient or low-quality image coverage.", breakdown:[{label:"Below 10 images",value:"22 props"},{label:"No exterior shot",value:"8"},{label:"Low res flagged",value:"14"}], estimatedImpact:"$15,400", actions:["View Gallery","Upload Images","Request Photos"] }},
-      { id:"amenities",   icon:"🏨", name:"Amenities",     score:81, impact:"$6.8K",  status:"healthy",
-        detail:{ description:"Missing or incorrect amenity listings reducing search ranking.", breakdown:[{label:"Missing amenities",value:"31 props"},{label:"Incorrect data",value:"9"},{label:"OTAs impacted",value:"3"}], estimatedImpact:"$6,800", actions:["Review Amenities","Bulk Update","Export Gaps"] }},
-      { id:"descriptions",icon:"📝", name:"Descriptions",  score:72, impact:"$9.1K",  status:"medium",
-        detail:{ description:"Properties with short, missing or duplicate descriptions.", breakdown:[{label:"Under 150 words",value:"18 props"},{label:"Missing entirely",value:"4"},{label:"Duplicate content",value:"7"}], estimatedImpact:"$9,100", actions:["Edit Descriptions","AI-Generate Draft","Export List"] }},
-      { id:"content-score",icon:"🖼️",name:"Content Score", score:58, impact:"$22.6K", status:"medium",
-        detail:{ description:"Overall OTA content score below threshold, reducing visibility.", breakdown:[{label:"Below 70 score",value:"27 props"},{label:"Below 50 score",value:"11"},{label:"Avg score",value:"61/100"}], estimatedImpact:"$22,600", actions:["View Scores","Content Action Plan","Export Report"] }},
+  ),
+
+  /* ── BEST WESTERN — moderate issues, mixed amber/green ── */
+  "Best Western Hotels": makeBuckets(
+    [
+      { id:"ari-sync",    icon:"🔄", name:"ARI Sync",     score:62, impact:"$14.2K", status:"medium",
+        detail:{ description:"Intermittent ARI sync delays on Best Western Plus properties via Agoda.", breakdown:[{label:"Agoda sync lag",value:"2.1h avg"},{label:"Sync issues",value:"6%"},{label:"Properties affected",value:"31"}], estimatedImpact:"$14,200", actions:["Investigate Feed","Fix Sync","Download Report"] }},
+      { id:"availability",icon:"📅", name:"Availability", score:74, impact:"$9.8K",  status:"medium",
+        detail:{ description:"Availability gaps on Best Western Premier weekend inventory.", breakdown:[{label:"Closed dates",value:"42"},{label:"Channels affected",value:"2"},{label:"Lost nights",value:"28"}], estimatedImpact:"$9,800", actions:["Investigate Calendar","Fix Availability","Download Gaps"] }},
+      { id:"restrictions",icon:"⛔", name:"Restrictions",  score:81, impact:"$4.1K",  status:"healthy",
+        detail:{ description:"Minor restriction issues on BW Plus seasonal inventory.", breakdown:[{label:"Min stay violations",value:"8"},{label:"CTA blocks",value:"3"},{label:"Channels impacted",value:"1"}], estimatedImpact:"$4,100", actions:["Investigate Restrictions","Fix Rules","Download Data"] }},
+      { id:"rate-parity", icon:"⚖️", name:"Rate Parity",  score:58, impact:"$28.9K", status:"medium",
+        detail:{ description:"Rate parity gaps between BW Premier and OTA display rates.", breakdown:[{label:"Booking.com",value:"6 violations"},{label:"Trip.com",value:"4 violations"},{label:"Agoda",value:"3 violations"}], estimatedImpact:"$28,900", actions:["Investigate Parity","Fix Rate Rules","Download Violations"] }},
+    ],
+    [
+      { id:"error-rate",  icon:"⚠️", name:"Error Rate",   score:55, impact:"$18.4K", status:"medium",
+        detail:{ description:"Moderate booking error rate on BW Plus properties.", breakdown:[{label:"API errors",value:"89/day"},{label:"Booking failures",value:"1.9%"},{label:"Retry rate",value:"11%"}], estimatedImpact:"$18,400", actions:["Investigate Errors","Fix Config","Download Report"] }},
+      { id:"activation",  icon:"⚙️", name:"Activation",   score:76, impact:"$5.2K",  status:"medium",
+        detail:{ description:"BW Premier new property activations pending across Booking.com.", breakdown:[{label:"Pending activation",value:"6 props"},{label:"Partial setup",value:"2"},{label:"Avg days",value:"3.8"}], estimatedImpact:"$5,200", actions:["Investigate Queue","Fix Activation","Download List"] }},
+      { id:"mapping",     icon:"🔗", name:"Mapping",       score:69, impact:"$11.7K", status:"medium",
+        detail:{ description:"Room type mapping gaps on BW Plus causing OTA display issues.", breakdown:[{label:"Unmapped rooms",value:"14"},{label:"Rate mismatch",value:"7"},{label:"OTAs affected",value:"2"}], estimatedImpact:"$11,700", actions:["Investigate Mappings","Fix Room Types","Download Errors"] }},
+      { id:"commission",  icon:"💰", name:"Commission",    score:82, impact:"$4.8K",  status:"healthy",
+        detail:{ description:"Minor commission discrepancies on BW Premier properties.", breakdown:[{label:"Overcharged",value:"3 props"},{label:"Avg overcharge",value:"0.9%"},{label:"Channels",value:"Expedia"}], estimatedImpact:"$4,800", actions:["Investigate Contracts","Fix Rates","Download Report"] }},
+    ],
+    [
+      { id:"images",      icon:"📷", name:"Images",        score:77, impact:"$7.1K",  status:"medium",
+        detail:{ description:"BW Plus properties with below-standard image counts on Agoda.", breakdown:[{label:"Below 10 images",value:"9 props"},{label:"No exterior shot",value:"2"},{label:"Low res flagged",value:"5"}], estimatedImpact:"$7,100", actions:["Investigate Gallery","Fix Images","Download List"] }},
+      { id:"amenities",   icon:"🏨", name:"Amenities",     score:86, impact:"$3.2K",  status:"healthy",
+        detail:{ description:"Amenity data largely complete — minor gaps on BW Premier.", breakdown:[{label:"Missing amenities",value:"8 props"},{label:"Incorrect data",value:"2"},{label:"OTAs impacted",value:"1"}], estimatedImpact:"$3,200", actions:["Investigate Amenities","Fix Data","Download Gaps"] }},
+      { id:"descriptions",icon:"📝", name:"Descriptions",  score:80, impact:"$4.4K",  status:"healthy",
+        detail:{ description:"Minor description gaps — mostly BW Plus short descriptions.", breakdown:[{label:"Under 150 words",value:"7 props"},{label:"Missing entirely",value:"1"},{label:"Duplicate content",value:"3"}], estimatedImpact:"$4,400", actions:["Investigate Content","Fix Descriptions","Download List"] }},
+      { id:"content-score",icon:"🖼️",name:"Content Score", score:73, impact:"$8.9K",  status:"medium",
+        detail:{ description:"BW Plus content score below 70 threshold on Agoda and Trip.com.", breakdown:[{label:"Below 70 score",value:"11 props"},{label:"Below 50 score",value:"3"},{label:"Avg score",value:"69/100"}], estimatedImpact:"$8,900", actions:["Investigate Scores","Fix Content Plan","Download Report"] }},
+    ],
+    [
+      { id:"look-to-book",icon:"🔍", name:"Look-to-Book",  score:68, impact:"$12.8K", status:"medium",
+        detail:{ description:"Search conversion slightly below benchmark on Trip.com.", breakdown:[{label:"Avg L2B ratio",value:"1:114"},{label:"Below threshold",value:"9 props"},{label:"Top miss channel",value:"Trip.com"}], estimatedImpact:"$12,800", actions:["Investigate L2B","Fix Strategy","Download Analytics"] }},
+      { id:"booking-pace",icon:"📈", name:"Booking Pace",  score:72, impact:"$9.4K",  status:"medium",
+        detail:{ description:"Booking pace slightly behind prior period on BW Premier.", breakdown:[{label:"Behind forecast",value:"7 props"},{label:"Avg gap",value:"-8%"},{label:"Critical window",value:"Next 28 days"}], estimatedImpact:"$9,400", actions:["Investigate Pace","Fix Promotions","Download Report"] }},
+      { id:"channel-mix", icon:"🌐", name:"Channel Mix",   score:79, impact:"$6.1K",  status:"medium",
+        detail:{ description:"OTA share healthy — minor direct channel improvement opportunity.", breakdown:[{label:"OTA share",value:"61%"},{label:"Direct share",value:"22%"},{label:"Target direct",value:"28%"}], estimatedImpact:"$6,100", actions:["Investigate Mix","Fix Strategy","Download Data"] }},
+      { id:"cancellation",icon:"❌", name:"Cancellation",  score:76, impact:"$7.8K",  status:"medium",
+        detail:{ description:"Cancellation rate marginally above benchmark.", breakdown:[{label:"Avg cancel rate",value:"14%"},{label:"High risk props",value:"4"},{label:"Peak window",value:"48h pre-arrival"}], estimatedImpact:"$7,800", actions:["Investigate Cancellations","Fix Policy","Download Report"] }},
     ]
-  },
-  {
-    name: "Demand Performance", color: "#3b82f6",
-    levers: [
-      { id:"look-to-book",icon:"🔍", name:"Look-to-Book",  score:55, impact:"$37.9K", status:"medium",
-        detail:{ description:"High search impressions not converting to bookings.", breakdown:[{label:"Avg L2B ratio",value:"1:142"},{label:"Below threshold",value:"19 props"},{label:"Top miss channel",value:"Expedia"}], estimatedImpact:"$37,900", actions:["View Analytics","Rate Review","Export Data"] }},
-      { id:"booking-pace",icon:"📈", name:"Booking Pace",  score:47, impact:"$54.2K", status:"critical",
-        detail:{ description:"Booking velocity tracking behind prior period and forecast.", breakdown:[{label:"Behind forecast",value:"31 props"},{label:"Avg gap",value:"-18%"},{label:"Critical window",value:"Next 14 days"}], estimatedImpact:"$54,200", actions:["View Pace Report","Apply Promotions","Alert Revenue Mgr"] }},
-      { id:"channel-mix", icon:"🌐", name:"Channel Mix",   score:76, impact:"$11.8K", status:"healthy",
-        detail:{ description:"OTA dependency too high — direct channel underperforming.", breakdown:[{label:"OTA share",value:"74%"},{label:"Direct share",value:"12%"},{label:"Target direct",value:"25%"}], estimatedImpact:"$11,800", actions:["View Mix Report","Direct Strategy","Export Data"] }},
-      { id:"cancellation",icon:"❌", name:"Cancellation",  score:63, impact:"$44.7K", status:"medium",
-        detail:{ description:"Cancellation rate above benchmark — revenue at risk.", breakdown:[{label:"Avg cancel rate",value:"22%"},{label:"High risk props",value:"14"},{label:"Peak window",value:"48h pre-arrival"}], estimatedImpact:"$44,700", actions:["View Cancellations","Policy Review","Export Report"] }},
-    ]
-  },
-];
+  ),
+};
+
+/* Default/fallback for accounts without specific data */
+const DEFAULT_LEVERS = makeBuckets(
+  [
+    { id:"ari-sync",    icon:"🔄", name:"ARI Sync",     score:79, impact:"$8.1K",  status:"healthy",
+      detail:{ description:"ARI sync performing within acceptable thresholds.", breakdown:[{label:"Avg sync lag",value:"0.8h"},{label:"Sync fail rate",value:"2%"},{label:"Properties affected",value:"4"}], estimatedImpact:"$8,100", actions:["Investigate Feed","View Sync Logs","Download Report"] }},
+    { id:"availability",icon:"📅", name:"Availability", score:84, impact:"$5.2K",  status:"healthy",
+      detail:{ description:"Availability windows healthy across demand partners.", breakdown:[{label:"Closed dates",value:"12"},{label:"Channels affected",value:"1"},{label:"Lost nights",value:"8"}], estimatedImpact:"$5,200", actions:["Investigate Calendar","View Availability","Download Gaps"] }},
+    { id:"restrictions",icon:"⛔", name:"Restrictions",  score:88, impact:"$2.4K",  status:"healthy",
+      detail:{ description:"Restriction rules well configured — minor optimisation available.", breakdown:[{label:"Min stay violations",value:"4"},{label:"CTA blocks",value:"1"},{label:"Channels impacted",value:"1"}], estimatedImpact:"$2,400", actions:["Investigate Restrictions","View Rules","Download Data"] }},
+    { id:"rate-parity", icon:"⚖️", name:"Rate Parity",  score:82, impact:"$6.8K",  status:"healthy",
+      detail:{ description:"Rate parity broadly maintained across OTAs.", breakdown:[{label:"Booking.com",value:"2 violations"},{label:"Expedia",value:"1 violation"},{label:"Agoda",value:"0 violations"}], estimatedImpact:"$6,800", actions:["Investigate Parity","View Listings","Download Report"] }},
+  ],
+  [
+    { id:"error-rate",  icon:"⚠️", name:"Error Rate",   score:81, impact:"$4.9K",  status:"healthy",
+      detail:{ description:"Error rate within benchmark — no immediate action required.", breakdown:[{label:"API errors",value:"21/day"},{label:"Booking failures",value:"0.6%"},{label:"Retry rate",value:"3%"}], estimatedImpact:"$4,900", actions:["Investigate Errors","View Error Log","Download Report"] }},
+    { id:"activation",  icon:"⚙️", name:"Activation",   score:91, impact:"$1.8K",  status:"healthy",
+      detail:{ description:"Property activations up to date across all channels.", breakdown:[{label:"Pending activation",value:"2 props"},{label:"Partial setup",value:"1"},{label:"Avg days",value:"2.1"}], estimatedImpact:"$1,800", actions:["Investigate Queue","View Status","Download List"] }},
+    { id:"mapping",     icon:"🔗", name:"Mapping",       score:86, impact:"$3.4K",  status:"healthy",
+      detail:{ description:"Room type mapping largely clean — minor discrepancies only.", breakdown:[{label:"Unmapped rooms",value:"4"},{label:"Rate mismatch",value:"2"},{label:"OTAs affected",value:"1"}], estimatedImpact:"$3,400", actions:["Investigate Mappings","View Room Types","Download Errors"] }},
+    { id:"commission",  icon:"💰", name:"Commission",    score:89, impact:"$2.1K",  status:"healthy",
+      detail:{ description:"Commission rates aligned with contracted terms.", breakdown:[{label:"Overcharged",value:"1 prop"},{label:"Avg overcharge",value:"0.4%"},{label:"Channels",value:"None flagged"}], estimatedImpact:"$2,100", actions:["Investigate Contracts","View Rates","Download Report"] }},
+  ],
+  [
+    { id:"images",      icon:"📷", name:"Images",        score:83, impact:"$3.6K",  status:"healthy",
+      detail:{ description:"Image coverage meeting OTA thresholds across all properties.", breakdown:[{label:"Below 10 images",value:"3 props"},{label:"No exterior shot",value:"1"},{label:"Low res flagged",value:"2"}], estimatedImpact:"$3,600", actions:["Investigate Gallery","View Images","Download List"] }},
+    { id:"amenities",   icon:"🏨", name:"Amenities",     score:88, impact:"$2.2K",  status:"healthy",
+      detail:{ description:"Amenity data complete — minor gaps only.", breakdown:[{label:"Missing amenities",value:"6 props"},{label:"Incorrect data",value:"2"},{label:"OTAs impacted",value:"1"}], estimatedImpact:"$2,200", actions:["Investigate Amenities","View Data","Download Gaps"] }},
+    { id:"descriptions",icon:"📝", name:"Descriptions",  score:85, impact:"$2.8K",  status:"healthy",
+      detail:{ description:"Descriptions meeting length and quality standards.", breakdown:[{label:"Under 150 words",value:"4 props"},{label:"Missing entirely",value:"0"},{label:"Duplicate content",value:"2"}], estimatedImpact:"$2,800", actions:["Investigate Content","View Descriptions","Download List"] }},
+    { id:"content-score",icon:"🖼️",name:"Content Score", score:80, impact:"$4.8K",  status:"healthy",
+      detail:{ description:"Content scores above threshold on major OTAs.", breakdown:[{label:"Below 70 score",value:"5 props"},{label:"Below 50 score",value:"0"},{label:"Avg score",value:"78/100"}], estimatedImpact:"$4,800", actions:["Investigate Scores","View Content Plan","Download Report"] }},
+  ],
+  [
+    { id:"look-to-book",icon:"🔍", name:"Look-to-Book",  score:74, impact:"$6.9K",  status:"medium",
+      detail:{ description:"Search-to-booking conversion within acceptable range.", breakdown:[{label:"Avg L2B ratio",value:"1:98"},{label:"Below threshold",value:"4 props"},{label:"Top miss channel",value:"Agoda"}], estimatedImpact:"$6,900", actions:["Investigate L2B","View Analytics","Download Data"] }},
+    { id:"booking-pace",icon:"📈", name:"Booking Pace",  score:79, impact:"$5.4K",  status:"medium",
+      detail:{ description:"Booking pace tracking broadly in line with forecast.", breakdown:[{label:"Behind forecast",value:"3 props"},{label:"Avg gap",value:"-4%"},{label:"Critical window",value:"Next 30 days"}], estimatedImpact:"$5,400", actions:["Investigate Pace","View Pace Report","Download Report"] }},
+    { id:"channel-mix", icon:"🌐", name:"Channel Mix",   score:82, impact:"$3.8K",  status:"healthy",
+      detail:{ description:"Channel mix well balanced — OTA and direct in healthy ratio.", breakdown:[{label:"OTA share",value:"58%"},{label:"Direct share",value:"26%"},{label:"Target direct",value:"25%"}], estimatedImpact:"$3,800", actions:["Investigate Mix","View Strategy","Download Data"] }},
+    { id:"cancellation",icon:"❌", name:"Cancellation",  score:81, impact:"$4.2K",  status:"healthy",
+      detail:{ description:"Cancellation rate within benchmark — no immediate action.", breakdown:[{label:"Avg cancel rate",value:"11%"},{label:"High risk props",value:"2"},{label:"Peak window",value:"72h pre-arrival"}], estimatedImpact:"$4,200", actions:["Investigate Cancellations","View Policy","Download Report"] }},
+  ]
+);
+
+const LEVER_STATUS_CFG = {
+  critical: { label:"Critical", color:"#ef4444", bg:"#fef2f2", bar:"#ef4444", icon:"🔥" },
+  medium:   { label:"At Risk",  color:"#f59e0b", bg:"#fffbeb", bar:"#f59e0b", icon:"⚠️" },
+  healthy:  { label:"Healthy",  color:"#10b981", bg:"#f0fdf4", bar:"#10b981", icon:"✓"  },
+};
+
+const FIX_STATUS_CFG = {
+  "Open":        { color:"#64748B", bg:"#F1F5F9", border:"#CBD5E1" },
+  "In Progress": { color:"#D97706", bg:"#FFFBEB", border:"#FCD34D" },
+  "Resolved":    { color:"#059669", bg:"#F0FDF4", border:"#86EFAC" },
+};
+const FIX_STATUS_CYCLE = ["Open","In Progress","Resolved"];
 
 const LEVER_STATUS_CFG = {
   critical: { label:"Critical", color:"#ef4444", bg:"#fef2f2", bar:"#ef4444", icon:"🔥" },
@@ -1194,7 +1348,20 @@ function downloadLeverCSV(lever, tenantName) {
 
 function LeversPage({ tenant, setTenant, toast }) {
   const [activePanel, setActivePanel] = useState(null);
-  const allLevers = LEVER_BUCKETS.flatMap(b => b.levers);
+  const [fixStatus, setFixStatus]     = useState({});
+
+  const leverBuckets = ACCOUNT_LEVERS[tenant] || DEFAULT_LEVERS;
+  const allLevers = leverBuckets.flatMap(b => b.levers);
+
+  const cycleFixStatus = (leverId, e) => {
+    e.stopPropagation();
+    setFixStatus(prev => {
+      const cur = prev[leverId] || "Open";
+      const next = FIX_STATUS_CYCLE[(FIX_STATUS_CYCLE.indexOf(cur) + 1) % FIX_STATUS_CYCLE.length];
+      toast(`Status → ${next}`, next === "Resolved" ? "success" : "info");
+      return { ...prev, [leverId]: next };
+    });
+  };
   const activeLever = allLevers.find(l => l.id === activePanel);
 
   const totalRisk = allLevers.reduce((sum, l) => sum + parseFloat(l.impact.replace(/[^0-9.]/g,"")), 0);
@@ -1292,7 +1459,7 @@ function LeversPage({ tenant, setTenant, toast }) {
       </div>
 
       {/* ── BUCKET SECTIONS ──────────────────────────────────────────── */}
-      {LEVER_BUCKETS.map(bucket => (
+      {leverBuckets.map(bucket => (
         <div key={bucket.name} style={{marginBottom:32}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
             <div style={{width:9,height:9,borderRadius:"50%",background:bucket.color}}/>
@@ -1309,10 +1476,17 @@ function LeversPage({ tenant, setTenant, toast }) {
                   {/* Status stripe */}
                   <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:st.bar,borderRadius:"14px 14px 0 0"}}/>
                   {/* Icon + Name */}
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:lever.parityLink?6:14}}>
                     <span style={{fontSize:17}}>{lever.icon}</span>
                     <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{lever.name}</span>
                   </div>
+                  {/* Parity↔Connectivity callout */}
+                  {lever.parityLink && (
+                    <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:10,padding:"4px 8px",borderRadius:6,background:"#FFF7ED",border:"1px solid #FED7AA",fontSize:10,fontWeight:600,color:"#C2410C"}}>
+                      <span>🔗</span>
+                      <span>Parity ↔ Connectivity linked</span>
+                    </div>
+                  )}
                   {/* Revenue — PRIMARY */}
                   <div style={{marginBottom:12}}>
                     <div style={{fontSize:9,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:2}}>Revenue at Risk</div>
@@ -1328,14 +1502,31 @@ function LeversPage({ tenant, setTenant, toast }) {
                       </span>
                     </div>
                   </div>
+                  {/* Fix status badge */}
+                  {(() => {
+                    const fs = fixStatus[lever.id] || "Open";
+                    const fc = FIX_STATUS_CFG[fs];
+                    return (
+                      <div style={{marginTop:10,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                        <span style={{fontSize:9,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.05em"}}>Fix Status</span>
+                        <button onClick={e=>cycleFixStatus(lever.id,e)}
+                          style={{fontSize:10,fontWeight:700,padding:"2px 9px",borderRadius:99,background:fc.bg,color:fc.color,border:`1px solid ${fc.border}`,cursor:"pointer",fontFamily:"inherit"}}>
+                          {fs === "Open" ? "● Open" : fs === "In Progress" ? "◑ In Progress" : "✓ Resolved"}
+                        </button>
+                      </div>
+                    );
+                  })()}
                   {/* Hover action buttons */}
-                  <div className="lever-actions">
+                  <div className="lever-actions" style={{marginTop:10}}>
                     <button className="lever-btn"
-                      onClick={e => { e.stopPropagation(); downloadLeverCSV(lever, tenant || "Account"); }}
-                      style={{background:C.brandDim,color:C.brand}}>⬇ Download</button>
+                      onClick={e=>{e.stopPropagation();setActivePanel(lever.id);}}
+                      style={{background:"#EFF6FF",color:"#2563EB",flex:1.2}}>🔍 Investigate</button>
                     <button className="lever-btn"
-                      onClick={e => { e.stopPropagation(); setActivePanel(lever.id); }}
-                      style={{background:C.brand,color:"#fff"}}>→ Diagnose</button>
+                      onClick={e=>cycleFixStatus(lever.id,e)}
+                      style={{background:"#FFFBEB",color:"#D97706",flex:1}}>🔧 Fix</button>
+                    <button className="lever-btn"
+                      onClick={e=>{e.stopPropagation();downloadLeverCSV(lever,tenant||"Account");}}
+                      style={{background:C.brandDim,color:C.brand,flex:1}}>⬇ CSV</button>
                   </div>
                 </div>
               );
