@@ -690,7 +690,7 @@ export default function App() {
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} toast={toast}/>}
-        {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} toast={toast}/>}
+        {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} activePartners={activePartners} toast={toast}/>}
       </div>
       <ToastHost/>
     </div>
@@ -1417,7 +1417,185 @@ const ACCOUNT_LEVERS_BASE = {
         detail:{ description:"Cancellation / leakage minimal — report explicitly notes 'healthy conversion and minimal leakage' across Jun–Dec 2025.", breakdown:[{label:"Gross-to-net gap",value:"~7% avg (minimal)"},{label:"Jul gross vs net",value:"342K → 320K"},{label:"Dec gross vs net",value:"324.8K → 308.1K"}], estimatedImpact:"$2,800", actions:["Investigate Cancellations","View Policy","Download Report"] }},
     ]
   ),
-};
+
+  /* ── HYATT | TRISEPT SOLUTIONS — Jun–Dec 2025 ── */
+  "Hyatt Hotels": makeBuckets(
+    [
+      { id:"ari-sync",     icon:"🔄", name:"ARI Sync",    score:69, impact:"$19.4K", status:"healthy",
+        detail:[["Sync lag","<4 min avg"],["Update frequency","Every 20 min"],["Failure rate","2.8%"]] },
+      { id:"availability", icon:"📅", name:"Availability", score:24, impact:"$76.2K", status:"critical",
+        detail:[["PID10 error","14.81%"],["PID06 error","14.81%"],["SYS82 error","11.11%"],["SYS83 error","11.11%"],["Biggest barrier","Booking conversion blocked"]] },
+      { id:"restrictions", icon:"⛔", name:"Restrictions",  score:79, impact:"$9.8K",  status:"healthy",
+        detail:[["Restriction conflicts","Low"],["Min stay violations","3.4%"],["Blackout clashes","1.6%"]] },
+      { id:"rate-parity",  icon:"⚖️", name:"Rate Parity",  score:74, impact:"$16.2K", status:"healthy",
+        detail:[["Parity score","74/100"],["Undercut instances","7.2%"],["Trisept vs direct","<5%"]] },
+    ],
+    [
+      { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:56, impact:"$29.6K", status:"medium",
+        detail:[["Booking error rate","3.70% across codes"],["RTY10/PID10","3.70% each"],["Multiple codes","GCN7, SYS84, GUA24"],["Status","Adds friction to flow"]] },
+      { id:"activation",   icon:"⚙️", name:"Activation",   score:54, impact:"$43.8K", status:"medium",
+        detail:[["Bookable","46%"],["Actively booking","45% — strong once live"],["Non-bookable","9%"],["Scale constraint","Limited property base"],["Growth lever","Expand coverage"]] },
+      { id:"mapping",      icon:"🔗", name:"Mapping",       score:82, impact:"$11.8K", status:"healthy",
+        detail:[["Mapping accuracy","98.1%"],["Unmatched","1.9%"],["Room type gaps","1.0%"]] },
+      { id:"commission",   icon:"💰", name:"Commission",    score:84, impact:"$8.6K",  status:"healthy",
+        detail:[["Avg commission rate","15.2%"],["Overrides","3 active"],["Net margin","Within SLA"]] },
+    ],
+    [
+      { id:"images",       icon:"📷", name:"Images",        score:78, impact:"$14.4K", status:"healthy",
+        detail:[["Properties with images","1,265"],["Below threshold","94 properties"],["Coverage","93.1%"],["Action","Enrich 94 under-threshold"]] },
+      { id:"amenities",    icon:"🏨", name:"Amenities",     score:83, impact:"$7.2K",  status:"healthy",
+        detail:[["Amenity fill rate","90%"],["Missing","<6 per property"],["Top gap","Spa details"]] },
+      { id:"descriptions", icon:"📝", name:"Descriptions",  score:81, impact:"$6.4K",  status:"healthy",
+        detail:[["Completeness","93%"],["Char avg","310"],["Missing","7%"]] },
+      { id:"content-score",icon:"🖼️", name:"Content Score", score:80, impact:"$8.8K",  status:"healthy",
+        detail:[["Overall","80/100"],["Image","78"],["Text","81"],["Structured","80"]] },
+    ],
+    [
+      { id:"look-to-book", icon:"🔍", name:"Look-to-Book",  score:72, impact:"$12.8K", status:"healthy",
+        detail:[["LTB ratio","1:118"],["Search volume","Moderate"],["Conversion","0.85%"]] },
+      { id:"booking-pace", icon:"📈", name:"Booking Pace",  score:68, impact:"$19.2K", status:"healthy",
+        detail:[["Peak month","July (2,331 gross)"],["Sep trough","1,370"],["Q4 recovery","1,470–1,481"]] },
+      { id:"channel-mix",  icon:"🌐", name:"Channel Mix",   score:8,  impact:"$87.3K", status:"critical",
+        detail:[["HY contribution","100.00% (12,119 bookings)"],["JV contribution","0.00%"],["DN contribution","0.00%"],["Inactive brands","5 of 6"],["Risk","Single brand total dependency"]] },
+      { id:"cancellation", icon:"❌", name:"Cancellation",  score:18, impact:"$112.4K",status:"critical",
+        detail:[["July","1,052 / 2,331 gross = 45.1%"],["June","665 / 1,989 = 33.4%"],["All months","Consistently high"],["Total cancels","4,806 Jul–Dec"],["Net realization","Severely impacted"]] },
+    ]
+  ),
+
+  /* ── MARRIOTT | BRITISH — Jan–Dec 2025 ── */
+  "Marriott International": makeBuckets(
+    [
+      { id:"ari-sync",     icon:"🔄", name:"ARI Sync",    score:73, impact:"$21.4K", status:"healthy",
+        detail:[["Sync lag","<2 min avg"],["Update frequency","Real-time"],["Failure rate","1.9%"]] },
+      { id:"availability", icon:"📅", name:"Availability", score:68, impact:"$34.8K", status:"healthy",
+        detail:[["Availability error","Primary error type at scale"],["Cumulative %","Up to 100.02%"],["Context","Dominant but partially scale-expected"]] },
+      { id:"restrictions", icon:"⛔", name:"Restrictions",  score:81, impact:"$12.4K", status:"healthy",
+        detail:[["Restriction conflicts","Low"],["Min stay violations","3.2%"],["Blackout clashes","1.1%"]] },
+      { id:"rate-parity",  icon:"⚖️", name:"Rate Parity",  score:79, impact:"$19.8K", status:"healthy",
+        detail:[["Parity score","79/100"],["Undercut instances","4.8%"],["British vs direct","<3%"]] },
+    ],
+    [
+      { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:22, impact:"$94.2K", status:"critical",
+        detail:[["Mean error count","684,424"],["Std deviation","2,933,652 — massive variability"],["Error % mean","4.35%"],["Error % std","18.64% — spike risk"],["Exceptions flagged","26 — 0 resolved"],["Action","Root cause investigation"]] },
+      { id:"activation",   icon:"⚙️", name:"Activation",   score:51, impact:"$58.4K", status:"medium",
+        detail:[["Booked properties","846 of 9,470 bookable"],["Booking rate","8.93%"],["Bookable %","95.25% of 9,942 total"],["Non-bookable","472 properties"],["Gap","Large idle bookable segment"]] },
+      { id:"mapping",      icon:"🔗", name:"Mapping",       score:84, impact:"$13.2K", status:"healthy",
+        detail:[["Mapping accuracy","98.7%"],["Unmatched","1.3%"],["Room type gaps","0.7%"]] },
+      { id:"commission",   icon:"💰", name:"Commission",    score:87, impact:"$10.4K", status:"healthy",
+        detail:[["Avg commission rate","14.1%"],["Overrides","5 active"],["Net margin","Within SLA"]] },
+    ],
+    [
+      { id:"images",       icon:"📷", name:"Images",        score:84, impact:"$11.8K", status:"healthy",
+        detail:[["Image coverage","Strong across 9,942 properties"],["Critical gaps","None"],["Status","Well maintained"]] },
+      { id:"amenities",    icon:"🏨", name:"Amenities",     score:86, impact:"$8.4K",  status:"healthy",
+        detail:[["Amenity fill rate","93%"],["Missing","<4 per property"],["Top gap","Parking"]] },
+      { id:"descriptions", icon:"📝", name:"Descriptions",  score:84, impact:"$7.2K",  status:"healthy",
+        detail:[["Completeness","96%"],["Char avg","410"],["Missing","4%"]] },
+      { id:"content-score",icon:"🖼️", name:"Content Score", score:85, impact:"$10.8K", status:"healthy",
+        detail:[["Overall","85/100"],["Image","84"],["Text","86"],["Structured","84"]] },
+    ],
+    [
+      { id:"look-to-book", icon:"🔍", name:"Look-to-Book",  score:76, impact:"$16.8K", status:"healthy",
+        detail:[["LTB ratio","1:142"],["Search volume","High — British leisure travel"],["Conversion","0.70%"]] },
+      { id:"booking-pace", icon:"📈", name:"Booking Pace",  score:72, impact:"$24.4K", status:"healthy",
+        detail:[["Peak month","September (+51.6% MoM)"],["Oct drop","-39.6% MoM"],["Volatility","High — external drivers"]] },
+      { id:"channel-mix",  icon:"🌐", name:"Channel Mix",   score:48, impact:"$67.8K", status:"medium",
+        detail:[["Total brands monitored","42"],["Booked brands","26 (61.9%)"],["Unbooked brands","16 (38.1%)"],["Top brand MC","20.07% (2,205 bookings)"],["Top 5 brands","53.69% total"]] },
+      { id:"cancellation", icon:"❌", name:"Cancellation",  score:58, impact:"$44.9K", status:"medium",
+        detail:[["Total cancellations","931 (8.48% avg rate)"],["Sep surge","+34.4% cancels"],["Oct correction","-51.6% cancels"],["Pattern","Volatile MoM"],["Net bookings","10,056 of 10,987 gross"]] },
+    ]
+  ),
+
+  /* ── IHG HOTELS | HOTEL TONIGHT — Jun–Dec 2025 ── */
+  "IHG Hotels & Resorts": makeBuckets(
+    [
+      { id:"ari-sync",     icon:"🔄", name:"ARI Sync",    score:76, impact:"$18.4K", status:"healthy",
+        detail:[["Sync lag","<2 min avg"],["Update frequency","Real-time"],["Failure rate","1.6%"]] },
+      { id:"availability", icon:"📅", name:"Availability", score:41, impact:"$58.4K", status:"medium",
+        detail:[["PID10 avail error","9.15%"],["PID07 avail error","8.50%"],["SYS81 avail error","9.15%"],["SYS82/SYS84/SYS90","9.15% each"],["Impact","Lost conversion at search"]] },
+      { id:"restrictions", icon:"⛔", name:"Restrictions",  score:82, impact:"$9.8K",  status:"healthy",
+        detail:[["Restriction conflicts","Low"],["Min stay violations","2.8%"],["Blackout clashes","1.1%"]] },
+      { id:"rate-parity",  icon:"⚖️", name:"Rate Parity",  score:80, impact:"$16.8K", status:"healthy",
+        detail:[["Parity score","80/100"],["Undercut instances","3.9%"],["HT vs direct gap","<3%"]] },
+    ],
+    [
+      { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:53, impact:"$34.2K", status:"medium",
+        detail:[["SYS81 booking error","6.54%"],["PID10 booking error","4.58%"],["RMR10 booking","1.96%"],["SYS84 booking","3.27%"],["Impact","Checkout friction on high-intent sessions"]] },
+      { id:"activation",   icon:"⚙️", name:"Activation",   score:32, impact:"$89.4K", status:"critical",
+        detail:[["Actively booking","49%"],["Bookable-not-converting","45% — largest growth lever"],["Non-bookable","6%"],["Root cause","Pricing parity, LOS/CTA restrictions, content"],["Action","Diagnostics on 45% idle segment"]] },
+      { id:"mapping",      icon:"🔗", name:"Mapping",       score:84, impact:"$12.4K", status:"healthy",
+        detail:[["Mapping accuracy","98.5%"],["Unmatched","1.5%"],["Room type gaps","0.8%"]] },
+      { id:"commission",   icon:"💰", name:"Commission",    score:86, impact:"$9.8K",  status:"healthy",
+        detail:[["Avg commission rate","14.4%"],["Overrides","3 active"],["Net margin","Within SLA"]] },
+    ],
+    [
+      { id:"images",       icon:"📷", name:"Images",        score:88, impact:"$8.4K",  status:"healthy",
+        detail:[["Properties with images","7,161"],["Below threshold","42 properties"],["Coverage","99.4%"],["Action","Close 42 — quick win"]] },
+      { id:"amenities",    icon:"🏨", name:"Amenities",     score:85, impact:"$7.8K",  status:"healthy",
+        detail:[["Amenity fill rate","92%"],["Missing","<5 per property"],["Top gap","EV charging"]] },
+      { id:"descriptions", icon:"📝", name:"Descriptions",  score:83, impact:"$6.9K",  status:"healthy",
+        detail:[["Completeness","95%"],["Char avg","350"],["Missing","5%"]] },
+      { id:"content-score",icon:"🖼️", name:"Content Score", score:86, impact:"$10.2K", status:"healthy",
+        detail:[["Overall","86/100"],["Image","88"],["Text","84"],["Structured","85"]] },
+    ],
+    [
+      { id:"look-to-book", icon:"🔍", name:"Look-to-Book",  score:81, impact:"$14.8K", status:"healthy",
+        detail:[["LTB ratio","1:138"],["Search volume","Growing — HT last-minute demand"],["Conversion","0.72%"]] },
+      { id:"booking-pace", icon:"📈", name:"Booking Pace",  score:84, impact:"$21.4K", status:"healthy",
+        detail:[["Jun baseline","1,866 net"],["Dec peak","3,643 net"],["Trend","Consistent growth — 0 cancellations"]] },
+      { id:"channel-mix",  icon:"🌐", name:"Channel Mix",   score:24, impact:"$78.6K", status:"critical",
+        detail:[["HI brand contribution","70.23% (15,495 bookings)"],["CP contribution","6.58% (1,452)"],["YO contribution","6.02% (1,329)"],["Inactive brands","6 of 20"],["Dependency risk","HI dominance is single point of failure"]] },
+      { id:"cancellation", icon:"❌", name:"Cancellation",  score:100,impact:"$0",     status:"healthy",
+        detail:[["Jun–Dec cancellations","0 (zero)"],["Gross = Net","Every month"],["Status","Best-in-class cancellation performance"],["Insight","Clean conversion — protect at all cost"]] },
+    ]
+  ),
+
+  /* ── OMNI HOTELS | AGODA — Jun–Dec 2025 ── */
+  "Omni Hotels & Resorts": makeBuckets(
+    [
+      { id:"ari-sync",     icon:"🔄", name:"ARI Sync",    score:72, impact:"$19.8K", status:"healthy",
+        detail:[["Sync lag","<3 min avg"],["Update frequency","Every 15 min"],["Failure rate","2.2%"]] },
+      { id:"availability", icon:"📅", name:"Availability", score:32, impact:"$64.2K", status:"critical",
+        detail:[["SYS90/SYS84/PID10/SYS82/SYS81","12.50% each"],["IND07 avail error","12.50%"],["Impact","Suppresses bookings even when demand exists"],["Action","Validate ARI mapping + credentials"]] },
+      { id:"restrictions", icon:"⛔", name:"Restrictions",  score:80, impact:"$10.4K", status:"healthy",
+        detail:[["Restriction conflicts","Low"],["Min stay violations","3.2%"],["Blackout clashes","1.4%"]] },
+      { id:"rate-parity",  icon:"⚖️", name:"Rate Parity",  score:78, impact:"$17.2K", status:"healthy",
+        detail:[["Parity score","78/100"],["Undercut instances","4.8%"],["Agoda vs direct gap","<4%"]] },
+    ],
+    [
+      { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:62, impact:"$28.4K", status:"medium",
+        detail:[["Booking error SYS81","6.25%"],["NNT01 avail error","6.25%"],["Stability","Moderate — needs monitoring"]] },
+      { id:"activation",   icon:"⚙️", name:"Activation",   score:88, impact:"$12.4K", status:"healthy",
+        detail:[["Actively booking","93% — best in portfolio"],["Bookable-not-booking","5%"],["Non-bookable","2%"],["Status","Strongest property activation of all accounts"]] },
+      { id:"mapping",      icon:"🔗", name:"Mapping",       score:83, impact:"$11.8K", status:"healthy",
+        detail:[["Mapping accuracy","98.2%"],["Unmatched","1.8%"],["Room type gaps","0.9%"]] },
+      { id:"commission",   icon:"💰", name:"Commission",    score:85, impact:"$9.4K",  status:"healthy",
+        detail:[["Avg commission rate","15.1%"],["Overrides","2 active"],["Net margin","Within SLA"]] },
+    ],
+    [
+      { id:"images",       icon:"📷", name:"Images",        score:98, impact:"$2.1K",  status:"healthy",
+        detail:[["Properties with images","53"],["Below threshold","1 property only"],["Coverage","98.1%"],["Action","Upload 1 remaining — trivial"]] },
+      { id:"amenities",    icon:"🏨", name:"Amenities",     score:87, impact:"$6.8K",  status:"healthy",
+        detail:[["Amenity fill rate","93%"],["Missing","<4 per property"],["Top gap","Pool hours"]] },
+      { id:"descriptions", icon:"📝", name:"Descriptions",  score:85, impact:"$5.9K",  status:"healthy",
+        detail:[["Completeness","96%"],["Char avg","390"],["Missing","4%"]] },
+      { id:"content-score",icon:"🖼️", name:"Content Score", score:89, impact:"$7.2K",  status:"healthy",
+        detail:[["Overall","89/100"],["Image","98"],["Text","86"],["Structured","84"]] },
+    ],
+    [
+      { id:"look-to-book", icon:"🔍", name:"Look-to-Book",  score:79, impact:"$16.4K", status:"healthy",
+        detail:[["LTB ratio","1:148"],["Search volume","Moderate — luxury segment"],["Conversion","0.68%"]] },
+      { id:"booking-pace", icon:"📈", name:"Booking Pace",  score:76, impact:"$22.8K", status:"healthy",
+        detail:[["Peak month","August (7,370 gross / 6,545 net)"],["Nov–Dec rebound","5,248 + 5,602"],["Total gross","37,513"]] },
+      { id:"channel-mix",  icon:"🌐", name:"Channel Mix",   score:12, impact:"$94.8K", status:"critical",
+        detail:[["OM brand contribution","100.00% (37,513 bookings)"],["AV brand contribution","0.00%"],["Total brands","2"],["Inactive","1 of 2 (AV)"],["Risk","Total single-brand dependency"]] },
+      { id:"cancellation", icon:"❌", name:"Cancellation",  score:58, impact:"$48.2K", status:"medium",
+        detail:[["Total cancellations","4,871 (~13% of gross)"],["Peak cancels","November (911)"],["Net realization","86.9%"],["Drivers","Pricing/availability volatility"],["Action","Rate parity + min LOS guardrails"]] },
+    ]
+  ),
+
+  /* ── HYATT HOTELS | TRISEPT SOLUTIONS — Jun–Dec 2025 ── */
+  };
 
 
 /* Choice Hotels — partner-specific data key for Hopper vs Agoda story */
@@ -1553,9 +1731,12 @@ function LeversPage({ tenant, setTenant, activePartners, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const [fixStatus, setFixStatus]     = useState({});
 
-  const partnerKey = activePartners && activePartners.length === 1 && !activePartners.includes("All Brands")
-    ? `${tenant}|${activePartners[0]}` : null;
-  const leverBuckets = (partnerKey && ALL_LEVERS[partnerKey]) || ALL_LEVERS[tenant] || DEFAULT_LEVERS;
+  // Find first partner-specific key that exists (supports single or multi-select)
+  const partnerKey = (activePartners || [])
+    .filter(p => p !== "All Brands")
+    .map(p => `${tenant}|${p}`)
+    .find(k => ALL_LEVERS[k]) || null;
+  const leverBuckets = ALL_LEVERS[partnerKey] || ALL_LEVERS[tenant] || DEFAULT_LEVERS;
   const allLevers = leverBuckets.flatMap(b => b.levers);
 
   const cycleFixStatus = (leverId, e) => {
