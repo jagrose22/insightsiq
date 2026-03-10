@@ -315,6 +315,26 @@ const DEMAND_PARTNERS = [
   "Tricept","Traveloka","Trisept Solutions","Trip.com",
 ];
 
+// Wyndham — properties with content critical errors (images below threshold)
+// Source: Wyndham-Content-Critical-Error.xlsx — 202 properties, 14 brands
+const WYNDHAM_CONTENT_ERRORS = [
+  { brand: "DI", count: 47, pids: [6342,17777,32642,45670,46139,47433,48550,48556,48909,49999,50007,50121,51027,52184,55941,80039,98989,99913,99955,99993,4838,5393,55674,56415,56931,284,2407,11040,33866,48554,48907,48921,50899,50978,51863,54328,54833,55934,5263,47217,48460,48561,50320,54209,56085,57586,60242] },
+  { brand: "HJ", count: 31, pids: [18272,19979,46298,46320,46321,47192,47227,47917,49329,49422,49423,49432,49433,49555,50120,50440,50519,50829,51358,53469,58620,32760,52475,59317,46981,50521,15029,15243,45501,48482,58644] },
+  { brand: "SE", count: 31, pids: [3637,8089,16355,50213,50577,53550,99415,9818,58556,3562,3581,8372,8458,32127,48496,53488,54339,3695,32267,47445,51850,53608,54194,56981,57032,58032,58977,60125,60128,60132,65312] },
+  { brand: "TL", count: 29, pids: [2490,9454,46818,51260,58488,57195,9565,14034,25637,51271,54386,54823,56327,57710,4341,4410,9676,10238,33968,40130,50278,50495,53581,53582,54352,54380,58034,59859,60430] },
+  { brand: "RA", count: 20, pids: [19175,20092,53536,54037,56426,58006,46890,48658,49811,60002,32021,49872,50051,54721,54993,55410,48189,49938,51161,57701] },
+  { brand: "BU", count: 14, pids: [10397,17905,99993,46817,52707,57563,37020,36657,50700,54024,55481,58555,58786,60466] },
+  { brand: "TC", count: 8,  pids: [54042,57788,6950,51487,15531,12960,56440,58066] },
+  { brand: "WY", count: 8,  pids: [48072,51590,57464,55418,56852,49087,59272] },
+  { brand: "WG", count: 4,  pids: [50195,51450,47023,59083] },
+  { brand: "MI", count: 4,  pids: [30918,27713,30920,47105] },
+  { brand: "BH", count: 3,  pids: [47950,58456,59982] },
+  { brand: "LQ", count: 1,  pids: [1033] },
+  { brand: "DX", count: 1,  pids: [54659] },
+  { brand: "AA", count: 1,  pids: [55749] },
+];
+
+
 const BRAND_MAP = {
   "Best Western Hotels":    ["All Brands","Best Western Plus","Best Western Premier"],
   "Choice Hotels":          ["All Brands","Cambria Hotels","Comfort Inn"],
@@ -443,9 +463,82 @@ function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
 /* ══════════════════════════════════════════════════════════════════════════
    ROOT APP
 ══════════════════════════════════════════════════════════════════════════ */
+/* ── Content Error Detail Modal ─────────────────────────────────────────── */
+function ContentErrorModal({ onClose }) {
+  const [expanded, setExpanded] = React.useState(null);
+  const total = WYNDHAM_CONTENT_ERRORS.reduce((s,b) => s + b.count, 0);
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",
+      background:"rgba(0,0,0,0.6)"}} onClick={onClose}>
+      <div style={{background:"#1E2433",borderRadius:12,border:"1px solid rgba(255,255,255,0.12)",
+        width:"min(720px,90vw)",maxHeight:"80vh",display:"flex",flexDirection:"column",
+        boxShadow:"0 24px 64px rgba(0,0,0,0.6)"}} onClick={e=>e.stopPropagation()}>
+        {/* Header */}
+        <div style={{padding:"18px 24px",borderBottom:"1px solid rgba(255,255,255,0.08)",
+          display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+          <div>
+            <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9",fontFamily:"Syne,sans-serif"}}>
+              Content Critical Errors — Wyndham Hotels
+            </div>
+            <div style={{fontSize:11,color:"#94A3B8",marginTop:2}}>
+              {total} properties below image threshold · 14 brands · Source: Hotel Key + Tricept POC
+            </div>
+          </div>
+          <button onClick={onClose} style={{background:"rgba(255,255,255,0.08)",border:"none",
+            color:"#94A3B8",width:28,height:28,borderRadius:6,cursor:"pointer",fontSize:14,
+            display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+        </div>
+        {/* Brand rows */}
+        <div style={{overflowY:"auto",padding:"12px 16px",flex:1}}>
+          {WYNDHAM_CONTENT_ERRORS.map(b => (
+            <div key={b.brand} style={{marginBottom:4,borderRadius:8,overflow:"hidden",
+              border:"1px solid rgba(255,255,255,0.07)"}}>
+              {/* Brand header row */}
+              <div onClick={()=>setExpanded(expanded===b.brand?null:b.brand)}
+                style={{display:"flex",alignItems:"center",padding:"10px 14px",cursor:"pointer",
+                  background:expanded===b.brand?"rgba(105,65,242,0.15)":"rgba(255,255,255,0.03)",
+                  transition:"background 0.1s"}}>
+                <div style={{width:36,height:22,borderRadius:4,background:"#DC2626",
+                  display:"flex",alignItems:"center",justifyContent:"center",
+                  fontSize:10,fontWeight:700,color:"#fff",marginRight:12,flexShrink:0}}>{b.brand}</div>
+                <div style={{flex:1,fontSize:13,color:"#E2E8F0",fontWeight:600}}>{b.count} properties</div>
+                {/* Mini bar */}
+                <div style={{width:120,height:6,background:"rgba(255,255,255,0.08)",borderRadius:3,marginRight:12}}>
+                  <div style={{width:`${(b.count/47)*100}%`,height:"100%",background:"#DC2626",borderRadius:3}}/>
+                </div>
+                <span style={{fontSize:10,color:"#6B7280"}}>{expanded===b.brand?"▲":"▼"}</span>
+              </div>
+              {/* PID list */}
+              {expanded===b.brand && (
+                <div style={{padding:"10px 14px",background:"rgba(0,0,0,0.2)",
+                  display:"flex",flexWrap:"wrap",gap:6}}>
+                  {b.pids.map(pid=>(
+                    <span key={pid} style={{background:"rgba(220,38,38,0.12)",border:"1px solid rgba(220,38,38,0.25)",
+                      borderRadius:4,padding:"2px 8px",fontSize:11,color:"#FCA5A5",fontFamily:"'IBM Plex Mono',monospace"}}>
+                      {pid}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Footer */}
+        <div style={{padding:"12px 24px",borderTop:"1px solid rgba(255,255,255,0.08)",
+          display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+          <span style={{fontSize:11,color:"#64748B"}}>Click any brand to expand property IDs</span>
+          <span style={{fontSize:11,color:"#DC2626",fontWeight:600}}>202 properties need immediate image upload</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 export default function App() {
   const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
+  const [showContentErrors, setShowContentErrors] = useState(false);
   const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
   const [activePartners, setActivePartners]     = useState(DEFAULT_PARTNERS);
   const [activeBrands, setActiveBrands]         = useState(DEFAULT_BRANDS);
@@ -698,9 +791,10 @@ export default function App() {
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} toast={toast}/>}
-        {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} activePartners={activePartners} toast={toast}/>}
+        {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} activePartners={activePartners} onContentErrors={()=>setShowContentErrors(true)} toast={toast}/>}
       </div>
       <ToastHost/>
+      {showContentErrors && <ContentErrorModal onClose={()=>setShowContentErrors(false)}/>}
     </div>
   );
 }
@@ -1268,7 +1362,7 @@ const ACCOUNT_LEVERS_BASE = {
     /* Content Quality */
     [
       { id:"images", icon:"📷", name:"Images", score:28, impact:"$29.8K", status:"critical",
-        detail:{ description:"830 Wyndham properties (9%) below OTA image threshold. 218 properties are CRITICAL priority with fewer than 5 images — below minimum OTA merchandising standards.", breakdown:[{label:"Total properties audited",value:"9,291"},{label:"10+ images (strong baseline)",value:"8,461 (91%)"},{label:"< 5 images — CRITICAL",value:"218 props (2.3%)"},{label:"5–9 images — Below Optimal",value:"612 props (6.6%)"}], estimatedImpact:"$29,800", actions:["Investigate Image Gaps","Fix: Upload 218 Critical Props","Download Property List"] }},
+        detail:{ description:"202 Wyndham properties across 14 brands below OTA image threshold. Days Inn leads with 47 properties, followed by Howard Johnson (31) and Super 8 (31) — fastest content win available.", breakdown:[{label:"Total properties with errors",value:"202 across 14 brands"},{label:"Worst brand (DI)",value:"47 properties"},{label:"HJ + SE combined",value:"62 properties"},{label:"TL + RA combined",value:"49 properties"}], estimatedImpact:"$29,800", actions:["Investigate Image Gaps","Fix: Upload Missing Images","Download Property List"], hasErrorDetail:true }},
       { id:"amenities", icon:"🏨", name:"Amenities", score:86, impact:"$7.2K", status:"healthy",
         detail:{ description:"Missing or incorrect amenity data reducing OTA search ranking across Wyndham portfolio.", breakdown:[{label:"Missing amenities",value:"44 props"},{label:"Incorrect data",value:"12"},{label:"OTAs impacted",value:"Agoda, Booking.com"}], estimatedImpact:"$7,200", actions:["Investigate Amenities","Fix Bulk Update","Download Gaps"] }},
       { id:"descriptions", icon:"📝", name:"Descriptions", score:83, impact:"$6.9K", status:"healthy",
@@ -1735,7 +1829,7 @@ function downloadLeverCSV(lever, tenantName) {
   URL.revokeObjectURL(url);
 }
 
-function LeversPage({ tenant, setTenant, activePartners, toast }) {
+function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const [fixStatus, setFixStatus]     = useState({});
 
@@ -1973,6 +2067,15 @@ function LeversPage({ tenant, setTenant, activePartners, toast }) {
                   </div>
                   {/* Actions */}
                   <div style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:10}}>Actions</div>
+                  {activeLever.detail.hasErrorDetail && (
+                    <button onClick={onContentErrors}
+                      style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",
+                        background:"rgba(220,38,38,0.08)",border:"1px solid rgba(220,38,38,0.3)",
+                        borderRadius:9,fontSize:13,fontWeight:600,color:"#DC2626",cursor:"pointer",
+                        marginBottom:8,fontFamily:"inherit"}}>
+                      ⚠️ View 202 Properties with Image Errors →
+                    </button>
+                  )}
                   {activeLever.detail.actions.map((action,i) => (
                     <button key={i} onClick={() => toast(`"${action}" opened`,"info")}
                       style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:9,fontSize:13,fontWeight:600,color:C.t2,cursor:"pointer",marginBottom:8,fontFamily:"inherit",transition:"background 0.12s,border-color 0.12s,color 0.12s"}}
