@@ -316,22 +316,22 @@ const DEMAND_PARTNERS = [
 ];
 
 // Wyndham — properties with content critical errors (images below threshold)
-// Source: Wyndham-Content-Critical-Error.xlsx — 202 properties, 14 brands
+// Source: POC-Wyndham_Missing_Property_List.xlsx — 202 properties, 14 brands
 const WYNDHAM_CONTENT_ERRORS = [
-  { brand: "DI", count: 47, pids: [6342,17777,32642,45670,46139,47433,48550,48556,48909,49999,50007,50121,51027,52184,55941,80039,98989,99913,99955,99993,4838,5393,55674,56415,56931,284,2407,11040,33866,48554,48907,48921,50899,50978,51863,54328,54833,55934,5263,47217,48460,48561,50320,54209,56085,57586,60242] },
-  { brand: "HJ", count: 31, pids: [18272,19979,46298,46320,46321,47192,47227,47917,49329,49422,49423,49432,49433,49555,50120,50440,50519,50829,51358,53469,58620,32760,52475,59317,46981,50521,15029,15243,45501,48482,58644] },
-  { brand: "SE", count: 31, pids: [3637,8089,16355,50213,50577,53550,99415,9818,58556,3562,3581,8372,8458,32127,48496,53488,54339,3695,32267,47445,51850,53608,54194,56981,57032,58032,58977,60125,60128,60132,65312] },
-  { brand: "TL", count: 29, pids: [2490,9454,46818,51260,58488,57195,9565,14034,25637,51271,54386,54823,56327,57710,4341,4410,9676,10238,33968,40130,50278,50495,53581,53582,54352,54380,58034,59859,60430] },
-  { brand: "RA", count: 20, pids: [19175,20092,53536,54037,56426,58006,46890,48658,49811,60002,32021,49872,50051,54721,54993,55410,48189,49938,51161,57701] },
-  { brand: "BU", count: 14, pids: [10397,17905,99993,46817,52707,57563,37020,36657,50700,54024,55481,58555,58786,60466] },
-  { brand: "TC", count: 8,  pids: [54042,57788,6950,51487,15531,12960,56440,58066] },
-  { brand: "WY", count: 8,  pids: [48072,51590,57464,55418,56852,49087,59272] },
-  { brand: "WG", count: 4,  pids: [50195,51450,47023,59083] },
-  { brand: "MI", count: 4,  pids: [30918,27713,30920,47105] },
-  { brand: "BH", count: 3,  pids: [47950,58456,59982] },
-  { brand: "LQ", count: 1,  pids: [1033] },
-  { brand: "DX", count: 1,  pids: [54659] },
-  { brand: "AA", count: 1,  pids: [55749] },
+  { brand:"DI", label:"Days Inn", count:47, properties:[{pid:6342,name:"Days Hotel Batangas"},{pid:17777,name:"Test Days Inn Wilkesboro Vickie"},{pid:32642,name:"Days Inn Athabasca"},{pid:45670,name:"Days Hotel Suites Liangping"},{pid:46139,name:"Days Hotel by Wyndham Cebu Toledo"},{pid:47433,name:"Days Inn Panguitch"},{pid:48550,name:"Days Hotel Suites Ivy Zunyi"},{pid:48556,name:"Days Hotel & Suites Jinzheng Shijiazhuang"},{pid:48909,name:"Days Hotel Wuhu Anqi"},{pid:49999,name:"Test Days Inn Wilkesboro"},{pid:50007,name:"Days Hotel Hainan Baoting"},{pid:50121,name:"Days Hotel by Wyndham Reno Airport"},{pid:51027,name:"Days Inn Guangzhou Boju"},{pid:52184,name:"Days Inn by Wyndham Wuxi Shengma"},{pid:55941,name:"Days Inn & Suites Kansas City Downtown"},{pid:4838,name:"Days Inn West Memphis"},{pid:5393,name:"Days Inn Wagoner"},{pid:55674,name:"DI Plattsburgh"},{pid:56415,name:"Days Inn by Wyndham Oklahoma City Bricktown"},{pid:56931,name:"DI Lamont"},{pid:284,name:"DI Dothan"},{pid:2407,name:"Days Inn by Wyndham Thomson"},{pid:11040,name:"Days Inn Donalsonville"},{pid:33866,name:"Days Inn City Centre Xian"},{pid:48554,name:"Days Hotel Xinjinyue Fuzhou"},{pid:48907,name:"Days Inn by Wyndham Panyu"},{pid:48921,name:"Days Hotel by Wyndham Shishi Fujian"},{pid:50899,name:"Days Inn Fuzhou Woer"},{pid:50978,name:"Days Hotel Chongqing Kaichuang"},{pid:51863,name:"DI King Winston Salem Area"},{pid:54328,name:"Days Inn Indianapolis South"},{pid:54833,name:"DI Pocatello"},{pid:55934,name:"Days Inn by Wyndham Shreveport"},{pid:5263,name:"DI Chrlstn Arprt"},{pid:47217,name:"Days Inn Hot Springs"},{pid:48460,name:"Days Inn by Wyndham Jacksonville Baymeadows"},{pid:48561,name:"Days Hotel Shanxi Xinzhou"},{pid:50320,name:"Days Inn Abilene"},{pid:54209,name:"Days Inn Brawley"},{pid:56085,name:"Days Inn by Wyndham Canadian"},{pid:57586,name:"Days Inn & Suites Summerside"},{pid:60242,name:"Days Inn Suites Colorado City"}] },
+  { brand:"HJ", label:"Howard Johnson", count:31, properties:[{pid:18272,name:"HJ Spokane"},{pid:19979,name:"Howard Johnson by Wyndham Piedras Moras"},{pid:46298,name:"Howard Johnson Tianzhu Fuyang"},{pid:46320,name:"Howard Johnson Shipu Ningbo"},{pid:46321,name:"Howard Johnson by Wyndham Minmetals Plaza Yingkou"},{pid:47192,name:"Howard Johnson Qinlu Yingtan"},{pid:47227,name:"HO JO Xiushan Plaza Chongqing"},{pid:47917,name:"Howard Johnson by Wyndham Chilecito Hotel"},{pid:49329,name:"Howard Johnson by Wyndham Neuquen"},{pid:49422,name:"Howard Johnson Jinyi Hotel Cho"},{pid:49423,name:"Howard Johnson Zunyue Hotel Ch"},{pid:49432,name:"Howard Johnson by Wyndham Riverview Hotel Guangzhou"},{pid:49433,name:"Howard Johnson by Wyndham Shenyang Jinlian"},{pid:49555,name:"Howard Johnson by Wyndham City of Flower Kunming"},{pid:50120,name:"Howard Johnson Huizhou"},{pid:50440,name:"Howard Johnson by Wyndham Tianmu Lake Plaza Liyang"},{pid:50519,name:"Howard Johnson by Wyndham Life Mountain View Chengdu"},{pid:50829,name:"Howard Johnson by Wyndham Huaihai Resort Lushan"},{pid:51358,name:"Howard Johnson by Wyndham Life Parkview Yuqing"},{pid:53469,name:"HoJo Downtown Gatlinburg"},{pid:58620,name:"HJ Upark Business Club Chengdu"},{pid:32760,name:"Howard Johnson by Wyndham Ezeiza Convention Center"},{pid:52475,name:"HoJo Dream Sea Resort Weihai"},{pid:59317,name:"Howard Johnson Maitreya Plaza"},{pid:46981,name:"Howard Johnson Trenque Lauquen"},{pid:50521,name:"Howard Johnson by Wyndham La Plata"},{pid:15029,name:"Howard Johnson by Wyndham Rio Ceballos"},{pid:15243,name:"Howard Johnson Plaza Guiyang"},{pid:45501,name:"HoJo Lake George"},{pid:48482,name:"Howard Johnson Dammam Hotel"},{pid:58644,name:"Howard Johnson Azusa"}] },
+  { brand:"SE", label:"Super 8", count:31, properties:[{pid:3637,name:"SE Chisago City"},{pid:8089,name:"Super 8 by Wyndham Kelso Longview Area"},{pid:16355,name:"Super 8 by Wyndham Yangtse River Qingshan"},{pid:50213,name:"Super 8 by Wyndham Vancouver"},{pid:50577,name:"Super 8 by Wyndham Chengde"},{pid:53550,name:"Super 8 by Wyndham Beijing Xin Tian Tan"},{pid:9818,name:"Travelodge Florence"},{pid:58556,name:"Super 8 Florence OR"},{pid:3562,name:"Super 8 by Wyndham Lewiston"},{pid:3581,name:"Super 8 Milbank SD"},{pid:8372,name:"SE Chenoa"},{pid:8458,name:"Super 8 Canton TX"},{pid:32127,name:"Super 8 by Wyndham Jilin Beijing Lu"},{pid:48496,name:"Super 8 by Wyndham Zhongshan"},{pid:53488,name:"Super 8 Sonora"},{pid:54339,name:"Super 8 by Wyndham Koblenz"},{pid:3695,name:"Ramada York Harrisburg Hershey"},{pid:32267,name:"Super 8 Brooks"},{pid:47445,name:"Super 8 by Wyndham Hangzhou"},{pid:51850,name:"Super 8 Kenedy"},{pid:53608,name:"Super 8 Great Bend"},{pid:54194,name:"Super 8 Asheville/Biltmore"},{pid:56981,name:"SE Penticton"},{pid:57032,name:"Super 8 Vancouver East"},{pid:58032,name:"Super 8 Big Spring TX"},{pid:58977,name:"Super 8 Tracy"},{pid:60125,name:"Super 8 Aurora East"},{pid:60128,name:"Super 8 Livermore"},{pid:60132,name:"Super 8 Santa Clara"},{pid:65312,name:"Super 8 Mesa Downtown"}] },
+  { brand:"TL", label:"Travelodge", count:29, properties:[{pid:2490,name:"TL Bellmawr"},{pid:9454,name:"Travelodge by Wyndham Forest Grove Hillsboro"},{pid:46818,name:"Travelodge by Wyndham Harriman"},{pid:51260,name:"Travelodge Raton"},{pid:58488,name:"Red Arrow Inn and Suites TL"},{pid:57195,name:"TL Rockford South"},{pid:9565,name:"Travelodge New Philadelphia"},{pid:14034,name:"Travelodge Winnipeg Airport"},{pid:25637,name:"Travelodge by Wyndham Stockbridge Atlanta South"},{pid:51271,name:"Travelodge Ogallala"},{pid:54386,name:"Travelodge Farmington"},{pid:54823,name:"TL Grand Rapids N"},{pid:56327,name:"TL Roanoke"},{pid:57710,name:"TL Canyonville"},{pid:4341,name:"Travelodge by Wyndham Pocatello"},{pid:4410,name:"Travelodge Odessa"},{pid:9676,name:"Travelodge by Wyndham Vancouver Lions Gate"},{pid:10238,name:"Travelodge Johnson Chehalis"},{pid:33968,name:"Travelodge Green River UT"},{pid:40130,name:"Days Inn Tiffin"},{pid:50278,name:"Travelodge Rosetown"},{pid:50495,name:"Travelodge Sacramento Convention"},{pid:53581,name:"Travelodge Ozone Park"},{pid:53582,name:"Travelodge by Wyndham Blythe"},{pid:54352,name:"Travelodge by Wyndham Downtown Gatlinburg"},{pid:54380,name:"Travelodge Benton Harbor MI"},{pid:58034,name:"Travelodge Carlisle North"},{pid:59859,name:"Days Inn Dumas Arkansas"},{pid:60430,name:"Primm Valley Travelodge"}] },
+  { brand:"RA", label:"Ramada", count:20, properties:[{pid:19175,name:"Ramada by Wyndham Al Khobar King Abdullah Street"},{pid:20092,name:"Ramada by Wyndham Pueblo"},{pid:53536,name:"Ramada Changsha Downtown"},{pid:54037,name:"Ramada Halong Bay View"},{pid:56426,name:"Ramada Cheltenham"},{pid:58006,name:"Ramada Coxs Bazar"},{pid:46890,name:"Ramada by Wyndham Sulaymaniyah"},{pid:48658,name:"Ramada by Wyndham Gunsan"},{pid:49811,name:"Ramada Yongin"},{pid:60002,name:"Ramada Kirkland Lake"},{pid:32021,name:"Ramada Buenos Aires"},{pid:49872,name:"Rockville RAM"},{pid:50051,name:"Ramada Hotel & Resort by Wyndham GyeongJu"},{pid:54721,name:"Ramada by Wyndham Southfield"},{pid:54993,name:"Ramada Nashville/Music Valley"},{pid:55410,name:"Ramada Gumi"},{pid:48189,name:"Ramada by Wyndham Jeju Hamdeok"},{pid:49938,name:"Ramada Encore Gimpo Han River"},{pid:51161,name:"Ramada Michigan City"},{pid:57701,name:"Ramada Kingston"}] },
+  { brand:"BU", label:"Baymont", count:14, properties:[{pid:10397,name:"Baymont by Wyndham Rock Springs"},{pid:17905,name:"Baymont Paducah"},{pid:46817,name:"Baymont Inn and Suites Harriman"},{pid:52707,name:"Baymont Fort Myers Central"},{pid:57563,name:"Baymont Bessemer"},{pid:37020,name:"Baymont Harlan"},{pid:36657,name:"BU Willow Park"},{pid:50700,name:"Baymont Mt Vernon"},{pid:54024,name:"Baymont by Wyndham Ferndale/Royal Oak"},{pid:55481,name:"Baymont by Wyndham Cedar City"},{pid:58555,name:"River House Inn Baymont"},{pid:58786,name:"Baymont Bakersfield"},{pid:60466,name:"Baymont Iowa Lake Charles"}] },
+  { brand:"TC", label:"Trademark Collection", count:8, properties:[{pid:54042,name:"Chateau Bedford"},{pid:57788,name:"LTC"},{pid:6950,name:"Lux Hotel and Spa Trademark"},{pid:51487,name:"Flamingo Las Vegas Trademark Collection"},{pid:15531,name:"The Hotel Pendleton Trademark"},{pid:12960,name:"Ramada Plaza by Wyndham Sault Ste. Marie"},{pid:56440,name:"HYPERION Hotel Salzburg"},{pid:58066,name:"H2 Hotel Wien"}] },
+  { brand:"WY", label:"Wyndham Hotels", count:8, properties:[{pid:48072,name:"Wyndham Garden Charleston Civic Center"},{pid:51590,name:"Wyndham Ribeirao Preto"},{pid:57464,name:"Wyndham Grand Ninh Binh"},{pid:55418,name:"Wyndham Garden Nagaizumi"},{pid:56852,name:"Wyndham Garden Wuhan West"},{pid:49087,name:"Wyndham Garden LaGuardia South"},{pid:59272,name:"Wyndham Flint Grand Blanc Conf"}] },
+  { brand:"WG", label:"Wingate by Wyndham", count:4, properties:[{pid:50195,name:"Wingate by Wyndham Anaheim"},{pid:51450,name:"Wingate by Wyndham Mentor OH"},{pid:47023,name:"Wingate by Wyndham Foshan Sanshui"},{pid:59083,name:"Wingate St. Louis Fenton Rt.66"}] },
+  { brand:"MI", label:"Microtel", count:4, properties:[{pid:30918,name:"Microtel Rawlins"},{pid:27713,name:"Baymont Henrietta/Rochester"},{pid:30920,name:"Microtel by Wyndham Cabanatuan"},{pid:47105,name:"Microtel by Wyndham General Santos"}] },
+  { brand:"BH", label:"Hawthorn / Wyndham Garden", count:3, properties:[{pid:47950,name:"Wyndham Garden Manama"},{pid:58456,name:"Hawthorn Xishuang Banna Jingho"},{pid:59982,name:"Hawthorn Kilgore"}] },
+  { brand:"LQ", label:"La Quinta", count:1, properties:[{pid:1033,name:"La Quinta Inn Ste Jackson"}] },
+  { brand:"DX", label:"Dazzler by Wyndham", count:1, properties:[{pid:54659,name:"Akti Imperial Hotel Convention"}] },
+  { brand:"AA", label:"AmericInn", count:1, properties:[{pid:55749,name:"AmericInn Memphis East"}] },
 ];
 
 
@@ -465,58 +465,68 @@ function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
 ══════════════════════════════════════════════════════════════════════════ */
 /* ── Content Error Detail Modal ─────────────────────────────────────────── */
 function ContentErrorModal({ onClose }) {
-  const [expanded, setExpanded] = React.useState(null);
+  const [expanded, setExpanded] = useState(null);
   const total = WYNDHAM_CONTENT_ERRORS.reduce((s,b) => s + b.count, 0);
+  const maxCount = WYNDHAM_CONTENT_ERRORS[0].count;
   return (
-    <div style={{position:"fixed",inset:0,zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",
-      background:"rgba(0,0,0,0.6)"}} onClick={onClose}>
-      <div style={{background:"#1E2433",borderRadius:12,border:"1px solid rgba(255,255,255,0.12)",
-        width:"min(720px,90vw)",maxHeight:"80vh",display:"flex",flexDirection:"column",
-        boxShadow:"0 24px 64px rgba(0,0,0,0.6)"}} onClick={e=>e.stopPropagation()}>
-        {/* Header */}
-        <div style={{padding:"18px 24px",borderBottom:"1px solid rgba(255,255,255,0.08)",
-          display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
-          <div>
-            <div style={{fontSize:14,fontWeight:700,color:"#F1F5F9",fontFamily:"Syne,sans-serif"}}>
-              Content Critical Errors — Wyndham Hotels
+    <div style={{position:"fixed",inset:0,zIndex:1000,display:"flex",alignItems:"center",
+      justifyContent:"center",background:"rgba(15,20,40,0.55)",backdropFilter:"blur(4px)"}}
+      onClick={onClose}>
+      <div style={{background:"#FFFFFF",borderRadius:16,width:"min(760px,92vw)",
+        maxHeight:"85vh",display:"flex",flexDirection:"column",
+        boxShadow:"0 32px 80px rgba(0,0,0,0.25)",overflow:"hidden"}}
+        onClick={e=>e.stopPropagation()}>
+        {/* Purple header */}
+        <div style={{background:"linear-gradient(135deg,#6941F2 0%,#8B67F5 100%)",padding:"20px 24px",flexShrink:0}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+            <div>
+              <div style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.7)",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:4}}>InsightsIQ · Content Quality Analysis</div>
+              <div style={{fontSize:18,fontWeight:800,color:"#FFFFFF",fontFamily:"'Syne',sans-serif",letterSpacing:"-0.3px"}}>Image Error Report — Wyndham Hotels</div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.75)",marginTop:4}}>{total} properties below image threshold · {WYNDHAM_CONTENT_ERRORS.length} brands · Source: Hotel Key + Tricept POC</div>
             </div>
-            <div style={{fontSize:11,color:"#94A3B8",marginTop:2}}>
-              {total} properties below image threshold · 14 brands · Source: Hotel Key + Tricept POC
-            </div>
+            <button onClick={onClose} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.25)",color:"#fff",width:32,height:32,borderRadius:8,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>✕</button>
           </div>
-          <button onClick={onClose} style={{background:"rgba(255,255,255,0.08)",border:"none",
-            color:"#94A3B8",width:28,height:28,borderRadius:6,cursor:"pointer",fontSize:14,
-            display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+          <div style={{display:"flex",gap:8,marginTop:14,flexWrap:"wrap"}}>
+            {[["202","Properties affected"],["14","Brands impacted"],["DI","Worst brand (47)"],["$29.8K","Revenue at risk"]].map(([v,l])=>(
+              <div key={l} style={{background:"rgba(255,255,255,0.15)",borderRadius:8,padding:"6px 14px",display:"flex",flexDirection:"column",alignItems:"center"}}>
+                <span style={{fontSize:15,fontWeight:800,color:"#fff",fontFamily:"'IBM Plex Mono',monospace"}}>{v}</span>
+                <span style={{fontSize:10,color:"rgba(255,255,255,0.7)",whiteSpace:"nowrap"}}>{l}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Column headers */}
+        <div style={{display:"grid",gridTemplateColumns:"160px 1fr 160px 24px",padding:"8px 20px",background:"#F8FAFC",borderBottom:"1px solid #E2E8F0",flexShrink:0}}>
+          {["Brand","Properties","Volume",""].map(h=><div key={h} style={{fontSize:10,fontWeight:700,color:"#6B7280",textTransform:"uppercase",letterSpacing:"0.06em"}}>{h}</div>)}
         </div>
         {/* Brand rows */}
-        <div style={{overflowY:"auto",padding:"12px 16px",flex:1}}>
+        <div style={{overflowY:"auto",flex:1}}>
           {WYNDHAM_CONTENT_ERRORS.map(b => (
-            <div key={b.brand} style={{marginBottom:4,borderRadius:8,overflow:"hidden",
-              border:"1px solid rgba(255,255,255,0.07)"}}>
-              {/* Brand header row */}
+            <div key={b.brand}>
               <div onClick={()=>setExpanded(expanded===b.brand?null:b.brand)}
-                style={{display:"flex",alignItems:"center",padding:"10px 14px",cursor:"pointer",
-                  background:expanded===b.brand?"rgba(105,65,242,0.15)":"rgba(255,255,255,0.03)",
-                  transition:"background 0.1s"}}>
-                <div style={{width:36,height:22,borderRadius:4,background:"#DC2626",
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  fontSize:10,fontWeight:700,color:"#fff",marginRight:12,flexShrink:0}}>{b.brand}</div>
-                <div style={{flex:1,fontSize:13,color:"#E2E8F0",fontWeight:600}}>{b.count} properties</div>
-                {/* Mini bar */}
-                <div style={{width:120,height:6,background:"rgba(255,255,255,0.08)",borderRadius:3,marginRight:12}}>
-                  <div style={{width:`${(b.count/47)*100}%`,height:"100%",background:"#DC2626",borderRadius:3}}/>
+                style={{display:"grid",gridTemplateColumns:"160px 1fr 160px 24px",alignItems:"center",padding:"10px 20px",cursor:"pointer",borderBottom:"1px solid #F1F5F9",background:expanded===b.brand?"#F5F3FF":"#FFFFFF",transition:"background 0.12s"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{width:34,height:22,borderRadius:4,background:expanded===b.brand?"#6941F2":"#DC2626",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,color:"#fff"}}>{b.brand}</div>
+                  <span style={{fontSize:11,color:"#374151",fontWeight:600}}>{b.label}</span>
                 </div>
-                <span style={{fontSize:10,color:"#6B7280"}}>{expanded===b.brand?"▲":"▼"}</span>
+                <div style={{fontSize:13,fontWeight:700,color:expanded===b.brand?"#6941F2":"#DC2626"}}>{b.count} {b.count===1?"property":"properties"}</div>
+                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                  <div style={{flex:1,height:5,background:"#E5E7EB",borderRadius:3}}>
+                    <div style={{width:`${(b.count/maxCount)*100}%`,height:"100%",background:expanded===b.brand?"#6941F2":"#DC2626",borderRadius:3,transition:"background 0.12s"}}/>
+                  </div>
+                </div>
+                <div style={{textAlign:"center",fontSize:10,color:"#9CA3AF"}}>{expanded===b.brand?"▲":"▼"}</div>
               </div>
-              {/* PID list */}
               {expanded===b.brand && (
-                <div style={{padding:"10px 14px",background:"rgba(0,0,0,0.2)",
-                  display:"flex",flexWrap:"wrap",gap:6}}>
-                  {b.pids.map(pid=>(
-                    <span key={pid} style={{background:"rgba(220,38,38,0.12)",border:"1px solid rgba(220,38,38,0.25)",
-                      borderRadius:4,padding:"2px 8px",fontSize:11,color:"#FCA5A5",fontFamily:"'IBM Plex Mono',monospace"}}>
-                      {pid}
-                    </span>
+                <div style={{background:"#FAFBFF",borderBottom:"2px solid #EDE9FE"}}>
+                  <div style={{display:"grid",gridTemplateColumns:"100px 1fr",padding:"7px 20px 4px",borderBottom:"1px solid #E5E7EB"}}>
+                    {["Property ID","Property Name"].map(h=><div key={h} style={{fontSize:10,fontWeight:700,color:"#6B7280",textTransform:"uppercase",letterSpacing:"0.05em"}}>{h}</div>)}
+                  </div>
+                  {b.properties.map((p,i)=>(
+                    <div key={i} style={{display:"grid",gridTemplateColumns:"100px 1fr",alignItems:"center",padding:"5px 20px",background:i%2===0?"transparent":"#F5F3FF",borderBottom:"1px solid #F3F4F6"}}>
+                      <div style={{fontFamily:"'IBM Plex Mono',monospace",fontSize:11,color:"#6941F2",fontWeight:600}}>{p.pid}</div>
+                      <div style={{fontSize:12,color:"#374151"}}>{p.name}</div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -524,16 +534,14 @@ function ContentErrorModal({ onClose }) {
           ))}
         </div>
         {/* Footer */}
-        <div style={{padding:"12px 24px",borderTop:"1px solid rgba(255,255,255,0.08)",
-          display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
-          <span style={{fontSize:11,color:"#64748B"}}>Click any brand to expand property IDs</span>
-          <span style={{fontSize:11,color:"#DC2626",fontWeight:600}}>202 properties need immediate image upload</span>
+        <div style={{padding:"10px 24px",borderTop:"1px solid #E2E8F0",background:"#F8FAFC",display:"flex",justifyContent:"space-between",alignItems:"center",flexShrink:0}}>
+          <span style={{fontSize:11,color:"#9CA3AF"}}>Click any brand row to expand property list</span>
+          <span style={{fontSize:11,fontWeight:700,color:"#DC2626"}}>⚠ 202 properties need immediate image upload</span>
         </div>
       </div>
     </div>
   );
 }
-
 
 export default function App() {
   const [page, setPage]             = useState("home");
@@ -593,7 +601,7 @@ export default function App() {
         .lever-btn{flex:1;padding:5px 0;border-radius:6px;font-size:10px;font-weight:700;border:none;cursor:pointer;transition:opacity 0.12s,transform 0.1s;letter-spacing:0.02em;}
         .lever-btn:hover{opacity:0.85;transform:translateY(-1px);}
         .lever-btn:active{transform:translateY(0);}
-        @keyframes fadeIn   {from{opacity:0;transform:translateY(8px)}  to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn   {from{opacity:0} to{opacity:1}}
         @keyframes fadeSlide{from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:translateX(0)}}
         @keyframes pulse    {0%,100%{opacity:1} 50%{opacity:0.5}}
         @keyframes toastIn  {from{opacity:0;transform:translateY(16px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)}}
@@ -789,7 +797,7 @@ export default function App() {
       <div style={{padding:"20px",minHeight:"calc(100vh - 136px)"}} className="fade-in" key={page}>
         {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
-        {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} toast={toast}/>}
+        {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} toast={toast}/>}
         {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} activePartners={activePartners} onContentErrors={()=>setShowContentErrors(true)} toast={toast}/>}
       </div>
@@ -1131,9 +1139,114 @@ function ErrorPage({ sel, setSel, toast }) {
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 3 — REVENUE AT RISK
 ══════════════════════════════════════════════════════════════════════════ */
-function RevenuePage({ role, sel, setSel, toast }) {
+function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast }) {
+  const [view, setView] = useState("portfolio");
+
+  // Build account-specific lever list sorted by impact descending
+  const acctLevers = React.useMemo(() => {
+    if (!activeClient) return [];
+    const tenant = activeClient.name;
+    const partnerKey = (activePartners || [])
+      .filter(p => p !== "All Brands")
+      .map(p => `${tenant}|${p}`)
+      .find(k => ALL_LEVERS[k]) || null;
+    const buckets = (partnerKey && ALL_LEVERS[partnerKey]) || ALL_LEVERS[tenant] || DEFAULT_LEVERS;
+    return buckets.flatMap(b => b.levers)
+      .map(l => ({ ...l, impactNum: parseFloat((l.impact||"$0").replace(/[$K,]/g,"")) * (l.impact?.includes("K")?1000:1) }))
+      .sort((a,b) => b.impactNum - a.impactNum);
+  }, [activeClient, activePartners]);
+
+  const ST = { critical:{color:"#DC2626",bg:"#FEF2F2",label:"Critical"}, medium:{color:"#D97706",bg:"#FFFBEB",label:"At Risk"}, healthy:{color:"#059669",bg:"#F0FDF4",label:"Healthy"} };
+
   return (
     <div className="fade-in">
+      {/* Page header + toggle */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+        <div>
+          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue at Risk</h1>
+          <div style={{fontSize:12,color:C.t3,marginTop:4}}>
+            {view==="portfolio" ? "All enterprise accounts · Portfolio risk overview" : `${activeClient?.name} · ${(activePartners||[]).join(" + ")} · Account detail view`}
+          </div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{display:"flex",background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:9,padding:3,boxShadow:C.shadow}}>
+            {[["portfolio","Portfolio View"],["account","Account View"]].map(([k,l])=>(
+              <button key={k} onClick={()=>setView(k)}
+                style={{background:k===view?C.brand:"transparent",border:"none",borderRadius:7,
+                  padding:"6px 16px",fontSize:12,color:k===view?"#fff":C.t3,
+                  fontWeight:k===view?700:500,cursor:"pointer",transition:"all 0.15s"}}>{l}</button>
+            ))}
+          </div>
+          <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↓ Export to QBR</button>
+        </div>
+      </div>
+
+      {/* ── ACCOUNT VIEW ── */}
+      {view==="account" && (
+        <div>
+          <SH phase="PRIORITISE" title={`${activeClient?.short || activeClient?.name} · Revenue Risk by Lever`} ann="new"/>
+          {/* Summary strip */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
+            {[
+              ["CRITICAL LEVERS", acctLevers.filter(l=>l.status==="critical").length, C.red, acctLevers.filter(l=>l.status==="critical").reduce((s,l)=>s+l.impactNum,0)],
+              ["AT RISK LEVERS",  acctLevers.filter(l=>l.status==="medium").length,   C.amber, acctLevers.filter(l=>l.status==="medium").reduce((s,l)=>s+l.impactNum,0)],
+              ["HEALTHY LEVERS",  acctLevers.filter(l=>l.status==="healthy").length,  C.green, 0],
+            ].map(([label,count,color,risk])=>(
+              <div key={label} style={{background:`linear-gradient(145deg,${C.cardBg} 40%,${color}08 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${color}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,textAlign:"center"}}>
+                <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:8}}>{label}</div>
+                <div style={{fontSize:36,fontWeight:800,fontFamily:C.mono,color,letterSpacing:"-1px",lineHeight:1}}>{count}</div>
+                {risk>0 && <div style={{fontSize:11,color:C.t3,marginTop:6}}>${(risk/1000).toFixed(1)}K at risk</div>}
+              </div>
+            ))}
+          </div>
+          {/* Lever table */}
+          <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:12,boxShadow:C.shadow,overflow:"hidden"}}>
+            <div style={{padding:"10px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
+              <Phase label="PRIORITISE"/>
+              <span style={{fontSize:12,fontWeight:700,color:C.t1}}>16 Levers — Ranked by Revenue Impact</span>
+              <span style={{fontSize:11,color:C.t3,marginLeft:"auto"}}>{activeClient?.name}</span>
+            </div>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
+              <thead>
+                <tr style={{background:"#F8FAFC"}}>{["#","Lever","Domain","Status","Revenue at Risk","Health Score"].map(h=><th key={h} style={{padding:"8px 14px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`}}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {acctLevers.map((l,i)=>{
+                  const st = ST[l.status] || ST.healthy;
+                  return (
+                    <tr key={l.id} style={{borderBottom:`1px solid ${C.t6}`,background:i%2===0?"#fff":"#FAFBFD"}}>
+                      <td style={{padding:"9px 14px",color:C.t4,fontSize:11,fontFamily:C.mono,fontWeight:600}}>#{i+1}</td>
+                      <td style={{padding:"9px 14px"}}>
+                        <div style={{display:"flex",alignItems:"center",gap:6}}>
+                          <span style={{fontSize:14}}>{l.icon}</span>
+                          <span style={{fontSize:12,fontWeight:600,color:C.t1}}>{l.name}</span>
+                        </div>
+                      </td>
+                      <td style={{padding:"9px 14px",fontSize:11,color:C.t3}}>{l.domain||"—"}</td>
+                      <td style={{padding:"9px 14px"}}>
+                        <span style={{fontSize:11,fontWeight:700,color:st.color,background:st.bg,padding:"2px 8px",borderRadius:5}}>{st.label}</span>
+                      </td>
+                      <td style={{padding:"9px 14px",fontFamily:C.mono,fontWeight:700,fontSize:13,color:l.status==="critical"?C.red:l.status==="medium"?C.amber:C.t4}}>{l.impact}</td>
+                      <td style={{padding:"9px 14px"}}>
+                        <div style={{display:"flex",alignItems:"center",gap:7}}>
+                          <div style={{width:60,height:5,background:C.t6,borderRadius:3,overflow:"hidden"}}>
+                            <div style={{width:`${l.score}%`,height:"100%",background:l.score<40?C.red:l.score<70?C.amber:C.green,borderRadius:3}}/>
+                          </div>
+                          <span style={{fontFamily:C.mono,fontSize:11,color:C.t2}}>{l.score}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── PORTFOLIO VIEW (existing) ── */}
+      {view==="portfolio" && (
+      <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
         <div>
           <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue at Risk</h1>
@@ -1198,6 +1311,7 @@ function RevenuePage({ role, sel, setSel, toast }) {
           </Card>
         )}
       </div>
+      </div>)}
     </div>
   );
 }
