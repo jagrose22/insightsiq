@@ -87,6 +87,36 @@ function StatusChip({ s }) {
   </span>;
 }
 
+const PRODUCER_TIER = {
+  "Wyndham Hotels":        "top",
+  "IHG Hotels & Resorts":  "top",
+  "Choice Hotels":         "top",
+  "Hilton Worldwide":      "top",
+  "Marriott International":"top",
+  "Omni Hotels & Resorts": "mid",
+  "Hyatt Hotels":          "mid",
+  "Best Western Hotels":   "mid",
+};
+
+function ProducerTier({ name }) {
+  const t = PRODUCER_TIER[name] || "low";
+  const cfg = {
+    top: { label:"TOP PRODUCER",  color:C.green, bg:C.greenBg,  border:C.greenBorder  },
+    mid: { label:"MID PRODUCER",  color:C.amber, bg:C.amberBg,  border:C.amberBorder  },
+    low: { label:"LOW PRODUCER",  color:C.t3,    bg:"#F8FAFC",  border:C.border        },
+  }[t];
+  return (
+    <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:9,
+      fontFamily:C.mono,background:cfg.bg,color:cfg.color,
+      border:`1px solid ${cfg.border}`,borderRadius:4,
+      padding:"2px 8px",fontWeight:700,letterSpacing:0.8,whiteSpace:"nowrap"}}>
+      <span style={{width:5,height:5,borderRadius:"50%",background:cfg.color,
+        flexShrink:0,display:"inline-block"}}/>
+      {cfg.label}
+    </span>
+  );
+}
+
 function Trend({ v, invert=false }) {
   const good = invert ? v<0 : v>0;
   return <span style={{fontSize:10,color:good?C.green:C.red,fontFamily:C.mono,fontWeight:700,
@@ -896,6 +926,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
                   return (
                     <tr key={t.id} onClick={()=>setSel(t)} className={s?"tr-sel":"tr-hover"} style={{background:s?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",borderLeft:`3px solid ${s?C.brand:"transparent"}`,transition:"all 0.1s"}}>
                       <td style={{padding:"9px 12px",fontWeight:s?700:500,color:s?C.brand:C.t1,fontSize:12}}>{t.name}</td>
+                      <td style={{padding:"9px 12px"}}><ProducerTier name={t.name}/></td>
                       <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{t.type}</span></td>
                       <td style={{padding:"9px 12px"}}><Rag s={t.rag}/></td>
                       <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:{red:C.red,amber:C.amber,green:C.green}[t.rag]}}>{t.err}</td>
@@ -1277,7 +1308,9 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
                 const rc = r.risk>80?C.red:r.risk>50?C.amber:C.green;
                 return (
                   <tr key={r.tenant} onClick={()=>setSel(r)} className={isSel?"tr-sel":"tr-hover"} style={{background:isSel?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",borderLeft:`3px solid ${isSel?C.brand:"transparent"}`}}>
-                    <td style={{padding:"9px 12px",fontWeight:isSel?700:500,color:isSel?C.brand:C.t1,fontSize:12}}>{r.tenant}</td>
+                    <td style={{padding:"9px 12px",fontWeight:isSel?700:500,color:isSel?C.brand:C.t1,fontSize:12}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>{r.tenant}<ProducerTier name={r.tenant}/></div>
+                  </td>
                     <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:600,color:C.t2,fontSize:12}}>{r.arr}</td>
                     <td style={{padding:"9px 12px"}}><div style={{display:"flex",alignItems:"center",gap:7}}><div style={{width:56,height:6,background:C.t6,borderRadius:3,overflow:"hidden"}}><div style={{width:`${r.risk}%`,height:"100%",background:rc,borderRadius:3}}/></div><span style={{fontFamily:C.mono,fontSize:11,color:rc,fontWeight:700}}>{r.risk}</span></div></td>
                     <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{r.drivers[0]}</td>
@@ -1988,6 +2021,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                 📍 {tenant}
               </div>
             )}
+            {tenant && <ProducerTier name={tenant}/>}
           </div>
           <div style={{fontSize:12,color:C.t3}}>16 levers across 4 domains · Click any card to drill down</div>
         </div>
