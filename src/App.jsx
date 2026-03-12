@@ -1976,6 +1976,65 @@ function downloadLeverCSV(lever, tenantName) {
   URL.revokeObjectURL(url);
 }
 
+const ACCOUNT_PERFORMANCE = {
+  "Wyndham Hotels":        { bookings:42040, adr:"$94",  conv:"0.81%", channel:"HotelTonight",  yoy:-8  },
+  "IHG Hotels & Resorts":  { bookings:28300, adr:"$118", conv:"1.2%",  channel:"Hotel Tonight",  yoy:+2  },
+  "Omni Hotels & Resorts": { bookings:19400, adr:"$187", conv:"1.4%",  channel:"Agoda",          yoy:-4  },
+  "Choice Hotels":         { bookings:31200, adr:"$82",  conv:"0.79%", channel:"Hopper",         yoy:+6  },
+};
+
+function PropertyPerformanceCard({ tenant }) {
+  const [open, setOpen] = useState(false);
+  const d = ACCOUNT_PERFORMANCE[tenant];
+  return (
+    <div style={{marginBottom:18}}>
+      <button onClick={()=>setOpen(o=>!o)}
+        style={{display:"flex",alignItems:"center",justifyContent:"space-between",
+          width:"100%",background:"none",border:"none",cursor:"pointer",padding:0,
+          marginBottom: open ? 10 : 0}}>
+        <span style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",
+          letterSpacing:"0.07em"}}>Property Performance</span>
+        <span style={{fontSize:10,color:C.brand,fontWeight:600}}>
+          {open ? "▲ Hide" : "▼ Show"}
+        </span>
+      </button>
+      {open && (
+        d ? (
+          <div style={{background:"#F8FAFC",borderRadius:10,border:`1px solid ${C.border}`,
+            padding:"12px 14px"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px 16px"}}>
+              {[
+                ["Bookings (12 mo)", d.bookings.toLocaleString()],
+                ["ADR",              d.adr],
+                ["Conversion",       d.conv],
+                ["Top Channel",      d.channel],
+              ].map(([label, val]) => (
+                <div key={label}>
+                  <div style={{fontSize:10,color:C.t4,fontWeight:600,letterSpacing:0.4,
+                    textTransform:"uppercase",marginBottom:2}}>{label}</div>
+                  <div style={{fontSize:15,fontWeight:800,color:C.t1,
+                    fontFamily:C.mono}}>{val}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{marginTop:12,paddingTop:10,borderTop:`1px solid ${C.t6}`,
+              display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <span style={{fontSize:10,color:C.t4,fontWeight:600,textTransform:"uppercase",
+                letterSpacing:0.4}}>YoY Trend</span>
+              <Trend v={d.yoy} invert/>
+            </div>
+          </div>
+        ) : (
+          <div style={{background:"#F8FAFC",borderRadius:10,border:`1px solid ${C.border}`,
+            padding:"12px 14px",textAlign:"center",color:C.t3,fontSize:12,fontStyle:"italic"}}>
+            Performance data loading…
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
 function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const [fixStatus, setFixStatus]     = useState({});
@@ -2208,6 +2267,10 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                       </div>
                     ))}
                   </div>
+                  {/* Property Performance */}
+                  {(activeLever.status === "critical" || activeLever.status === "medium") && (
+                    <PropertyPerformanceCard tenant={tenant}/>
+                  )}
                   {/* Impact */}
                   <div style={{background:st.bg,border:`1px solid ${st.color}33`,borderRadius:10,padding:"12px 16px",marginBottom:22}}>
                     <div style={{fontSize:10,fontWeight:700,color:st.color,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Estimated Revenue Impact</div>
