@@ -209,7 +209,7 @@ function SH({ phase, title, ann, right, sub }) {
       <div style={{width:3,height:sub?32:20,background:p.color,borderRadius:2,flexShrink:0,marginTop:2}}/>
       <div style={{flex:1}}>
         <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-          <span style={{fontSize:13,fontWeight:700,color:C.t1,fontFamily:"'Syne',sans-serif"}}>{title}</span>
+          <span style={{fontSize:13,fontWeight:700,color:C.t1,fontFamily:"'DM Sans',sans-serif"}}>{title}</span>
           <Phase label={phase}/>
           {ann && <Ann type={ann}/>}
           {right && <div style={{marginLeft:"auto"}}>{right}</div>}
@@ -513,7 +513,7 @@ function ContentErrorModal({ onClose }) {
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
             <div>
               <div style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,0.7)",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:4}}>InsightsIQ · Content Quality Analysis</div>
-              <div style={{fontSize:18,fontWeight:800,color:"#FFFFFF",fontFamily:"'Syne',sans-serif",letterSpacing:"-0.3px"}}>Image Error Report — Wyndham Hotels</div>
+              <div style={{fontSize:18,fontWeight:800,color:"#FFFFFF",fontFamily:"'DM Sans',sans-serif",letterSpacing:"-0.3px"}}>Image Error Report — Wyndham Hotels</div>
               <div style={{fontSize:12,color:"rgba(255,255,255,0.75)",marginTop:4}}>{total} properties below image threshold · {WYNDHAM_CONTENT_ERRORS.length} brands · Source: Hotel Key + Tricept POC</div>
             </div>
             <button onClick={onClose} style={{background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.25)",color:"#fff",width:32,height:32,borderRadius:8,cursor:"pointer",fontSize:14,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>✕</button>
@@ -608,7 +608,7 @@ export default function App() {
   return (
     <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:C.pageBg,minHeight:"100vh",color:C.t1}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         ::-webkit-scrollbar{width:4px;height:4px}
         ::-webkit-scrollbar-track{background:transparent}
@@ -658,7 +658,7 @@ export default function App() {
         <div style={{display:"flex",alignItems:"center",gap:8,marginRight:4}}>
           <div style={{width:3,height:28,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
           <div style={{lineHeight:1}}>
-            <div style={{fontFamily:"'Syne',sans-serif",fontSize:15,fontWeight:800,color:"#FFF",letterSpacing:"-0.3px"}}>
+            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:800,color:"#FFF",letterSpacing:"-0.3px"}}>
               RG<span style={{color:"#A78BFA"}}>Insights</span>
             </div>
             <div style={{fontSize:8,color:"#6B7280",fontFamily:C.mono,letterSpacing:1.2,marginTop:1}}>InsightsIQ  v1.0</div>
@@ -853,7 +853,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
     <div className="fade-in">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
-          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",lineHeight:1}}>Health Overview</h1>
+          <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",lineHeight:1}}>Health Overview</h1>
           <div style={{fontSize:12,color:C.t3,marginTop:4}}>{isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants"}</div>
         </div>
         <div style={{display:"flex",gap:8}}>
@@ -992,7 +992,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
     <Card style={{display:"flex",flexDirection:"column",overflow:"hidden"}} selected>
       <div style={{padding:"14px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
-          <div style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",lineHeight:1.2,flex:1,marginRight:8}}>{row.name}</div>
+          <div style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",lineHeight:1.2,flex:1,marginRight:8}}>{row.name}</div>
           <Rag s={row.rag}/>
         </div>
         <div style={{fontSize:11,color:C.t3,marginBottom:10}}>ARR: <b style={{fontFamily:C.mono,color:C.t2}}>${row.arr}M</b> · Owner: {row.owner}{row.leversRed>0 && <span style={{marginLeft:8,color:C.red,fontWeight:700}}>{row.leversRed} lever{row.leversRed!==1?"s":""} critical</span>}</div>
@@ -1070,7 +1070,7 @@ function ErrorPage({ sel, setSel, toast }) {
     <div className="fade-in">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18}}>
         <div>
-          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Error Intelligence</h1>
+          <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Error Intelligence</h1>
           <div style={{fontSize:12,marginTop:4}}><span style={{color:C.red,fontWeight:700}}>These aren't system bugs — these are guests who couldn't book.</span><span style={{color:C.t3}}> Every error = a lost arrival.</span></div>
         </div>
         <button style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 14px",fontSize:12,color:C.t2}}>↓ Export</button>
@@ -1123,7 +1123,7 @@ function ErrorPage({ sel, setSel, toast }) {
           <Card key={sel.id} className="fade-in" style={{display:"flex",flexDirection:"column",overflow:"hidden"}}>
             <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div>
-                <div style={{fontSize:15,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",marginBottom:4}}>{sel.name}</div>
+                <div style={{fontSize:15,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",marginBottom:4}}>{sel.name}</div>
                 <div style={{fontSize:11,color:C.t3,display:"flex",alignItems:"center",gap:6}}><span>Type: <b>{sel.type}</b></span><span>·</span><span>{sel.freq} events</span><span>·</span><span>{sel.tenants} tenants</span><Ann type="backed"/></div>
               </div>
               <div style={{textAlign:"right"}}><Phase label="FIX"/><div style={{fontSize:24,fontWeight:800,fontFamily:C.mono,color:C.red,marginTop:4}}>{sel.impact}</div></div>
@@ -1198,7 +1198,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
       {/* Page header + toggle */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
         <div>
-          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue at Risk</h1>
+          <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue at Risk</h1>
           <div style={{fontSize:12,color:C.t3,marginTop:4}}>
             {view==="portfolio" ? "All enterprise accounts · Portfolio risk overview" : `${activeClient?.name} · ${(activePartners||[]).join(" + ")} · Account detail view`}
           </div>
@@ -1282,13 +1282,6 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
       {/* ── PORTFOLIO VIEW (existing) ── */}
       {view==="portfolio" && (
       <div>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
-        <div>
-          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue at Risk</h1>
-          <div style={{fontSize:12,color:C.t3,marginTop:4}}>Quantify and prioritise financial impact · {role==="exec"?"All tenants":"Your tenants"} · Renewal risk overlay</div>
-        </div>
-        <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↓ Export to QBR</button>
-      </div>
       <SH phase="SEE" title="Risk Summary" ann="new"/>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
         {[["TOTAL ARR AT RISK","$29.5M",C.red,"12 high-risk tenants"],["IMMINENT RENEWALS","3",C.amber,"<90 days · $16.1M combined"],["ARR PROTECTED (30d)","$2.1M",C.green,"via active playbooks · est."]].map(([l,v,c,s])=>(
@@ -1330,7 +1323,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
         {sel && (
           <Card key={sel.tenant} style={{padding:16,overflowY:"auto"}} selected>
             <Phase label="PROVE"/>
-            <div style={{fontSize:15,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif",margin:"10px 0 4px"}}>{sel.tenant}</div>
+            <div style={{fontSize:15,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",margin:"10px 0 4px"}}>{sel.tenant}</div>
             <div style={{fontSize:11,color:C.t3,marginBottom:14}}>ARR: <b style={{fontFamily:C.mono}}>${sel.arr}M</b> · Renewal: <b style={{color:C.amber}}>{sel.renewal}</b></div>
             <div style={{background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:10,padding:"12px",marginBottom:12}}>
               <div style={{fontSize:10,color:C.t3,fontWeight:600,textTransform:"uppercase",letterSpacing:0.5,marginBottom:8}}>Risk Score <Ann type="new"/></div>
@@ -1362,7 +1355,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
     <div className="fade-in">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
         <div>
-          <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Playbooks & Action Queue</h1>
+          <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Playbooks & Action Queue</h1>
           <div style={{fontSize:12,color:C.t3,marginTop:4}}>Operationalise remediation · Track recovery · Build preventive standards</div>
         </div>
         <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>+ New Action</button>
@@ -1501,7 +1494,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
                     <span style={{fontSize:18}}>{pl.icon}</span>
                     <div style={{flex:1}}>
                       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
-                        <span style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif"}}>{pl.label}</span>
+                        <span style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif"}}>{pl.label}</span>
                         <Phase label={pl.phase}/>
                         <span style={{fontSize:11,fontWeight:700,fontFamily:C.mono,
                           color:pl.badge,background:pl.badgeBg,
@@ -2361,7 +2354,7 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
-            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",margin:0}}>Revenue Recovery</h1>
+            <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",margin:0}}>Revenue Recovery</h1>
             <Phase label="PROVE"/>
             <ProducerTier name={tenant}/>
           </div>
@@ -2565,7 +2558,7 @@ function DistributionPage({ tenant, goLevers, toast }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
-            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",margin:0}}>Distribution Health</h1>
+            <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",margin:0}}>Distribution Health</h1>
             <Phase label="SEE"/>
             <ProducerTier name={tenant}/>
           </div>
@@ -2829,7 +2822,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
-            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue Cockpit</h1>
+            <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px"}}>Revenue Cockpit</h1>
             {tenant && (
               <div style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:7,padding:"4px 12px",fontSize:12,color:C.brand,fontWeight:700}}>
                 📍 {tenant}
@@ -3003,7 +2996,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                     style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t4,float:"right",padding:0,lineHeight:1}}>✕</button>
                   <div style={{marginBottom:22}}>
                     <div style={{fontSize:26,marginBottom:6}}>{activeLever.icon}</div>
-                    <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 8px",fontFamily:"'Syne',sans-serif"}}>{activeLever.name}</h2>
+                    <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 8px",fontFamily:"'DM Sans',sans-serif"}}>{activeLever.name}</h2>
                     <div style={{marginBottom:10}}>
                       <IssueTag leverId={activeLever.id} status={activeLever.status}/>
                     </div>
