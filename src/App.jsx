@@ -830,7 +830,7 @@ export default function App() {
         {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
-        {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} toast={toast}/>}
+        {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} activeClient={activeClient} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
         {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} activePartners={activePartners} onContentErrors={()=>setShowContentErrors(true)} toast={toast}/>}
       </div>
       <ToastHost/>
@@ -1354,7 +1354,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
 ══════════════════════════════════════════════════════════════════════════ */
-function PlaybooksPage({ tab, setTab, kanban, setKanban, toast }) {
+function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePartners, goLevers, toast }) {
   const kanbanCols = [["To Review","Unassigned","PRIORITISE"],["In Progress","InProgress","FIX"],["Proved","Mitigated","PROVE"],["Preventive","Active","PREVENT"]];
   return (
     <div className="fade-in">
@@ -1367,7 +1367,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, toast }) {
       </div>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:18}}>
         <div style={{display:"flex",background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:9,padding:3,gap:2,boxShadow:C.shadow}}>
-          {[["queue","Action Queue"],["library","Playbook Library"]].map(([k,l])=>(
+          {[["queue","Action Queue"],["smart","Smart Queues"],["library","Playbook Library"]].map(([k,l])=>(
             <button key={k} onClick={()=>setTab(k)} style={{background:tab===k?C.brand:"transparent",border:"none",borderRadius:7,padding:"6px 18px",fontSize:12,color:tab===k?"#fff":C.t3,fontWeight:tab===k?700:500,transition:"all 0.15s"}}>{l}</button>
           ))}
         </div>
@@ -1423,6 +1423,166 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, toast }) {
           })}
         </div>
       </>)}
+      {tab==="smart" && (() => {
+        // Build lever list for active account
+        const tenant = activeClient?.name || "";
+        const partnerKey = (activePartners || [])
+          .filter(p => p !== "All Brands")
+          .map(p => `${tenant}|${p}`)
+          .find(k => ALL_LEVERS[k]) || null;
+        const buckets = (partnerKey && ALL_LEVERS[partnerKey]) || ALL_LEVERS[tenant] || DEFAULT_LEVERS;
+        const levers = buckets.flatMap(b => b.levers);
+
+        const impactNum = l => parseFloat(l.impact.replace(/[^0-9.]/g,"")) * (l.impact.includes("K")?1000:1);
+        const tag = l => ISSUE_TAGS[l.id] || ["PIPE","RG Fix"];
+
+        const PLAYLISTS = [
+          {
+            id:"fix-week", icon:"⚡", label:"Fix This Week",
+            badge:C.red, badgeBg:C.redBg, badgeBdr:C.redBorder,
+            tagline:"Highest impact fixes — sorted by revenue at risk",
+            phase:"PRIORITISE",
+            items: levers.filter(l=>l.status==="critical")
+                         .sort((a,b)=>impactNum(b)-impactNum(a))
+                         .slice(0,8),
+          },
+          {
+            id:"rg-owns", icon:"🔧", label:"RateGain Owns",
+            badge:C.green, badgeBg:C.greenBg, badgeBdr:C.greenBorder,
+            tagline:"Actions RateGain can resolve without client dependency",
+            phase:"FIX",
+            items: levers.filter(l=>l.status!=="healthy" && tag(l)[1]==="RG Fix")
+                         .sort((a,b)=>impactNum(b)-impactNum(a))
+                         .slice(0,15),
+          },
+          {
+            id:"client-it", icon:"🏢", label:"Client IT Queue",
+            badge:C.amber, badgeBg:C.amberBg, badgeBdr:C.amberBorder,
+            tagline:"Escalations ready for your internal IT team",
+            phase:"FIX",
+            items: levers.filter(l=>l.status!=="healthy" && tag(l)[1]==="Client IT")
+                         .sort((a,b)=>impactNum(b)-impactNum(a))
+                         .slice(0,15),
+          },
+          {
+            id:"property", icon:"📋", label:"Property Outreach",
+            badge:C.blue, badgeBg:C.blueBg, badgeBdr:C.blueBorder,
+            tagline:"Properties that need direct outreach to resolve",
+            phase:"FIX",
+            items: levers.filter(l=>l.status!=="healthy" && tag(l)[1]==="Property")
+                         .sort((a,b)=>impactNum(b)-impactNum(a))
+                         .slice(0,15),
+          },
+          {
+            id:"quick-wins", icon:"✨", label:"Quick Wins",
+            badge:C.brand, badgeBg:C.brandDim, badgeBdr:C.brandBorder,
+            tagline:"Medium effort, meaningful return — act now",
+            phase:"SEE",
+            items: levers.filter(l=>l.status==="medium" && tag(l)[1]==="RG Fix" && impactNum(l)>=10000)
+                         .sort((a,b)=>impactNum(b)-impactNum(a))
+                         .slice(0,15),
+          },
+        ];
+
+        return (
+          <div>
+            <SH phase="PRIORITISE" title="Smart Queues" ann="new"
+              sub={`${tenant} · Pre-filtered action lists · ${levers.filter(l=>l.status!=="healthy").length} open issues`}/>
+            <div style={{display:"flex",flexDirection:"column",gap:16}}>
+              {PLAYLISTS.map(pl => (
+                <div key={pl.id} style={{background:C.cardBg,border:`1px solid ${C.border}`,
+                  borderRadius:14,overflow:"hidden",boxShadow:C.shadow}}>
+                  {/* Playlist header */}
+                  <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,
+                    background:`linear-gradient(135deg,${pl.badgeBg} 0%,${C.cardBg} 60%)`,
+                    display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:18}}>{pl.icon}</span>
+                    <div style={{flex:1}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2}}>
+                        <span style={{fontSize:14,fontWeight:800,color:C.t1,fontFamily:"'Syne',sans-serif"}}>{pl.label}</span>
+                        <Phase label={pl.phase}/>
+                        <span style={{fontSize:11,fontWeight:700,fontFamily:C.mono,
+                          color:pl.badge,background:pl.badgeBg,
+                          border:`1px solid ${pl.badgeBdr}`,borderRadius:99,
+                          padding:"1px 10px",marginLeft:2}}>
+                          {pl.items.length}
+                        </span>
+                      </div>
+                      <div style={{fontSize:11,color:C.t3,fontStyle:"italic"}}>{pl.tagline}</div>
+                    </div>
+                  </div>
+                  {/* Items */}
+                  {pl.items.length === 0 ? (
+                    <div style={{padding:"18px 20px",color:C.t3,fontSize:12,fontStyle:"italic",
+                      display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{fontSize:16}}>✓</span>
+                      No items in this queue for {tenant} — all clear!
+                    </div>
+                  ) : (
+                    <table style={{width:"100%",borderCollapse:"collapse"}}>
+                      <thead>
+                        <tr style={{background:"#F8FAFC"}}>
+                          {["Lever","Type","Owner","Revenue at Risk",""].map(h=>(
+                            <th key={h} style={{padding:"7px 16px",textAlign:"left",
+                              fontSize:10,fontWeight:700,color:C.t4,
+                              textTransform:"uppercase",letterSpacing:0.5,
+                              borderBottom:`1px solid ${C.border}`}}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pl.items.map((l,i) => {
+                          const [type, owner] = tag(l);
+                          const tc = ISSUE_TYPE_CFG[type]  || ISSUE_TYPE_CFG.PIPE;
+                          const oc = OWNER_CFG[owner]      || OWNER_CFG["Property"];
+                          const chip = (cfg, lbl) => (
+                            <span key={lbl} style={{display:"inline-flex",alignItems:"center",gap:3,
+                              fontSize:9,fontFamily:C.mono,background:cfg.bg,color:cfg.color,
+                              border:`1px solid ${cfg.border}`,borderRadius:4,
+                              padding:"2px 7px",fontWeight:700,letterSpacing:0.6,
+                              whiteSpace:"nowrap"}}>
+                              <span style={{width:4,height:4,borderRadius:"50%",
+                                background:cfg.color,display:"inline-block"}}/>
+                              {lbl}
+                            </span>
+                          );
+                          return (
+                            <tr key={l.id} style={{borderBottom:i<pl.items.length-1?`1px solid ${C.t6}`:"none",
+                              background:i%2===0?"#fff":"#FAFBFD"}}>
+                              <td style={{padding:"10px 16px"}}>
+                                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                                  <span style={{fontSize:14}}>{l.icon}</span>
+                                  <span style={{fontSize:13,fontWeight:600,color:C.t1}}>{l.name}</span>
+                                </div>
+                              </td>
+                              <td style={{padding:"10px 16px"}}>{chip(tc, type)}</td>
+                              <td style={{padding:"10px 16px"}}>{chip(oc, owner)}</td>
+                              <td style={{padding:"10px 16px",fontFamily:C.mono,fontWeight:700,
+                                fontSize:13,
+                                color:l.status==="critical"?C.red:C.amber}}>{l.impact}</td>
+                              <td style={{padding:"10px 16px"}}>
+                                <button onClick={()=>{goLevers(tenant);}}
+                                  style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,
+                                    borderRadius:7,padding:"4px 12px",fontSize:11,color:C.brand,
+                                    fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",
+                                    transition:"all 0.12s"}}
+                                  onMouseEnter={e=>{e.currentTarget.style.background=C.brand;e.currentTarget.style.color="#fff";}}
+                                  onMouseLeave={e=>{e.currentTarget.style.background=C.brandDim;e.currentTarget.style.color=C.brand;}}>
+                                  Open Lever →
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
       {tab==="library" && (<>
         <SH phase="PREVENT" title="Reusable Playbook Library" ann="ui"/>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
