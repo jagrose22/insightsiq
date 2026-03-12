@@ -2295,6 +2295,65 @@ function DistributionPage({ tenant, goLevers, toast }) {
   );
 }
 
+// Issue Classification: [issueType, ownership]
+// issueType: crs=blue, pipe=amber, ota=brand-purple
+// ownership: rg=green, client=amber, property=grey
+const ISSUE_TAGS = {
+  "ari-sync":    ["PIPE",    "RG Fix"   ],
+  "availability":["CRS",     "Client IT"],
+  "restrictions":["CRS",     "Property" ],
+  "rate-parity": ["PIPE",    "RG Fix"   ],
+  "error-rate":  ["PIPE",    "RG Fix"   ],
+  "activation":  ["OTA",     "RG Fix"   ],
+  "mapping":     ["PIPE",    "RG Fix"   ],
+  "images":      ["OTA",     "Property" ],
+  "channel-mix": ["OTA",     "Client IT"],
+  "cancellation":["OTA",     "Property" ],
+  // fallbacks for other levers
+  "commission":  ["PIPE",    "RG Fix"   ],
+  "amenities":   ["OTA",     "Property" ],
+  "descriptions":["OTA",     "Property" ],
+  "content-score":["OTA",    "Property" ],
+  "look-to-book":["CRS",     "Client IT"],
+  "booking-pace":["CRS",     "Client IT"],
+};
+
+const ISSUE_TYPE_CFG = {
+  PIPE: { bg:C.amberBg,  color:C.amber,  border:C.amberBorder  },
+  CRS:  { bg:C.blueBg,   color:C.blue,   border:C.blueBorder   },
+  OTA:  { bg:C.brandDim, color:C.brand,  border:C.brandBorder  },
+};
+const OWNER_CFG = {
+  "RG Fix":    { bg:C.greenBg, color:C.green, border:C.greenBorder },
+  "Client IT": { bg:C.amberBg, color:C.amber, border:C.amberBorder },
+  "Property":  { bg:"#F8FAFC", color:C.t3,    border:C.border      },
+};
+
+function IssueTag({ leverId, status }) {
+  if (status === "healthy") return null;
+  const pair = ISSUE_TAGS[leverId];
+  if (!pair) return null;
+  const [type, owner] = pair;
+  const tc = ISSUE_TYPE_CFG[type]  || ISSUE_TYPE_CFG.PIPE;
+  const oc = OWNER_CFG[owner]      || OWNER_CFG["Property"];
+  const chip = (cfg, label) => (
+    <span key={label} style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:9,
+      fontFamily:C.mono,background:cfg.bg,color:cfg.color,
+      border:`1px solid ${cfg.border}`,borderRadius:4,
+      padding:"2px 8px",fontWeight:700,letterSpacing:0.8,whiteSpace:"nowrap"}}>
+      <span style={{width:5,height:5,borderRadius:"50%",background:cfg.color,
+        flexShrink:0,display:"inline-block"}}/>
+      {label}
+    </span>
+  );
+  return (
+    <span style={{display:"inline-flex",alignItems:"center",gap:4}}>
+      {chip(tc, type)}
+      {chip(oc, owner)}
+    </span>
+  );
+}
+
 function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const [fixStatus, setFixStatus]     = useState({});
@@ -2431,9 +2490,13 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                   {/* Status stripe */}
                   <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:st.bar,borderRadius:"14px 14px 0 0"}}/>
                   {/* Icon + Name */}
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:lever.parityLink?6:14}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
                     <span style={{fontSize:17}}>{lever.icon}</span>
                     <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{lever.name}</span>
+                  </div>
+                  {/* Issue Classification Tags */}
+                  <div style={{marginBottom:lever.parityLink?6:12,minHeight:18}}>
+                    <IssueTag leverId={lever.id} status={lever.status}/>
                   </div>
                   {/* Parity↔Connectivity callout */}
                   {lever.parityLink && (
@@ -2504,7 +2567,10 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                     style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t4,float:"right",padding:0,lineHeight:1}}>✕</button>
                   <div style={{marginBottom:22}}>
                     <div style={{fontSize:26,marginBottom:6}}>{activeLever.icon}</div>
-                    <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 4px",fontFamily:"'Syne',sans-serif"}}>{activeLever.name}</h2>
+                    <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 8px",fontFamily:"'Syne',sans-serif"}}>{activeLever.name}</h2>
+                    <div style={{marginBottom:10}}>
+                      <IssueTag leverId={activeLever.id} status={activeLever.status}/>
+                    </div>
                     <p style={{fontSize:13,color:C.t3,margin:0,lineHeight:1.5}}>{activeLever.detail.description}</p>
                   </div>
                   {/* Score */}
