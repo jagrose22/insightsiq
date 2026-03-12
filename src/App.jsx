@@ -419,6 +419,7 @@ const PB_LIBRARY = [
 ];
 
 const TOP_NAV = [
+  { id:"dist",      label:"Distribution Health",  phase:"SEE"       },
   { id:"home",      label:"Health Overview",      phase:"SEE"       },
   { id:"errors",    label:"Error Intelligence",   phase:"PRIORITISE"},
   { id:"revenue",   label:"Revenue at Risk",      phase:"PRIORITISE"},
@@ -574,7 +575,7 @@ function ContentErrorModal({ onClose }) {
 }
 
 export default function App() {
-  const [page, setPage]             = useState("home");
+  const [page, setPage]             = useState("dist");
   const [role, setRole]             = useState("exec");
   const [showContentErrors, setShowContentErrors] = useState(false);
   const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
@@ -825,6 +826,7 @@ export default function App() {
       <LoopBar active={loopPhase}/>
 
       <div style={{padding:"20px",minHeight:"calc(100vh - 136px)"}} className="fade-in" key={page}>
+        {page==="dist"     && <DistributionPage tenant={activeClient.name} goLevers={goLevers} toast={toast}/>}
         {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
@@ -1976,6 +1978,67 @@ function downloadLeverCSV(lever, tenantName) {
   URL.revokeObjectURL(url);
 }
 
+const DIST_HEALTH_DATA = {
+  "Wyndham Hotels": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"42,040", rag:"green"  },
+      { label:"Cancellation Rate", value:"8.3%",   rag:"amber"  },
+      { label:"Active Partners",   value:"2 of 4", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"15.2",   rag:"red"    },
+    ],
+    grossTrend: [6073,5840,5290,5680,5100,4890,4510,4220],
+    netTrend:   [5550,5300,4820,5190,4660,4470,4120,3880],
+    trendLabel: "▼ 8% vs prior period",
+    partners: [
+      { name:"HotelTonight",  contribution:"68%", errorRate:"4.1%", rag:"green" },
+      { name:"Tricept",       contribution:"32%", errorRate:"28.4%",rag:"red"   },
+    ],
+  },
+  "IHG Hotels & Resorts": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"28,300", rag:"green"  },
+      { label:"Cancellation Rate", value:"0%",     rag:"green"  },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"5.6",    rag:"amber"  },
+    ],
+    grossTrend: [3200,3400,3550,3800,3700,3900,4100,4200],
+    netTrend:   [3200,3400,3550,3800,3700,3900,4100,4200],
+    trendLabel: "▲ 2% vs prior period",
+    partners: [
+      { name:"Hotel Tonight", contribution:"100%", errorRate:"5.6%", rag:"amber" },
+    ],
+  },
+  "Omni Hotels & Resorts": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"19,400", rag:"green"  },
+      { label:"Cancellation Rate", value:"13%",    rag:"amber"  },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"8.1",    rag:"amber"  },
+    ],
+    grossTrend: [2300,2450,2600,2550,2400,2380,2200,2150],
+    netTrend:   [2000,2130,2260,2220,2090,2070,1910,1870],
+    trendLabel: "▼ 4% vs prior period",
+    partners: [
+      { name:"Agoda", contribution:"100%", errorRate:"8.1%", rag:"amber" },
+    ],
+  },
+  "Choice Hotels": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"31,200", rag:"green"  },
+      { label:"Cancellation Rate", value:"6.1%",   rag:"amber"  },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"3.4",    rag:"green"  },
+    ],
+    grossTrend: [3400,3600,3750,3900,4100,4300,4200,4500],
+    netTrend:   [3190,3380,3520,3660,3850,4040,3940,4220],
+    trendLabel: "▲ 6% vs prior period",
+    partners: [
+      { name:"Agoda",          contribution:"78%", errorRate:"2.1%",  rag:"green" },
+      { name:"Hopper",         contribution:"22%", errorRate:"18.7%", rag:"red"   },
+    ],
+  },
+};
+
 const ACCOUNT_PERFORMANCE = {
   "Wyndham Hotels":        { bookings:42040, adr:"$94",  conv:"0.81%", channel:"HotelTonight",  yoy:-8  },
   "IHG Hotels & Resorts":  { bookings:28300, adr:"$118", conv:"1.2%",  channel:"Hotel Tonight",  yoy:+2  },
@@ -2031,6 +2094,193 @@ function PropertyPerformanceCard({ tenant }) {
           </div>
         )
       )}
+    </div>
+  );
+}
+
+function DistributionPage({ tenant, goLevers, toast }) {
+  const d = DIST_HEALTH_DATA[tenant];
+  const ragColor = { green:C.green, amber:C.amber, red:C.red };
+  const ragBg    = { green:C.greenBg, amber:C.amberBg, red:"#FEF2F2" };
+  const ragBdr   = { green:C.greenBorder, amber:C.amberBorder, red:C.redBorder };
+
+  if (!d) return (
+    <div className="fade-in" style={{padding:40,textAlign:"center",color:C.t3}}>
+      <div style={{fontSize:32,marginBottom:12}}>📡</div>
+      <div style={{fontSize:16,fontWeight:700,color:C.t1,marginBottom:6}}>Distribution data loading</div>
+      <div style={{fontSize:13}}>Full health data available for Wyndham, IHG, Omni and Choice.</div>
+    </div>
+  );
+
+  const w = 320, h = 80;
+  const allVals = [...d.grossTrend, ...d.netTrend];
+  const mn = Math.min(...allVals), mx = Math.max(...allVals), rng = mx - mn || 1;
+  const pts = (arr) => arr.map((v,i) =>
+    `${(i/(arr.length-1))*w},${h-((v-mn)/rng)*(h-10)-5}`).join(" ");
+  const grossPts = pts(d.grossTrend);
+  const netPts   = pts(d.netTrend);
+  const months   = ["Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb"];
+  const lastGY   = h-((d.grossTrend[d.grossTrend.length-1]-mn)/rng)*(h-10)-5;
+  const lastNY   = h-((d.netTrend[d.netTrend.length-1]-mn)/rng)*(h-10)-5;
+
+  return (
+    <div className="fade-in">
+      {/* Page header */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
+            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",margin:0}}>Distribution Health</h1>
+            <Phase label="SEE"/>
+            <ProducerTier name={tenant}/>
+          </div>
+          <div style={{fontSize:12,color:C.t3}}>Current state · {tenant} · RG InsightsIQ signal layer</div>
+        </div>
+        <button onClick={()=>goLevers(tenant)}
+          style={{background:C.brand,border:"none",borderRadius:8,padding:"8px 18px",
+            fontSize:13,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`,cursor:"pointer"}}>
+          → 16-Lever Analysis
+        </button>
+      </div>
+
+      {/* 1. Health Snapshot Bar */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:18}}>
+        {d.kpis.map(k => (
+          <div key={k.label} style={{background:C.cardBg,border:`1px solid ${ragBdr[k.rag]}`,
+            borderTop:`3px solid ${ragColor[k.rag]}`,borderRadius:12,padding:"16px 18px",
+            boxShadow:C.shadow}}>
+            <div style={{fontSize:10,fontWeight:600,color:C.t3,textTransform:"uppercase",
+              letterSpacing:0.6,marginBottom:8}}>{k.label}</div>
+            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:ragColor[k.rag],
+              letterSpacing:"-1px",lineHeight:1}}>{k.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 2+3. Trend + Partners */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+
+        {/* Booking Trend Card */}
+        <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:12,
+          padding:"18px 20px",boxShadow:C.shadow}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+            <div>
+              <div style={{fontSize:12,fontWeight:700,color:C.t1}}>Booking Trend</div>
+              <div style={{fontSize:11,color:C.t3,marginTop:2}}>Gross vs Net · 8-month window</div>
+            </div>
+            <span style={{fontSize:11,fontWeight:700,fontFamily:C.mono,
+              color:d.trendLabel.startsWith("▲")?C.green:C.red}}>{d.trendLabel}</span>
+          </div>
+          {/* Dual-line sparkline */}
+          <div style={{position:"relative",marginBottom:10}}>
+            <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{overflow:"visible",display:"block"}}>
+              {/* Fill between lines — cancellation gap */}
+              <polygon
+                points={`${grossPts} ${pts(d.netTrend).split(" ").reverse().join(" ")}`}
+                fill={C.red} fillOpacity={0.07}/>
+              {/* Gross line */}
+              <polyline points={grossPts} fill="none" stroke={C.brand} strokeWidth={2}
+                strokeLinejoin="round" strokeLinecap="round" strokeDasharray="5 3"/>
+              <circle cx={w} cy={lastGY} r={3} fill={C.cardBg} stroke={C.brand} strokeWidth={2}/>
+              {/* Net line */}
+              <polyline points={netPts} fill="none" stroke={C.green} strokeWidth={2.5}
+                strokeLinejoin="round" strokeLinecap="round"/>
+              <circle cx={w} cy={lastNY} r={3.5} fill={C.cardBg} stroke={C.green} strokeWidth={2}/>
+            </svg>
+          </div>
+          {/* Month labels */}
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}>
+            {months.map(m => <span key={m} style={{fontSize:9,color:C.t4,fontFamily:C.mono}}>{m}</span>)}
+          </div>
+          {/* Legend */}
+          <div style={{display:"flex",gap:16}}>
+            {[[C.brand,"Gross bookings","5 3"],[C.green,"Net bookings",""]].map(([c,l,dash])=>(
+              <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
+                <svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke={c} strokeWidth="2" strokeDasharray={dash}/></svg>
+                <span style={{fontSize:10,color:C.t3}}>{l}</span>
+              </div>
+            ))}
+            <div style={{display:"flex",alignItems:"center",gap:5}}>
+              <div style={{width:12,height:8,background:C.red,opacity:0.2,borderRadius:1}}/>
+              <span style={{fontSize:10,color:C.t3}}>Cancellation gap</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Partner Contribution Panel */}
+        <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:12,
+          boxShadow:C.shadow,overflow:"hidden"}}>
+          <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,
+            display:"flex",alignItems:"center",gap:8}}>
+            <Phase label="SEE"/>
+            <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Partner Contribution</span>
+            <span style={{fontSize:11,color:C.t3,marginLeft:"auto"}}>{d.partners.length} active partner{d.partners.length>1?"s":""}</span>
+          </div>
+          <table style={{width:"100%",borderCollapse:"collapse"}}>
+            <thead>
+              <tr style={{background:"#F8FAFC"}}>
+                {["Partner","Contribution","Error Rate"].map(h => (
+                  <th key={h} style={{padding:"8px 16px",textAlign:"left",fontSize:10,
+                    fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:0.5,
+                    borderBottom:`1px solid ${C.border}`}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {d.partners.map((p,i) => (
+                <tr key={p.name} style={{borderBottom:i<d.partners.length-1?`1px solid ${C.t6}`:"none",
+                  background:i%2===0?"#fff":"#FAFBFD"}}>
+                  <td style={{padding:"12px 16px",fontSize:13,fontWeight:600,color:C.t1}}>{p.name}</td>
+                  <td style={{padding:"12px 16px"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <div style={{width:60,height:5,background:C.t6,borderRadius:3}}>
+                        <div style={{width:p.contribution,height:"100%",background:C.brand,borderRadius:3}}/>
+                      </div>
+                      <span style={{fontSize:12,fontWeight:700,fontFamily:C.mono,color:C.t1}}>{p.contribution}</span>
+                    </div>
+                  </td>
+                  <td style={{padding:"12px 16px"}}>
+                    <span style={{fontSize:12,fontWeight:700,fontFamily:C.mono,
+                      color:ragColor[p.rag],background:ragBg[p.rag],
+                      border:`1px solid ${ragBdr[p.rag]}`,borderRadius:5,
+                      padding:"2px 8px"}}>{p.errorRate}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Bottom note */}
+          {d.partners.some(p=>p.rag==="red") && (
+            <div style={{padding:"10px 16px",background:"#FEF2F2",borderTop:`1px solid ${C.redBorder}`,
+              fontSize:11,color:C.red,fontWeight:600}}>
+              ⚠ High error rate detected — see 16-Lever Grid for root cause
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 4. Bridge CTA */}
+      <div style={{background:`linear-gradient(135deg,${C.brandDim} 0%,#EDE9FE 100%)`,
+        border:`1px solid ${C.brandBorder}`,borderRadius:14,padding:"22px 28px",
+        display:"flex",alignItems:"center",justifyContent:"space-between",
+        boxShadow:`0 2px 12px ${C.brand}18`}}>
+        <div>
+          <div style={{fontSize:11,fontWeight:700,color:C.brand,textTransform:"uppercase",
+            letterSpacing:"0.07em",marginBottom:6}}>RateIQ · Distribution → Action</div>
+          <div style={{fontSize:15,fontWeight:700,color:C.t1,marginBottom:4}}>
+            Distribution health identifies where revenue is leaking.
+          </div>
+          <div style={{fontSize:13,color:C.t3}}>
+            The 16-Lever Grid shows you what to fix first.
+          </div>
+        </div>
+        <button onClick={()=>goLevers(tenant)}
+          style={{background:C.brand,border:"none",borderRadius:10,
+            padding:"12px 24px",fontSize:14,color:"#fff",fontWeight:800,
+            boxShadow:`0 4px 16px ${C.brand}55`,cursor:"pointer",
+            whiteSpace:"nowrap",flexShrink:0}}>
+          → View 16-Lever Analysis
+        </button>
+      </div>
     </div>
   );
 }
