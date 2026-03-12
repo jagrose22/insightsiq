@@ -424,6 +424,7 @@ const TOP_NAV = [
   { id:"errors",    label:"Error Intelligence",   phase:"PRIORITISE"},
   { id:"revenue",   label:"Revenue at Risk",      phase:"PRIORITISE"},
   { id:"playbooks", label:"Playbooks & Queue",    phase:"FIX"       },
+  { id:"recovery",  label:"Revenue Recovery",    phase:"PROVE"     },
   { id:"levers",    label:"16-Lever Grid",        phase:"SEE"       },
   { id:"ltb",       label:"Look-to-Book",         stub:true         },
   { id:"qbr",       label:"Reporting / QBR",      stub:true         },
@@ -831,6 +832,7 @@ export default function App() {
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} activeClient={activeClient} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
+        {page==="recovery" && <RecoveryPage activeClient={activeClient} goLevers={goLevers} toast={toast}/>}
         {page==="levers"   && <LeversPage tenant={leversFor || activeClient.name} setTenant={setLeversFor} activePartners={activePartners} onContentErrors={()=>setShowContentErrors(true)} toast={toast}/>}
       </div>
       <ToastHost/>
@@ -2254,6 +2256,280 @@ function PropertyPerformanceCard({ tenant }) {
           </div>
         )
       )}
+    </div>
+  );
+}
+
+/* ── Revenue Recovery data ── */
+const RECOVERY_DATA = {
+  "Wyndham Hotels": {
+    pocStart:"Jan 2026", monthsIn:3,
+    forecastBookings:80,  forecastRevenue:"$7,520",
+    realizedBookings:47,  realizedRevenue:"$4,418",
+    progress:59,
+    baseline:"Dec 2025",
+    monthly:[12, 21, 35, 47],  // realized bookings per month
+    forecast:80,               // flat forecast line
+    pillars:[
+      { name:"ARI",           fixed:2, total:4, bookings:18, revenue:"$1,692", rag:"green" },
+      { name:"Errors",        fixed:3, total:4, bookings:16, revenue:"$1,504", rag:"green" },
+      { name:"Content",       fixed:1, total:4, bookings:8,  revenue:"$752",   rag:"amber" },
+      { name:"Look-to-Book",  fixed:0, total:4, bookings:0,  revenue:"—",      rag:"grey"  },
+    ],
+  },
+  "IHG Hotels & Resorts": {
+    pocStart:"Nov 2025", monthsIn:4,
+    forecastBookings:55,  forecastRevenue:"$6,490",
+    realizedBookings:61,  realizedRevenue:"$7,198",
+    progress:110,
+    baseline:"Oct 2025",
+    monthly:[18, 38, 55, 61],
+    forecast:55,
+    pillars:[
+      { name:"ARI",           fixed:3, total:4, bookings:24, revenue:"$2,832", rag:"green" },
+      { name:"Errors",        fixed:2, total:4, bookings:20, revenue:"$2,360", rag:"green" },
+      { name:"Content",       fixed:2, total:4, bookings:12, revenue:"$1,416", rag:"green" },
+      { name:"Look-to-Book",  fixed:1, total:4, bookings:5,  revenue:"$590",   rag:"amber" },
+    ],
+  },
+  "Omni Hotels & Resorts": {
+    pocStart:"Feb 2026", monthsIn:2,
+    forecastBookings:40,  forecastRevenue:"$7,480",
+    realizedBookings:28,  realizedRevenue:"$5,236",
+    progress:70,
+    baseline:"Jan 2026",
+    monthly:[11, 28],
+    forecast:40,
+    pillars:[
+      { name:"ARI",           fixed:2, total:4, bookings:14, revenue:"$2,618", rag:"green" },
+      { name:"Errors",        fixed:1, total:4, bookings:9,  revenue:"$1,683", rag:"amber" },
+      { name:"Content",       fixed:1, total:4, bookings:5,  revenue:"$935",   rag:"amber" },
+      { name:"Look-to-Book",  fixed:0, total:4, bookings:0,  revenue:"—",      rag:"grey"  },
+    ],
+  },
+  "Choice Hotels": {
+    pocStart:"Oct 2025", monthsIn:5,
+    forecastBookings:95,  forecastRevenue:"$7,790",
+    realizedBookings:88,  realizedRevenue:"$7,216",
+    progress:93,
+    baseline:"Sep 2025",
+    monthly:[28, 51, 70, 82, 88],
+    forecast:95,
+    pillars:[
+      { name:"ARI",           fixed:3, total:4, bookings:36, revenue:"$2,952", rag:"green" },
+      { name:"Errors",        fixed:3, total:4, bookings:29, revenue:"$2,378", rag:"green" },
+      { name:"Content",       fixed:2, total:4, bookings:16, revenue:"$1,312", rag:"green" },
+      { name:"Look-to-Book",  fixed:1, total:4, bookings:7,  revenue:"$574",   rag:"amber" },
+    ],
+  },
+};
+
+function RecoveryPage({ activeClient, goLevers, toast }) {
+  const tenant = activeClient?.name || "";
+  const d = RECOVERY_DATA[tenant];
+
+  if (!d) return (
+    <div className="fade-in" style={{padding:40,textAlign:"center",color:C.t3}}>
+      <div style={{fontSize:32,marginBottom:12}}>📊</div>
+      <div style={{fontSize:16,fontWeight:700,color:C.t1,marginBottom:6}}>Recovery tracking not yet active</div>
+      <div style={{fontSize:13}}>Full uplift data available for Wyndham, IHG, Omni and Choice.</div>
+    </div>
+  );
+
+  // Build bar chart SVG — bars for realized, dashed line for forecast
+  const BAR_W = 560, BAR_H = 120;
+  const n = d.monthly.length;
+  const barW = Math.floor((BAR_W - 40) / n) - 8;
+  const maxVal = Math.max(d.forecast * 1.2, ...d.monthly);
+  const barH = (v) => Math.max(4, ((v / maxVal) * (BAR_H - 24)));
+  const forecastY = BAR_H - 16 - ((d.forecast / maxVal) * (BAR_H - 24));
+  const monthLabels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  // derive month labels from pocStart
+  const startMonthIdx = monthLabels.indexOf(d.pocStart.split(" ")[0]);
+  const barLabels = d.monthly.map((_,i) => monthLabels[(startMonthIdx + i) % 12]);
+
+  const ragColor = { green:C.green, amber:C.amber, grey:C.t3 };
+  const ragBg    = { green:C.greenBg, amber:C.amberBg, grey:"#F8FAFC" };
+  const ragBdr   = { green:C.greenBorder, amber:C.amberBorder, grey:C.border };
+
+  const pct = Math.min(d.progress, 100);
+  const isOver = d.progress > 100;
+
+  return (
+    <div className="fade-in">
+      {/* Header */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4}}>
+            <h1 style={{fontFamily:"'Syne',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",margin:0}}>Revenue Recovery</h1>
+            <Phase label="PROVE"/>
+            <ProducerTier name={tenant}/>
+          </div>
+          <div style={{fontSize:12,color:C.t3}}>Program scorecard · {tenant} · POC started {d.pocStart}</div>
+        </div>
+        <button onClick={()=>toast("QBR export queued","info")}
+          style={{background:C.brand,border:"none",borderRadius:8,padding:"8px 18px",
+            fontSize:13,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`,cursor:"pointer"}}>
+          ↓ Export to QBR
+        </button>
+      </div>
+
+      {/* 1. Program Scorecard */}
+      <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,
+        padding:"20px 24px",marginBottom:16,boxShadow:C.shadow}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+          <Phase label="PROVE"/>
+          <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Program Scorecard</span>
+          <Ann type="backed"/>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:20}}>
+          {[
+            ["POC Start Date",         d.pocStart,                       C.brand ],
+            ["Forecast (monthly)",     `+${d.forecastBookings} bookings · ${d.forecastRevenue}`, C.t2 ],
+            ["Realized to Date",       `+${d.realizedBookings} bookings · ${d.realizedRevenue}`, isOver?C.green:C.amber ],
+            ["Recovery Progress",      `${d.progress}%`,                 isOver?C.green:d.progress>=70?C.amber:C.red ],
+          ].map(([label,value,color])=>(
+            <div key={label}>
+              <div style={{fontSize:10,fontWeight:600,color:C.t4,textTransform:"uppercase",
+                letterSpacing:0.5,marginBottom:6}}>{label}</div>
+              <div style={{fontSize:14,fontWeight:800,fontFamily:C.mono,color,lineHeight:1.3}}>{value}</div>
+            </div>
+          ))}
+        </div>
+        {/* Progress bar */}
+        <div style={{marginBottom:10}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+            <span style={{fontSize:11,color:C.t3}}>Recovery Progress vs Forecast</span>
+            <span style={{fontSize:11,fontWeight:700,fontFamily:C.mono,
+              color:isOver?C.green:d.progress>=70?C.amber:C.red}}>{d.progress}%</span>
+          </div>
+          <div style={{height:10,background:C.t6,borderRadius:99,overflow:"hidden"}}>
+            <div style={{width:`${pct}%`,height:"100%",borderRadius:99,
+              background:isOver?C.green:d.progress>=70?C.amber:C.red,
+              transition:"width 0.8s ease"}}/>
+          </div>
+        </div>
+        <div style={{fontSize:11,color:C.t4,fontStyle:"italic"}}>
+          Baseline established {d.baseline}. All uplift measured against agreed pre-POC baseline.
+        </div>
+      </div>
+
+      {/* 2 + 3. Chart + Pillar Breakdown */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 420px",gap:14}}>
+
+        {/* Monthly Uplift Chart */}
+        <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,
+          padding:"18px 20px",boxShadow:C.shadow}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+            <Phase label="PROVE"/>
+            <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Monthly Uplift vs Forecast</span>
+          </div>
+          <div style={{fontSize:11,color:C.t3,marginBottom:16}}>
+            {d.monthsIn} months into program · Target: +{d.forecastBookings} bookings/mo
+          </div>
+          {/* SVG bar chart */}
+          <div style={{overflowX:"auto"}}>
+            <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
+              {/* Forecast dashed line */}
+              <line x1="20" y1={forecastY} x2={BAR_W - 20} y2={forecastY}
+                stroke={C.brand} strokeWidth="1.5" strokeDasharray="6 4" opacity="0.6"/>
+              <text x={BAR_W - 18} y={forecastY - 4} fontSize="9" fill={C.brand}
+                textAnchor="end" fontFamily="IBM Plex Mono" fontWeight="700">TARGET</text>
+              {/* Bars */}
+              {d.monthly.map((v, i) => {
+                const x = 20 + i * ((BAR_W - 40) / n);
+                const bh = barH(v);
+                const by = BAR_H - 16 - bh;
+                const isWin = v >= d.forecast;
+                return (
+                  <g key={i}>
+                    <rect x={x + 2} y={by} width={barW} height={bh}
+                      rx="4" fill={isWin ? C.green : C.blue} opacity="0.85"/>
+                    <text x={x + 2 + barW/2} y={BAR_H + 8} fontSize="9"
+                      textAnchor="middle" fill={C.t4} fontFamily="IBM Plex Mono">{barLabels[i]}</text>
+                    <text x={x + 2 + barW/2} y={by - 4} fontSize="9"
+                      textAnchor="middle" fill={C.t2} fontFamily="IBM Plex Mono" fontWeight="700">+{v}</text>
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
+          {/* Legend */}
+          <div style={{display:"flex",gap:16,marginTop:8}}>
+            {[[C.blue,"Realized uplift",""],[C.green,"Exceeded target",""],
+              [C.brand,"Forecast line","6 4"]].map(([c,l,dash])=>(
+              <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
+                {dash ? (
+                  <svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke={c} strokeWidth="1.5" strokeDasharray={dash}/></svg>
+                ) : (
+                  <div style={{width:12,height:10,background:c,borderRadius:2,opacity:0.85}}/>
+                )}
+                <span style={{fontSize:10,color:C.t3}}>{l}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Pillar Breakdown Table */}
+        <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,
+          boxShadow:C.shadow,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,
+            display:"flex",alignItems:"center",gap:8}}>
+            <Phase label="PRIORITISE"/>
+            <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Uplift by Pillar</span>
+          </div>
+          <table style={{width:"100%",borderCollapse:"collapse",flex:1}}>
+            <thead>
+              <tr style={{background:"#F8FAFC"}}>
+                {["Pillar","Levers Fixed","Bookings/mo","Revenue"].map(h=>(
+                  <th key={h} style={{padding:"8px 14px",textAlign:"left",fontSize:10,
+                    fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:0.4,
+                    borderBottom:`1px solid ${C.border}`}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {d.pillars.map((p,i)=>(
+                <tr key={p.name} style={{borderBottom:i<d.pillars.length-1?`1px solid ${C.t6}`:"none",
+                  background:i%2===0?"#fff":"#FAFBFD"}}>
+                  <td style={{padding:"12px 14px"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>
+                      <div style={{width:8,height:8,borderRadius:"50%",
+                        background:ragColor[p.rag],flexShrink:0}}/>
+                      <span style={{fontSize:13,fontWeight:600,color:C.t1}}>{p.name}</span>
+                    </div>
+                  </td>
+                  <td style={{padding:"12px 14px"}}>
+                    <button onClick={()=>goLevers(tenant)}
+                      style={{background:ragBg[p.rag],border:`1px solid ${ragBdr[p.rag]}`,
+                        borderRadius:6,padding:"3px 10px",fontSize:11,
+                        color:ragColor[p.rag],fontWeight:700,fontFamily:C.mono,
+                        cursor:"pointer",whiteSpace:"nowrap"}}>
+                      {p.fixed} of {p.total}
+                    </button>
+                  </td>
+                  <td style={{padding:"12px 14px",fontFamily:C.mono,fontSize:13,
+                    fontWeight:700,color:p.bookings>0?C.green:C.t4}}>
+                    {p.bookings>0?`+${p.bookings}`:"—"}
+                  </td>
+                  <td style={{padding:"12px 14px",fontFamily:C.mono,fontSize:13,
+                    fontWeight:700,color:p.revenue!=="—"?C.green:C.t4}}>
+                    {p.revenue!=="—"?p.revenue:"—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Totals row */}
+          <div style={{padding:"12px 14px",borderTop:`2px solid ${C.border}`,
+            background:"#F8FAFC",display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr"}}>
+            <span style={{fontSize:11,fontWeight:700,color:C.t2}}>Total</span>
+            <span style={{fontSize:11,color:C.t4,fontFamily:C.mono}}>{d.pillars.reduce((s,p)=>s+p.fixed,0)} levers</span>
+            <span style={{fontSize:11,fontWeight:700,fontFamily:C.mono,color:C.green}}>+{d.realizedBookings}/mo</span>
+            <span style={{fontSize:11,fontWeight:700,fontFamily:C.mono,color:C.green}}>{d.realizedRevenue}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
