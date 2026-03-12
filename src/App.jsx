@@ -2040,10 +2040,10 @@ const DIST_HEALTH_DATA = {
 };
 
 const ACCOUNT_PERFORMANCE = {
-  "Wyndham Hotels":        { bookings:42040, adr:"$94",  conv:"0.81%", channel:"HotelTonight",  yoy:-8  },
-  "IHG Hotels & Resorts":  { bookings:28300, adr:"$118", conv:"1.2%",  channel:"Hotel Tonight",  yoy:+2  },
-  "Omni Hotels & Resorts": { bookings:19400, adr:"$187", conv:"1.4%",  channel:"Agoda",          yoy:-4  },
-  "Choice Hotels":         { bookings:31200, adr:"$82",  conv:"0.79%", channel:"Hopper",         yoy:+6  },
+  "Wyndham Hotels":        { bookings:42040, revenue:"$3.96M", cancelRate:"8.3%",  channel:"Hotel Tonight", yoy:-8 },
+  "IHG Hotels & Resorts":  { bookings:28300, revenue:"$3.34M", cancelRate:"4.1%",  channel:"Hotel Tonight", yoy:+2 },
+  "Omni Hotels & Resorts": { bookings:19400, revenue:"$3.63M", cancelRate:"6.2%",  channel:"Agoda",         yoy:-4 },
+  "Choice Hotels":         { bookings:31200, revenue:"$2.56M", cancelRate:"5.8%",  channel:"Hopper",        yoy:+6 },
 };
 
 function PropertyPerformanceCard({ tenant }) {
@@ -2065,11 +2065,11 @@ function PropertyPerformanceCard({ tenant }) {
         d ? (
           <div style={{background:"#F8FAFC",borderRadius:10,border:`1px solid ${C.border}`,
             padding:"12px 14px"}}>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px 16px"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px 16px",marginBottom:12}}>
               {[
                 ["Bookings (12 mo)", d.bookings.toLocaleString()],
-                ["ADR",              d.adr],
-                ["Conversion",       d.conv],
+                ["Net Revenue",      d.revenue],
+                ["Cancellation Rate",d.cancelRate],
                 ["Top Channel",      d.channel],
               ].map(([label, val]) => (
                 <div key={label}>
@@ -2080,7 +2080,7 @@ function PropertyPerformanceCard({ tenant }) {
                 </div>
               ))}
             </div>
-            <div style={{marginTop:12,paddingTop:10,borderTop:`1px solid ${C.t6}`,
+            <div style={{paddingTop:10,borderTop:`1px solid ${C.t6}`,
               display:"flex",alignItems:"center",justifyContent:"space-between"}}>
               <span style={{fontSize:10,color:C.t4,fontWeight:600,textTransform:"uppercase",
                 letterSpacing:0.4}}>YoY Trend</span>
@@ -2143,6 +2143,11 @@ function DistributionPage({ tenant, goLevers, toast }) {
       </div>
 
       {/* 1. Health Snapshot Bar */}
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+        <span style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",
+          letterSpacing:"0.07em"}}>Health Snapshot</span>
+        <ProducerTier name={tenant}/>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:18}}>
         {d.kpis.map(k => (
           <div key={k.label} style={{background:C.cardBg,border:`1px solid ${ragBdr[k.rag]}`,
@@ -2229,7 +2234,12 @@ function DistributionPage({ tenant, goLevers, toast }) {
               {d.partners.map((p,i) => (
                 <tr key={p.name} style={{borderBottom:i<d.partners.length-1?`1px solid ${C.t6}`:"none",
                   background:i%2===0?"#fff":"#FAFBFD"}}>
-                  <td style={{padding:"12px 16px",fontSize:13,fontWeight:600,color:C.t1}}>{p.name}</td>
+                  <td style={{padding:"12px 16px"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7,flexWrap:"wrap"}}>
+                      <span style={{fontSize:13,fontWeight:600,color:C.t1}}>{p.name}</span>
+                      <ProducerTier name={tenant}/>
+                    </div>
+                  </td>
                   <td style={{padding:"12px 16px"}}>
                     <div style={{display:"flex",alignItems:"center",gap:8}}>
                       <div style={{width:60,height:5,background:C.t6,borderRadius:3}}>
