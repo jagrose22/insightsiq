@@ -3077,20 +3077,34 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
         <>
           <div onClick={() => setActivePanel(null)}
             style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.08)",zIndex:400,animation:"fadeIn 0.18s ease"}}/>
-          <div style={{position:"fixed",top:0,right:0,bottom:0,width:360,background:C.cardBg,boxShadow:C.shadowLg,zIndex:401,overflowY:"auto",animation:"fadeSlide 0.22s cubic-bezier(0.4,0,0.2,1)"}}>
+          <div style={{position:"fixed",top:50,right:0,bottom:0,width:360,background:C.cardBg,boxShadow:C.shadowLg,zIndex:401,overflowY:"auto",animation:"fadeSlide 0.22s cubic-bezier(0.4,0,0.2,1)"}}>
             {activeLever && (() => {
               const st = LEVER_STATUS_CFG[activeLever.status];
+              // Normalise detail — Wyndham uses object format, other accounts use flat array
+              const rawDetail = activeLever.detail;
+              const detail = Array.isArray(rawDetail)
+                ? {
+                    description: `${activeLever.name} — ${activeLever.impact} at risk`,
+                    breakdown: rawDetail.map(([label,value]) => ({label, value})),
+                    estimatedImpact: activeLever.impact,
+                    actions: ["Investigate","Download Report"],
+                  }
+                : rawDetail;
               return (
                 <div style={{padding:26}}>
-                  <button onClick={() => setActivePanel(null)}
-                    style={{background:"none",border:"none",cursor:"pointer",fontSize:18,color:C.t4,float:"right",padding:0,lineHeight:1}}>✕</button>
-                  <div style={{marginBottom:22}}>
-                    <div style={{fontSize:26,marginBottom:6}}>{activeLever.icon}</div>
-                    <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 8px",fontFamily:"'DM Sans',sans-serif"}}>{activeLever.name}</h2>
-                    <div style={{marginBottom:10}}>
+                  {/* Header row: close button + name */}
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
+                    <div style={{flex:1,paddingRight:12}}>
+                      <div style={{fontSize:26,marginBottom:4}}>{activeLever.icon}</div>
+                      <h2 style={{fontSize:20,fontWeight:800,color:C.t1,margin:"0 0 8px",fontFamily:"'DM Sans',sans-serif"}}>{activeLever.name}</h2>
                       <IssueTag leverId={activeLever.id} status={activeLever.status}/>
                     </div>
-                    <p style={{fontSize:13,color:C.t3,margin:0,lineHeight:1.5}}>{activeLever.detail.description}</p>
+                    <button onClick={() => setActivePanel(null)}
+                      style={{background:"#F1F5F9",border:"none",cursor:"pointer",fontSize:14,
+                        color:C.t3,padding:"4px 8px",borderRadius:6,lineHeight:1,flexShrink:0}}>✕</button>
+                  </div>
+                  <div style={{marginBottom:22}}>
+                    <p style={{fontSize:13,color:C.t3,margin:0,lineHeight:1.5}}>{detail.description}</p>
                   </div>
                   {/* Score */}
                   <div style={{background:"#F8FAFC",borderRadius:12,padding:"14px 16px",marginBottom:18}}>
@@ -3105,8 +3119,8 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                   {/* Breakdown */}
                   <div style={{marginBottom:18}}>
                     <div style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:10}}>Breakdown</div>
-                    {activeLever.detail.breakdown.map((item,i) => (
-                      <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:i<activeLever.detail.breakdown.length-1?`1px solid ${C.t6}`:"none"}}>
+                    {detail.breakdown.map((item,i) => (
+                      <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:i<detail.breakdown.length-1?`1px solid ${C.t6}`:"none"}}>
                         <span style={{fontSize:13,color:C.t3}}>{item.label}</span>
                         <span style={{fontSize:13,fontWeight:700,color:C.t1,fontFamily:"'IBM Plex Mono',monospace"}}>{item.value}</span>
                       </div>
@@ -3119,11 +3133,11 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                   {/* Impact */}
                   <div style={{background:st.bg,border:`1px solid ${st.color}33`,borderRadius:10,padding:"12px 16px",marginBottom:22}}>
                     <div style={{fontSize:10,fontWeight:700,color:st.color,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Estimated Revenue Impact</div>
-                    <div style={{fontSize:28,fontWeight:800,color:st.color,fontFamily:"'IBM Plex Mono',monospace"}}>{activeLever.detail.estimatedImpact}</div>
+                    <div style={{fontSize:28,fontWeight:800,color:st.color,fontFamily:"'IBM Plex Mono',monospace"}}>{detail.estimatedImpact}</div>
                   </div>
                   {/* Actions */}
                   <div style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:10}}>Actions</div>
-                  {activeLever.detail.hasErrorDetail && (
+                  {detail.hasErrorDetail && (
                     <button onClick={onContentErrors}
                       style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",
                         background:"rgba(220,38,38,0.08)",border:"1px solid rgba(220,38,38,0.3)",
@@ -3132,7 +3146,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
                       ⚠️ View 202 Properties with Image Errors →
                     </button>
                   )}
-                  {activeLever.detail.actions.map((action,i) => (
+                  {detail.actions.map((action,i) => (
                     <button key={i} onClick={() => toast(`"${action}" opened`,"info")}
                       style={{display:"block",width:"100%",textAlign:"left",padding:"10px 14px",background:"#F8FAFC",border:`1px solid ${C.border}`,borderRadius:9,fontSize:13,fontWeight:600,color:C.t2,cursor:"pointer",marginBottom:8,fontFamily:"inherit",transition:"background 0.12s,border-color 0.12s,color 0.12s"}}
                       onMouseEnter={e=>{e.currentTarget.style.background=C.brandDim;e.currentTarget.style.borderColor=C.brandBorder;e.currentTarget.style.color=C.brand}}
