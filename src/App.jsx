@@ -653,10 +653,10 @@ export default function App() {
   const [detailTab, setDetailTab]   = useState("snapshot");
   const [selCluster, setSelCluster] = useState(ERROR_CLUSTERS[0]);
   const [selRisk, setSelRisk]       = useState(RISK_ROWS[0]);
-  const [pbTab, setPbTab]           = useState("queue");
+  const [pbTab, setPbTab]           = useState("smart");
   const [leversFor, setLeversFor]   = useState(null);
   const [alertOpen, setAlertOpen]   = useState(false);
-  const [kanban, setKanban]         = useState(false);
+  const [kanban, setKanban]         = useState(true);
 
   const goLevers = (name) => { setLeversFor(name); setPage("levers"); };
   // Close multi-select dropdowns on outside click
@@ -1485,7 +1485,11 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
                         <span style={{fontSize:9,background:"#F1F5F9",borderRadius:4,padding:"2px 7px",color:C.t3,border:`1px solid ${C.border}`}}>{pb.cat}</span>
                         <span style={{fontSize:11,fontFamily:C.mono,color:C.green,fontWeight:700}}>{pb.impact}</span>
                       </div>
-                      <div style={{fontSize:10,color:pb.due==="Today"?C.red:C.t4,marginTop:6,fontFamily:C.mono}}>Due: {pb.due}</div>
+                      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:6}}>
+                        <span style={{fontSize:10,color:pb.due==="Today"?C.red:C.t4,fontFamily:C.mono}}>Due: {pb.due}</span>
+                        <span style={{fontSize:10,color:C.t3,fontFamily:C.mono}}>⏱ {pb.effort}</span>
+                      </div>
+                      <div style={{fontSize:10,color:C.t4,marginTop:4}}>👤 {pb.owner}</div>
                     </div>
                   ))}
                   {items.length===0 && <div style={{textAlign:"center",padding:"24px 0",color:C.t5,fontSize:12}}>No items</div>}
@@ -1496,6 +1500,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
         </div>
       </>)}
       {tab==="smart" && (() => {
+        // key on activeClient forces recompute when account switches
         // Build lever list for active account
         const tenant = activeClient?.name || "";
         const partnerKey = (activePartners || [])
@@ -1557,7 +1562,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
         ];
 
         return (
-          <div>
+          <div key={activeClient?.name}>
             <SH phase="PRIORITISE" title="Smart Queues" ann="new"
               sub={`${tenant} · Pre-filtered action lists · ${levers.filter(l=>l.status!=="healthy").length} open issues`}/>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
