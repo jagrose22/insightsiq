@@ -320,6 +320,70 @@ const ENTERPRISE_ACCOUNTS = [
   { id:8,  name:"Wyndham Hotels",         short:"Wyndham"      },
 ];
 
+const ACCOUNT_BRANDS = {
+  "Best Western Hotels": [
+    "WorldHotels Luxury","WorldHotels Elite","WorldHotels Crafted","WorldHotels Distinctive",
+    "BW Premier Collection","BW Signature Collection","Vib","Aiden","Sadie",
+    "Best Western Premier","Best Western Plus","Best Western","GLo",
+    "SureStay Hotel","SureStay Collection","Executive Residency","@HOME","SureStay Studio",
+  ],
+  "Choice Hotels": [
+    "Radisson Collection","Radisson Blu","Radisson","Park Plaza by Radisson",
+    "Ascend Hotel Collection","Cambria Hotels","Park Inn by Radisson",
+    "Country Inn & Suites","Clarion","Clarion Pointe","Comfort Inn","Comfort Suites",
+    "Quality Inn","Sleep Inn","Econo Lodge","Rodeway Inn",
+    "Everhome Suites","MainStay Suites","Suburban Studios","WoodSpring Suites",
+  ],
+  "IHG Hotels & Resorts": [
+    "Six Senses","Regent Hotels & Resorts","InterContinental","Vignette Collection",
+    "Kimpton","Hotel Indigo","Noted Collection","Crowne Plaza","voco Hotels",
+    "Ruby Hotels","HUALUXE","EVEN Hotels","Holiday Inn","Holiday Inn Express",
+    "avid hotels","Garner","Atwell Suites","Staybridge Suites","Candlewood Suites",
+    "Holiday Inn Club Vacations","Iberostar Beachfront Resorts",
+  ],
+  "Hilton Worldwide": [
+    "Waldorf Astoria","LXR Hotels & Resorts","Conrad","Signia by Hilton","NoMad Hotels",
+    "Canopy by Hilton","Graduate by Hilton","Tempo by Hilton","Motto by Hilton",
+    "Hilton Hotels & Resorts","DoubleTree by Hilton","Curio Collection",
+    "Tapestry Collection","Outset Collection","Embassy Suites","Homewood Suites",
+    "Home2 Suites","LivSmart Studios","Hilton Garden Inn","Hampton by Hilton",
+    "Tru by Hilton","Spark by Hilton","Hilton Grand Vacations",
+    "Small Luxury Hotels","AutoCamp",
+  ],
+  "Hyatt Hotels": [
+    "Park Hyatt","Miraval","Alila","Impression by Secrets","Unbound Collection","Atona",
+    "Andaz","Thompson Hotels","The Standard","JdV by Hyatt","Bunkhouse Hotels",
+    "Dream Hotels","me and all Hotels","Breathless Resorts",
+    "Hyatt Ziva","Hyatt Zilara","Hyatt Vivid","Dreams Resorts","Secrets Resorts",
+    "Alua Hotels & Resorts","Sunscape Resorts","Zoetry Wellness",
+    "Grand Hyatt","Hyatt Regency","Hyatt","Hyatt Centric","Destination by Hyatt",
+    "Hyatt Vacation Club","Hyatt Place","Hyatt House","Caption by Hyatt","Hyatt Studios",
+  ],
+  "Marriott International": [
+    "The Ritz-Carlton","Ritz-Carlton Reserve","St. Regis","The Luxury Collection",
+    "Edition Hotels","JW Marriott","W Hotels","Bvlgari Hotels",
+    "Marriott Hotels","Sheraton","Westin","Renaissance Hotels","Le Meridien",
+    "Delta Hotels","Marriott Vacation Clubs","Gaylord Hotels","CitizenM",
+    "Autograph Collection","Design Hotels","Tribute Portfolio","MGM Collection",
+    "AC Hotels","Aloft Hotels","Courtyard","Fairfield","Four Points by Sheraton",
+    "Moxy Hotels","Protea Hotels","SpringHill Suites","City Express","Series by Marriott",
+    "Residence Inn","TownePlace Suites","Element","Marriott Executive Apartments",
+    "Apartments by Marriott Bonvoy","Homes & Villas","StudioRes",
+  ],
+  "Omni Hotels & Resorts": [
+    "Omni Hotels & Resorts",
+  ],
+  "Wyndham Hotels": [
+    "Registry Collection","Dolce Hotels and Resorts","Wyndham Hotels and Resorts",
+    "Wyndham Grand","TRYP by Wyndham","Dazzler by Wyndham","Esplendor by Wyndham",
+    "Trademark Collection","Vienna House","Ramada","Wyndham Garden","Wingate",
+    "La Quinta","Baymont","AmericInn","Days Inn","Howard Johnson","Super 8",
+    "Travelodge","Microtel","Hawthorn Suites","WaterWalk Extended Stay",
+    "Wyndham Alltra","Club Wyndham","WorldMark",
+    "Margaritaville Vacation Club","Shell Vacations Club",
+  ],
+};
+
 // Demo defaults
 const DEFAULT_CLIENT    = "Wyndham Hotels";
 const DEFAULT_PARTNERS  = ["Hotel Key","Tricept"];
@@ -641,6 +705,7 @@ export default function App() {
         @keyframes spin     {to{transform:rotate(360deg)}}
         @keyframes dotPulse {0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.6}}
         .fade-in   {animation:fadeIn    0.22s ease-out both}
+        .brands-chip:hover .brands-dropdown{display:block !important;}
         .fade-slide{animation:fadeSlide 0.22s ease-out both}
         .toast-in  {animation:toastIn   0.25s cubic-bezier(0.34,1.56,0.64,1) both}
         .live-dot  {animation:dotPulse  2s ease-in-out infinite}
@@ -671,10 +736,7 @@ export default function App() {
                     ? <>RG<span style={{color:"#A78BFA"}}>InsightsIQ</span></>
                     : <>RG<span style={{color:"#67E8F9"}}>RateIQ</span></>}
                 </div>
-                <div style={{fontSize:8,fontFamily:C.mono,letterSpacing:1.2,marginTop:1,
-                  color:isInsights?"#A78BFA88":"#67E8F988",transition:"color 0.2s ease"}}>
-                  {isInsights ? "InsightsIQ" : "RateIQ"}
-                </div>
+
               </div>
             </>);
           })()}
@@ -2923,11 +2985,31 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
           <div style={{fontSize:12,color:C.t3}}>16 levers across 4 domains · Click any card to drill down</div>
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          <select onChange={e=>setTenant(e.target.value)} value={tenant||"All Tenants"}
-            style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 12px",fontSize:12,color:C.t1,outline:"none",boxShadow:C.shadow}}>
-            <option>All Tenants</option>
-            {TENANTS.map(t=><option key={t.id}>{t.name}</option>)}
-          </select>
+          {(() => {
+            const brands = ACCOUNT_BRANDS[tenant] || [];
+            if (!brands.length) return null;
+            return (
+              <div style={{position:"relative"}} className="brands-chip">
+                <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,
+                  padding:"6px 12px",fontSize:12,color:C.t2,display:"flex",alignItems:"center",
+                  gap:6,boxShadow:C.shadow,cursor:"default",userSelect:"none"}}>
+                  <span style={{fontSize:10,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:0.5}}>Brands</span>
+                  <span style={{fontWeight:700,color:C.brand,fontFamily:C.mono,fontSize:13}}>{brands.length}</span>
+                  <span style={{fontSize:11,color:C.t3}}>covered</span>
+                  <span style={{fontSize:9,color:C.t4,marginLeft:2}}>▾</span>
+                </div>
+                <div className="brands-dropdown"
+                  style={{position:"absolute",top:"calc(100% + 6px)",right:0,
+                    background:"#1E2433",border:"1px solid rgba(255,255,255,0.12)",
+                    borderRadius:8,minWidth:200,zIndex:500,
+                    boxShadow:"0 8px 24px rgba(0,0,0,0.35)",padding:"6px 0",display:"none"}}>
+                  {brands.map(b=>(
+                    <div key={b} style={{padding:"5px 14px",fontSize:12,color:"#E2E8F0"}}>{b}</div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
           <button style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}}>↗ Export Grid</button>
         </div>
       </div>
