@@ -656,13 +656,28 @@ export default function App() {
         alignItems:"center",gap:14,position:"sticky",top:0,zIndex:200,
         boxShadow:"0 2px 8px rgba(0,0,0,0.2)"}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginRight:4}}>
-          <div style={{width:3,height:28,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
-          <div style={{lineHeight:1}}>
-            <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:800,color:"#FFF",letterSpacing:"-0.3px"}}>
-              RG<span style={{color:"#A78BFA"}}>Insights</span>
-            </div>
-            <div style={{fontSize:8,color:"#6B7280",fontFamily:C.mono,letterSpacing:1.2,marginTop:1}}>InsightsIQ  v1.0</div>
-          </div>
+          {(()=>{
+            const isInsights = page==="dist" || page==="home";
+            return (<>
+              <div style={{width:3,height:28,borderRadius:2,
+                background:isInsights
+                  ? "linear-gradient(180deg,#A78BFA,#6941F2)"
+                  : "linear-gradient(180deg,#67E8F9,#0891B2)",
+                transition:"background 0.3s ease"}}/>
+              <div style={{lineHeight:1}}>
+                <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:800,
+                  color:"#FFF",letterSpacing:"-0.3px",transition:"all 0.2s ease"}}>
+                  {isInsights
+                    ? <>RG<span style={{color:"#A78BFA"}}>Insights</span></>
+                    : <>RG<span style={{color:"#67E8F9"}}>RateIQ</span></>}
+                </div>
+                <div style={{fontSize:8,fontFamily:C.mono,letterSpacing:1.2,marginTop:1,
+                  color:isInsights?"#A78BFA88":"#67E8F988",transition:"color 0.2s ease"}}>
+                  {isInsights ? "InsightsIQ" : "RateIQ"}
+                </div>
+              </div>
+            </>);
+          })()}
         </div>
         <div style={{width:1,height:24,background:"rgba(255,255,255,0.1)"}}/>
         <div style={{position:"relative",display:"flex",flexDirection:"column",gap:1}}>
