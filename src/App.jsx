@@ -657,7 +657,7 @@ export default function App() {
         boxShadow:"0 2px 8px rgba(0,0,0,0.2)"}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginRight:4}}>
           {(()=>{
-            const isInsights = page==="dist" || page==="home";
+            const isInsights = page==="dist";
             return (<>
               <div style={{width:3,height:28,borderRadius:2,
                 background:isInsights
@@ -668,7 +668,7 @@ export default function App() {
                 <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:800,
                   color:"#FFF",letterSpacing:"-0.3px",transition:"all 0.2s ease"}}>
                   {isInsights
-                    ? <>RG<span style={{color:"#A78BFA"}}>Insights</span></>
+                    ? <>RG<span style={{color:"#A78BFA"}}>InsightsIQ</span></>
                     : <>RG<span style={{color:"#67E8F9"}}>RateIQ</span></>}
                 </div>
                 <div style={{fontSize:8,fontFamily:C.mono,letterSpacing:1.2,marginTop:1,
