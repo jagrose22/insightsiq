@@ -842,7 +842,7 @@ export default function App() {
       <LoopBar active={loopPhase}/>
 
       <div style={{padding:"20px",minHeight:"calc(100vh - 136px)"}} className="fade-in" key={page}>
-        {page==="dist"     && <DistributionPage tenant={activeClient.name} goLevers={goLevers} toast={toast}/>}
+        {page==="dist"     && <DistributionPage tenant={activeClient.name} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
         {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
@@ -2203,8 +2203,78 @@ const DIST_HEALTH_DATA = {
     netTrend:   [3190,3380,3520,3660,3850,4040,3940,4220],
     trendLabel: "▲ 6% vs prior period",
     partners: [
-      { name:"Agoda",          contribution:"78%", errorRate:"2.1%",  rag:"green" },
-      { name:"Hopper",         contribution:"22%", errorRate:"18.7%", rag:"red"   },
+      { name:"Agoda",  contribution:"78%", errorRate:"2.1%",  rag:"green" },
+      { name:"Hopper", contribution:"22%", errorRate:"18.7%", rag:"red"   },
+    ],
+  },
+  "Choice Hotels|Hopper Travel Services": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"6,864",  rag:"amber"  },
+      { label:"Cancellation Rate", value:"11.2%",  rag:"red"    },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"18.7",   rag:"red"    },
+    ],
+    grossTrend: [820,940,980,1050,1120,1080,990,880],
+    netTrend:   [728,834,870,932,994,958,878,780],
+    trendLabel: "▼ 12% vs prior period",
+    partners: [
+      { name:"Hopper", contribution:"100%", errorRate:"18.7%", rag:"red" },
+    ],
+  },
+  "Best Western Hotels": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"18,400", rag:"amber"  },
+      { label:"Cancellation Rate", value:"66%",    rag:"red"    },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"9.4",    rag:"red"    },
+    ],
+    grossTrend: [2800,2650,2500,2200,1980,1840,1700,1530],
+    netTrend:   [952,901,850,748,673,626,578,520],
+    trendLabel: "▼ 14% vs prior period",
+    partners: [
+      { name:"Delta Vacation", contribution:"100%", errorRate:"9.4%", rag:"red" },
+    ],
+  },
+  "Hilton Worldwide": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"22,100", rag:"amber"  },
+      { label:"Cancellation Rate", value:"9.2%",   rag:"amber"  },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"12.7",   rag:"red"    },
+    ],
+    grossTrend: [2900,2800,2750,2680,2600,2540,2480,2310],
+    netTrend:   [2635,2545,2500,2437,2365,2311,2254,2102],
+    trendLabel: "▼ 11% vs prior period",
+    partners: [
+      { name:"British Airways", contribution:"100%", errorRate:"12.7%", rag:"red" },
+    ],
+  },
+  "Hyatt Hotels": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"14,800", rag:"amber"  },
+      { label:"Cancellation Rate", value:"16.4%",  rag:"red"    },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"6.8",    rag:"amber"  },
+    ],
+    grossTrend: [2100,1980,1900,1820,1750,1690,1640,1520],
+    netTrend:   [1757,1656,1589,1523,1464,1414,1371,1271],
+    trendLabel: "▼ 8% vs prior period",
+    partners: [
+      { name:"Trisept Solutions", contribution:"100%", errorRate:"6.8%", rag:"amber" },
+    ],
+  },
+  "Marriott International": {
+    kpis: [
+      { label:"Net Bookings YTD",  value:"31,600", rag:"green"  },
+      { label:"Cancellation Rate", value:"7.1%",   rag:"amber"  },
+      { label:"Active Partners",   value:"1 of 2", rag:"amber"  },
+      { label:"Error Rate /1k",    value:"7.9",    rag:"amber"  },
+    ],
+    grossTrend: [3800,3850,3900,3820,3780,3900,3850,3920],
+    netTrend:   [3530,3579,3627,3552,3517,3627,3580,3644],
+    trendLabel: "▼ 3% vs prior period",
+    partners: [
+      { name:"British Airways", contribution:"100%", errorRate:"7.9%", rag:"amber" },
     ],
   },
 };
@@ -2542,8 +2612,13 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
   );
 }
 
-function DistributionPage({ tenant, goLevers, toast }) {
-  const d = DIST_HEALTH_DATA[tenant];
+function DistributionPage({ tenant, activePartners, goLevers, toast }) {
+  // Check for partner-specific key first (e.g. Choice + Hopper), fall back to account key
+  const partnerKey = (activePartners || [])
+    .filter(p => p !== "All Brands")
+    .map(p => `${tenant}|${p}`)
+    .find(k => DIST_HEALTH_DATA[k]) || null;
+  const d = (partnerKey && DIST_HEALTH_DATA[partnerKey]) || DIST_HEALTH_DATA[tenant];
   const ragColor = { green:C.green, amber:C.amber, red:C.red };
   const ragBg    = { green:C.greenBg, amber:C.amberBg, red:"#FEF2F2" };
   const ragBdr   = { green:C.greenBorder, amber:C.amberBorder, red:C.redBorder };
