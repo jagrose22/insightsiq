@@ -715,7 +715,7 @@ function InnovationModal({ tab, setTab, onClose, toast }) {
         {/* Header */}
         <div style={{padding:"20px 24px 0",display:"flex",alignItems:"center",gap:10}}>
           <span style={{fontSize:20}}>💡</span>
-          <span style={{fontSize:18,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",flex:1}}>Innovation Hub</span>
+          <span style={{fontSize:18,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",flex:1}}>Shape the Future</span>
           <button onClick={onClose} style={{background:C.cardBg,border:`1px solid ${C.border}`,color:C.t3,width:28,height:28,borderRadius:6,cursor:"pointer",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
         {/* Tabs */}
@@ -1602,7 +1602,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   );
 }
 
-/* ═════════════════════════════���════════════════════════════════════════════
+/* ════════════════���════════════���════════════════════════════════════════════
    PAGE 2 — ERROR INTELLIGENCE
 ═════════════════════════════════════════════════════════════════════════��� */
 function ErrorPage({ sel, setSel, toast }) {
