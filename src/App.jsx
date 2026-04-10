@@ -409,6 +409,40 @@ const DEMAND_PARTNERS = [
   "Tricept","Traveloka","Trisept Solutions","Trip.com",
 ];
 
+// Wyndham Account View — Brand Health Grid data
+const WYNDHAM_BRANDS = [
+  { brand: "Registry Collection", tier: "Luxury", health: 82, err: 2.1, rag: "green", properties: 12 },
+  { brand: "Dolce Hotels", tier: "Upscale", health: 74, err: 4.2, rag: "amber", properties: 28 },
+  { brand: "Wyndham Hotels & Resorts", tier: "Upscale", health: 71, err: 5.8, rag: "amber", properties: 214 },
+  { brand: "Wyndham Grand", tier: "Upscale", health: 78, err: 3.4, rag: "amber", properties: 55 },
+  { brand: "TRYP by Wyndham", tier: "Lifestyle", health: 68, err: 7.2, rag: "amber", properties: 96 },
+  { brand: "Vienna House", tier: "Boutique", health: 73, err: 4.8, rag: "amber", properties: 41 },
+  { brand: "Trademark Collection", tier: "Lifestyle", health: 58, err: 11.4, rag: "red", properties: 87 },
+  { brand: "La Quinta", tier: "Midscale", health: 48, err: 13.5, rag: "red", properties: 912 },
+  { brand: "Ramada", tier: "Midscale", health: 44, err: 14.2, rag: "red", properties: 783 },
+  { brand: "Days Inn", tier: "Economy", health: 31, err: 18.4, rag: "red", properties: 1847 },
+  { brand: "Super 8", tier: "Economy", health: 29, err: 19.2, rag: "red", properties: 2203 },
+  { brand: "Howard Johnson", tier: "Economy", health: 35, err: 16.9, rag: "red", properties: 421 },
+  { brand: "Hawthorn Suites", tier: "Extended Stay", health: 67, err: 7.8, rag: "amber", properties: 128 },
+  { brand: "Wyndham Alltra", tier: "All-Inclusive", health: 76, err: 3.8, rag: "amber", properties: 22 },
+];
+
+// Wyndham Account View — Demand Partners data
+const WYNDHAM_DEMAND_PARTNERS = [
+  { name: "Tek Travel", bookings: 16737, type: "Aggregator" },
+  { name: "HotelTonight", bookings: 14973, type: "OTA" },
+  { name: "Trisept Partners", bookings: 6127, type: "Leisure Pkg" },
+  { name: "Hotwire", bookings: 4385, type: "OTA" },
+  { name: "Entertainment Benefits", bookings: 4095, type: "Benefits" },
+  { name: "Trisept Solutions", bookings: 720, type: "Leisure Pkg" },
+];
+
+const WYNDHAM_DEMAND_PARTNERS_EXTENDED = [
+  { name: "Delta Vacations", bookings: 427, type: "Leisure Pkg" },
+  { name: "British Airways", bookings: 127, type: "Airline" },
+  { name: "Inntel UD Interface", bookings: 307, type: "GDS" },
+];
+
 // Wyndham — properties with content critical errors (images below threshold)
 // Source: POC-Wyndham_Missing_Property_List.xlsx — 202 properties, 14 brands
 const WYNDHAM_CONTENT_ERRORS = [
@@ -466,13 +500,19 @@ const RISK_ROWS = [
   { tenant:"Marriott Bonvoy",          arr:7.2,risk:52,renewal:"Sep '26",drivers:["Moderate error index","SLA breach"],     owner:"Lisa K.",   trend:-3  },
   { tenant:"Accor / Booking.com",      arr:1.8,risk:28,renewal:"Nov '26",drivers:["Minor content gaps"],                    owner:"Priya S.",  trend:+1  },
 ];
+const playbooks_relativeDate = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
 const PLAYBOOKS = [
   { id:"PB1",title:"ARI Sync Recovery",           cat:"Incident",    effort:"2h",impact:"$28K+", tenant:"Hilton/BA",    status:"InProgress",due:"Today", owner:"Marcus T." },
-  { id:"PB2",title:"Rate Restriction Remediation",cat:"Incident",    effort:"1h",impact:"$12K+", tenant:"Expedia/Omni", status:"InProgress",due:"Mar 6", owner:"Priya S."  },
-  { id:"PB3",title:"GDS Mapping Correction",      cat:"Data Quality",effort:"3h",impact:"$6K+",  tenant:"Amadeus",      status:"Unassigned",due:"Mar 8", owner:"—"         },
-  { id:"PB4",title:"Content Score Uplift",        cat:"Activation",  effort:"4h",impact:"+8%",   tenant:"Agoda Push",   status:"Unassigned",due:"Mar 10",owner:"—"         },
-  { id:"PB5",title:"Cancellation Rate Audit",     cat:"Revenue",     effort:"2h",impact:"Net+3%",tenant:"Wyndham",      status:"Active",    due:"Mar 7", owner:"Lisa K."   },
-];
+  { id:"PB2",title:"Rate Restriction Remediation",cat:"Incident",    effort:"1h",impact:"$12K+", tenant:"Expedia/Omni", status:"InProgress",due:playbooks_relativeDate(2), owner:"Priya S."  },
+  { id:"PB3",title:"GDS Mapping Correction",      cat:"Data Quality",effort:"3h",impact:"$6K+",  tenant:"Amadeus",      status:"Unassigned",due:playbooks_relativeDate(4), owner:"—"         },
+  { id:"PB4",title:"Content Score Uplift",        cat:"Activation",  effort:"4h",impact:"+8%",   tenant:"Agoda Push",   status:"Unassigned",due:playbooks_relativeDate(6),owner:"—"         },
+  { id:"PB5",title:"Cancellation Rate Audit",     cat:"Revenue",     effort:"2h",impact:"Net+3%",tenant:"Wyndham",      status:"Active",    due:playbooks_relativeDate(9), owner:"Lisa K."   },
+  { id:"PB6",title:"ARI Sync Fixed — La Quinta",  cat:"Recovery",    effort:"—", impact:"+$12K", tenant:"Wyndham",      status:"Mitigated", due:playbooks_relativeDate(-3),owner:"Marcus T." },
+  ];
 const PB_LIBRARY = [
   { title:"ARI Sync Recovery Protocol",       cat:"Incident",    effort:"2h",impact:"High",  desc:"Reconnect ARI feed, validate date ranges, confirm sync with demand partner" },
   { title:"Rate Parity Correction",           cat:"Revenue",     effort:"1h",impact:"High",  desc:"Identify parity gaps across OTAs, update rate rules, verify display" },
@@ -905,7 +945,7 @@ export default function App() {
 
       <div style={{padding:"20px",minHeight:"calc(100vh - 136px)"}} className="fade-in" key={page}>
         {page==="dist"     && <DistributionPage tenant={activeClient.name} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
-        {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
+        {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast} activeClient={activeClient} setPage={setPage}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} activeClient={activeClient} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
@@ -923,46 +963,109 @@ export default function App() {
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
-function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
+function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
   const isExec = role==="exec";
-  const hs=58, circ=2*Math.PI*32;
+  const [viewMode, setViewMode] = useState("account"); // "account" or "portfolio"
+  const [partnersExpanded, setPartnersExpanded] = useState(false);
+
+  // KPI data based on view mode
+  const kpiData = viewMode === "account" ? {
+    healthScore: 38,
+    healthStatus: "AT RISK",
+    healthTrend: "▼ 3 pts vs last week",
+    healthAccent: C.amber,
+    errorIndex: "15.2/1k",
+    errorBadge: "▲ RISING",
+    errorSub: "▲ 11 vs last period",
+    errorSpark: [8, 9, 10, 11, 12, 13, 15.2],
+    revenueAtRisk: "$47.2K",
+    revenueSub: "ARI $28.4K · Rate $12.4K · Content $6.4K",
+    pulseValue: "9",
+    pulseTotal: "27",
+    pulseSub: "brands with critical issues",
+  } : {
+    healthScore: 58,
+    healthStatus: "AT RISK",
+    healthTrend: "▼ 3 pts vs last week",
+    healthAccent: C.amber,
+    errorIndex: "8.1/1k",
+    errorBadge: "▲ RISING",
+    errorSub: "▲ 1.1 vs last period",
+    errorSpark: [6.2, 6.8, 7.1, 6.9, 7.8, 8.3, 7.9, 8.1],
+    revenueAtRisk: "$47.2K",
+    revenueSub: "ARI $28.4K · Rate $12.4K · Content $6.4K",
+    pulseValue: isExec ? "9" : "3",
+    pulseTotal: isExec ? "84" : "8",
+    pulseSub: isExec ? "tenants with critical issues" : "need action today",
+  };
+
+  const hs = kpiData.healthScore, circ = 2 * Math.PI * 32;
   return (
     <div className="fade-in">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
           <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",lineHeight:1}}>Health Overview</h1>
-          <div style={{fontSize:12,color:C.t3,marginTop:4}}>{isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants"}</div>
+          <div style={{fontSize:12,color:C.t3,marginTop:4}}>{viewMode === "account" ? `${activeClient?.name || "Wyndham Hotels"} · 27 brands · 9,849 properties` : (isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants")}</div>
         </div>
         <div style={{display:"flex",gap:8}}>
           <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 16px",fontSize:12,color:C.t2,fontWeight:500}} onClick={()=>toast("Export queued — check your downloads","info")}>↗ Export</button>
           <button className="btn-primary" style={{background:C.brand,border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,color:"#fff",fontWeight:700,boxShadow:`0 2px 8px ${C.brand}44`}} onClick={()=>toast("QBR Snapshot generating…","success")}>QBR Snapshot</button>
         </div>
       </div>
-      <SH phase="SEE" title="Portfolio Health Summary" ann="ui" sub={isExec?"All segments · 84 tenants":"Your assigned tenants · 8 properties"}/>
+
+      {/* View Toggle Pill */}
+      <div style={{display:"flex",justifyContent:"center",marginBottom:20}}>
+        <div style={{display:"inline-flex",background:C.inputBg,borderRadius:10,padding:3,border:`1px solid ${C.border}`}}>
+          {[
+            { key: "account", label: "🏨 Account View" },
+            { key: "portfolio", label: "⬡ Portfolio View" },
+          ].map(opt => (
+            <button
+              key={opt.key}
+              onClick={() => setViewMode(opt.key)}
+              style={{
+                padding: "8px 20px",
+                fontSize: 12,
+                fontWeight: viewMode === opt.key ? 700 : 500,
+                color: viewMode === opt.key ? "#fff" : C.t2,
+                background: viewMode === opt.key ? C.brand : "transparent",
+                border: "none",
+                borderRadius: 8,
+                cursor: "pointer",
+                transition: "all 0.15s",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <SH phase="SEE" title={viewMode === "account" ? "Account Health Summary" : "Portfolio Health Summary"} ann="ui" sub={viewMode === "account" ? `${activeClient?.name || "Wyndham Hotels"} · 27 brands` : (isExec ? "All segments · 84 tenants" : "Your assigned tenants · 8 properties")}/>
       <div style={{display:"grid",gridTemplateColumns:"210px 1fr 1fr 1fr",gap:12,marginBottom:22}}>
-        <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${C.amber}0A 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.amber}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+        <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${kpiData.healthAccent}0A 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${kpiData.healthAccent}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
           <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:8,alignSelf:"flex-start"}}>Health Score <Ann type="ui"/></div>
           <div style={{position:"relative",width:84,height:84}}>
             <svg width="84" height="84" viewBox="0 0 84 84">
               <circle cx={42} cy={42} r={32} fill="none" stroke={C.t6} strokeWidth={9}/>
-              <circle cx={42} cy={42} r={32} fill={C.amber+"08"} stroke="none"/>
-              <circle cx={42} cy={42} r={32} fill="none" stroke={C.amber} strokeWidth={9} strokeDasharray={`${(hs/100)*circ} ${circ}`} strokeLinecap="round" transform="rotate(-90 42 42)"/>
+              <circle cx={42} cy={42} r={32} fill={kpiData.healthAccent+"08"} stroke="none"/>
+              <circle cx={42} cy={42} r={32} fill="none" stroke={kpiData.healthAccent} strokeWidth={9} strokeDasharray={`${(hs/100)*circ} ${circ}`} strokeLinecap="round" transform="rotate(-90 42 42)"/>
             </svg>
             <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-              <span style={{fontSize:26,fontWeight:800,color:C.amber,fontFamily:C.mono,lineHeight:1}}>{hs}</span>
+              <span style={{fontSize:26,fontWeight:800,color:kpiData.healthAccent,fontFamily:C.mono,lineHeight:1}}>{hs}</span>
               <span style={{fontSize:9,color:C.t4,fontFamily:C.mono}}>/100</span>
             </div>
           </div>
-          <div style={{fontSize:11,color:C.amber,fontWeight:700}}>AT RISK</div>
-          <div style={{fontSize:10,color:C.t4}}>▼ 3 pts vs last week</div>
+          <div style={{fontSize:11,color:kpiData.healthAccent,fontWeight:700}}>{kpiData.healthStatus}</div>
+          <div style={{fontSize:10,color:C.t4}}>{kpiData.healthTrend}</div>
         </div>
-        <KpiTile label="Error Index" value="8.1/1k" sub="▲ 1.1 vs last period" accent={C.red} spark={[6.2,6.8,7.1,6.9,7.8,8.3,7.9,8.1]} ann="backed" badge="▲ RISING"/>
-        <KpiTile label={isExec?"Revenue at Risk":"Your Revenue at Risk"} value="$47.2K" sub="ARI $28.4K · Rate $12.4K · Content $6.4K" accent={C.brand} ann="new"/>
-        <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${C.cyan}08 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.cyan}`,borderRadius:12,padding:"16px",boxShadow:C.shadow}}>
-          <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:10}}>{isExec?"Portfolio Pulse":"Operator Pulse"} <Ann type="backed"/></div>
-          {isExec ? <>
-            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>9<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/84</span></div>
-            <div style={{fontSize:11,color:C.t3,marginBottom:10}}>tenants with critical issues</div>
+        <KpiTile label="Error Index" value={kpiData.errorIndex} sub={kpiData.errorSub} accent={C.red} spark={kpiData.errorSpark} ann="backed" badge={kpiData.errorBadge}/>
+        <KpiTile label={viewMode === "account" ? "Revenue at Risk" : (isExec ? "Revenue at Risk" : "Your Revenue at Risk")} value={kpiData.revenueAtRisk} sub={kpiData.revenueSub} accent={viewMode === "account" ? C.red : C.brand} ann="new"/>
+        <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${viewMode === "account" ? C.amber : C.cyan}08 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${viewMode === "account" ? C.amber : C.cyan}`,borderRadius:12,padding:"16px",boxShadow:C.shadow}}>
+          <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:10}}>{viewMode === "account" ? "Brand Pulse" : (isExec ? "Portfolio Pulse" : "Operator Pulse")} <Ann type="backed"/></div>
+          <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>{kpiData.pulseValue}<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/{kpiData.pulseTotal}</span></div>
+          <div style={{fontSize:11,color:C.t3,marginBottom:10}}>{kpiData.pulseSub}</div>
+          {viewMode === "portfolio" && isExec && (
             <div style={{display:"flex",flexDirection:"column",gap:5}}>
               {[[9,"Critical",C.red],[22,"At risk",C.amber],[53,"Healthy",C.green]].map(([n,l,c])=>(
                 <div key={l} style={{display:"flex",alignItems:"center",gap:8}}>
@@ -972,83 +1075,207 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
                 </div>
               ))}
             </div>
-          </> : <>
-            <div style={{fontSize:28,fontWeight:800,fontFamily:C.mono,color:C.t1,marginBottom:4}}>3<span style={{fontSize:14,color:C.t4,fontWeight:500}}>/8</span></div>
-            <div style={{fontSize:11,color:C.t3,marginBottom:10}}>need action today</div>
-            {[["Wyndham","due today",C.red],["Expedia/Omni","due Mar 6",C.amber]].map(([t,d,c])=>(
-              <div key={t} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",background:c+"0C",borderRadius:6,marginBottom:5,border:`1px solid ${c}22`}}>
-                <span style={{fontSize:11,color:C.t2,fontWeight:600}}>{t}</span>
-                <span style={{fontSize:10,color:c,fontWeight:700,fontFamily:C.mono}}>{d}</span>
-              </div>
-            ))}
-          </>}
+          )}
+          {viewMode === "portfolio" && !isExec && (
+            <>
+              {[["Wyndham","due today",C.red],["Expedia/Omni","due Mar 6",C.amber]].map(([t,d,c])=>(
+                <div key={t} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px 8px",background:c+"0C",borderRadius:6,marginBottom:5,border:`1px solid ${c}22`}}>
+                  <span style={{fontSize:11,color:C.t2,fontWeight:600}}>{t}</span>
+                  <span style={{fontSize:10,color:c,fontWeight:700,fontFamily:C.mono}}>{d}</span>
+                </div>
+              ))}
+            </>
+          )}
+          {viewMode === "account" && (
+            <div style={{display:"flex",flexDirection:"column",gap:5}}>
+              {[[9,"Critical",C.red],[11,"At risk",C.amber],[7,"Healthy",C.green]].map(([n,l,c])=>(
+                <div key={l} style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{flex:1,height:4,background:C.t6,borderRadius:2}}><div style={{width:`${(n/27)*100}%`,height:"100%",background:c,borderRadius:2}}/></div>
+                  <span style={{fontSize:10,color:c,fontWeight:600,fontFamily:C.mono,width:14,textAlign:"right"}}>{n}</span>
+                  <span style={{fontSize:10,color:C.t3,width:50}}>{l}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 368px",gap:14,marginBottom:22}}>
-        <Card>
-          <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
-            <Phase label="PRIORITISE"/>
-            <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{isExec ? "Priority Grid — Impact × Urgency" : "Your Assigned Tenants"}</span>
-            <Ann type="ui"/>
-            <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Impact ▾</span>
-          </div>
-          <div style={{overflowX:"auto"}}>
-            <table>
-              <thead>
-                <tr style={{background:"#F8FAFC"}}>
-                  {["Tenant","Tier","Health","Err/1k","ARR $M","Trend","Status","Owner",""].map(h=>(
-                    <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3}}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[...TENANTS].sort((a,b)=>a.health-b.health).map((t,i)=>{
-                  const s = sel?.id===t.id;
-                  return (
-                    <tr key={t.id} onClick={()=>setSel(t)} className={s?"tr-sel":"tr-hover"} style={{background:s?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",borderLeft:`3px solid ${s?C.brand:"transparent"}`,transition:"all 0.1s"}}>
-                      <td style={{padding:"9px 12px",fontWeight:s?700:500,color:s?C.brand:C.t1,fontSize:12}}>{t.name}</td>
-                      <td style={{padding:"9px 12px"}}><ProducerTier name={t.name}/></td>
-                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{t.type}</span></td>
-                      <td style={{padding:"9px 12px"}}><Rag s={t.rag}/></td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:{red:C.red,amber:C.amber,green:C.green}[t.rag]}}>{t.err}</td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{t.arr}</td>
-                      <td style={{padding:"9px 12px"}}><Trend v={t.trend} invert/></td>
-                      <td style={{padding:"9px 12px"}}><StatusChip s={t.status}/></td>
-                      <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{t.owner}</td>
-                      <td style={{padding:"9px 10px"}}>
-                        <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 →</button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+
+      {/* Account View: Brand Health Grid + Demand Partners */}
+      {viewMode === "account" && activeClient?.name !== "Wyndham Hotels" && (
+        <Card style={{marginBottom:22,padding:48,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}}>
+          <div style={{fontSize:24,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",marginBottom:8}}>{activeClient?.name || "Selected Account"}</div>
+          <div style={{marginBottom:16}}><ProducerTier name={activeClient?.name}/></div>
+          <div style={{fontSize:13,color:C.t3,maxWidth:420,lineHeight:1.6,marginBottom:20}}>Full account diagnostic coming in next release. Switch to Portfolio View to compare all enterprise accounts.</div>
+          <button 
+            onClick={()=>setViewMode("portfolio")} 
+            style={{background:C.brand,border:"none",borderRadius:8,padding:"10px 24px",fontSize:13,color:"#fff",fontWeight:700,cursor:"pointer",boxShadow:`0 2px 8px ${C.brand}44`}}
+          >
+            View Portfolio →
+          </button>
         </Card>
-        <DetailPane row={sel} tab={tab} setTab={setTab} goLevers={goLevers}/>
-      </div>
+      )}
+      {viewMode === "account" && activeClient?.name === "Wyndham Hotels" && (
+        <div style={{display:"grid",gridTemplateColumns:"60% 40%",gap:16,marginBottom:22}}>
+          {/* Left Panel: Brand Health Grid */}
+          <Card>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
+              <Phase label="PRIORITISE"/>
+              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
+              <Ann type="ui"/>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Health ▴</span>
+            </div>
+            <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead>
+                  <tr style={{background:"#F8FAFC",position:"sticky",top:0,zIndex:1}}>
+                    {["Brand","Tier","Health","Err/1k","Status","Properties"].map(h=>(
+                      <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3,background:"#F8FAFC"}}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {WYNDHAM_BRANDS.map((b,i)=>(
+                    <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
+                      <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
+                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.health>=70?C.green:b.health>=50?C.amber:C.red}}>{b.health}</td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.err>=10?C.red:b.err>=5?C.amber:C.green}}>{b.err}</td>
+                      <td style={{padding:"9px 12px"}}><Rag s={b.rag}/></td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{b.properties.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          {/* Right Panel: Demand Partner Pairings */}
+          <Card style={{display:"flex",flexDirection:"column"}}>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+              <Phase label="SEE"/>
+              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Demand Partner Pairings</span>
+              <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}>
+                <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
+                ALL PULL
+              </span>
+            </div>
+            <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
+              {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
+            </div>
+            <div style={{flex:1,overflowY:"auto",padding:"8px 0"}}>
+              {WYNDHAM_DEMAND_PARTNERS.map(p=>(
+                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
+                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
+                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
+                  </div>
+                </div>
+              ))}
+              {partnersExpanded && WYNDHAM_DEMAND_PARTNERS_EXTENDED.map(p=>(
+                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
+                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
+                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{padding:"10px 16px",borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
+              <button 
+                onClick={()=>setPartnersExpanded(!partnersExpanded)} 
+                style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"6px 14px",fontSize:11,color:C.brand,fontWeight:600,cursor:"pointer",transition:"all 0.12s"}}
+              >
+                {partnersExpanded ? "Show Less ↑" : "View All Partners ↓"}
+              </button>
+              {partnersExpanded && (
+                <button style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"6px 12px",fontSize:10,color:C.t3,cursor:"pointer"}}>⬇ Export</button>
+              )}
+            </div>
+            {/* Push Opportunity Callout */}
+            <div style={{margin:"0 16px 16px",padding:12,background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderLeft:`3px solid ${C.amber}`,borderRadius:8}}>
+              <span style={{fontSize:12,color:C.amber,lineHeight:1.5}}>⚡ <b>Push Opportunity</b> — migrating top 3 partners to Push could recover an estimated $180K–$240K in annual booking volume.</span>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Portfolio View: Original Priority Grid + DetailPane */}
+      {viewMode === "portfolio" && (
+        <div style={{display:"grid",gridTemplateColumns:"1fr 368px",gap:14,marginBottom:22}}>
+          <Card>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
+              <Phase label="PRIORITISE"/>
+              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{isExec ? "Priority Grid — Impact × Urgency" : "Your Assigned Tenants"}</span>
+              <Ann type="ui"/>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Impact ▾</span>
+            </div>
+            <div style={{overflowX:"auto"}}>
+              <table>
+                <thead>
+                  <tr style={{background:"#F8FAFC"}}>
+                    {["Tenant","Tier","Health","Err/1k","ARR $M","Trend","Status","Owner",""].map(h=>(
+                      <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3}}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...TENANTS].sort((a,b)=>a.health-b.health).map((t,i)=>{
+                    const s = sel?.id===t.id;
+                    return (
+                      <tr key={t.id} onClick={()=>setSel(t)} className={s?"tr-sel":"tr-hover"} style={{background:s?"#F5F3FF":i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`,cursor:"pointer",borderLeft:`3px solid ${s?C.brand:"transparent"}`,transition:"all 0.1s"}}>
+                        <td style={{padding:"9px 12px",fontWeight:s?700:500,color:s?C.brand:C.t1,fontSize:12}}>{t.name}</td>
+                        <td style={{padding:"9px 12px"}}><ProducerTier name={t.name}/></td>
+                        <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{t.type}</span></td>
+                        <td style={{padding:"9px 12px"}}><Rag s={t.rag}/></td>
+                        <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:{red:C.red,amber:C.amber,green:C.green}[t.rag]}}>{t.err}</td>
+                        <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{t.arr}</td>
+                        <td style={{padding:"9px 12px"}}><Trend v={t.trend} invert/></td>
+                        <td style={{padding:"9px 12px"}}><StatusChip s={t.status}/></td>
+                        <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{t.owner}</td>
+                        <td style={{padding:"9px 10px"}}>
+                          <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 →</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+          <DetailPane row={sel} tab={tab} setTab={setTab} goLevers={goLevers}/>
+        </div>
+      )}
+
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
         <Card style={{padding:16}}>
           <SH phase="PREVENT" title="Emerging Risk Patterns" ann="new"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],["Rate restriction spikes correlate with weekend inventory windows","amber"],["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
-              <div key={txt} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,borderLeft:`3px solid ${C[s]}`}}>
-                <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{txt}</span>
-                <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>View →</button>
-              </div>
-            ))}
+{[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],["Rate restriction spikes correlate with weekend inventory windows","amber"],["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
+  <div key={txt} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,borderLeft:`3px solid ${C[s]}`}}>
+  <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{txt}</span>
+  <button onClick={()=>setPage("errors")} className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0,cursor:"pointer"}}>View →</button>
+  </div>
+  ))}
           </div>
         </Card>
         <Card style={{padding:16}}>
           <SH phase="PREVENT" title="Recommended Preventive Playbooks" ann="ui"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {["Standardise retry policy for ARI sync across all Tier 1 tenants","Add pre-deployment health check for onboarding + content modules","Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
-              <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
-                <div style={{width:4,height:4,borderRadius:"50%",background:C.blue,flexShrink:0}}/>
-                <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{t}</span>
-                <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>Add →</button>
-              </div>
-            ))}
+{["Standardise retry policy for ARI sync across all Tier 1 tenants","Add pre-deployment health check for onboarding + content modules","Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
+  <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
+  <div style={{width:4,height:4,borderRadius:"50%",background:C.blue,flexShrink:0}}/>
+  <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{t}</span>
+  <button onClick={()=>setPage("playbooks")} className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0,cursor:"pointer"}}>Add →</button>
+  </div>
+  ))}
           </div>
         </Card>
       </div>
@@ -1139,9 +1366,9 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ═════════════════════════════���════════════════════════════════════════════
    PAGE 2 — ERROR INTELLIGENCE
-══════════════════════════════════════════════════════════════════════════ */
+═════════════════════════════════════════════════════════════════════════��� */
 function ErrorPage({ sel, setSel, toast }) {
   return (
     <div className="fade-in">
@@ -1427,6 +1654,11 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
 ══════════════════════════════════════════════════════════════════════════ */
 function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePartners, goLevers, toast }) {
+  const relativeDate = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
   const kanbanCols = [["To Review","Unassigned","PRIORITISE"],["In Progress","InProgress","FIX"],["Proved","Mitigated","PROVE"],["Preventive","Active","PREVENT"]];
   return (
     <div className="fade-in">
