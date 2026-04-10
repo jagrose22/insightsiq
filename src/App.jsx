@@ -500,13 +500,19 @@ const RISK_ROWS = [
   { tenant:"Marriott Bonvoy",          arr:7.2,risk:52,renewal:"Sep '26",drivers:["Moderate error index","SLA breach"],     owner:"Lisa K.",   trend:-3  },
   { tenant:"Accor / Booking.com",      arr:1.8,risk:28,renewal:"Nov '26",drivers:["Minor content gaps"],                    owner:"Priya S.",  trend:+1  },
 ];
+const playbooks_relativeDate = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
 const PLAYBOOKS = [
   { id:"PB1",title:"ARI Sync Recovery",           cat:"Incident",    effort:"2h",impact:"$28K+", tenant:"Hilton/BA",    status:"InProgress",due:"Today", owner:"Marcus T." },
-  { id:"PB2",title:"Rate Restriction Remediation",cat:"Incident",    effort:"1h",impact:"$12K+", tenant:"Expedia/Omni", status:"InProgress",due:"Mar 6", owner:"Priya S."  },
-  { id:"PB3",title:"GDS Mapping Correction",      cat:"Data Quality",effort:"3h",impact:"$6K+",  tenant:"Amadeus",      status:"Unassigned",due:"Mar 8", owner:"—"         },
-  { id:"PB4",title:"Content Score Uplift",        cat:"Activation",  effort:"4h",impact:"+8%",   tenant:"Agoda Push",   status:"Unassigned",due:"Mar 10",owner:"—"         },
-  { id:"PB5",title:"Cancellation Rate Audit",     cat:"Revenue",     effort:"2h",impact:"Net+3%",tenant:"Wyndham",      status:"Active",    due:"Mar 7", owner:"Lisa K."   },
-];
+  { id:"PB2",title:"Rate Restriction Remediation",cat:"Incident",    effort:"1h",impact:"$12K+", tenant:"Expedia/Omni", status:"InProgress",due:playbooks_relativeDate(2), owner:"Priya S."  },
+  { id:"PB3",title:"GDS Mapping Correction",      cat:"Data Quality",effort:"3h",impact:"$6K+",  tenant:"Amadeus",      status:"Unassigned",due:playbooks_relativeDate(4), owner:"—"         },
+  { id:"PB4",title:"Content Score Uplift",        cat:"Activation",  effort:"4h",impact:"+8%",   tenant:"Agoda Push",   status:"Unassigned",due:playbooks_relativeDate(6),owner:"—"         },
+  { id:"PB5",title:"Cancellation Rate Audit",     cat:"Revenue",     effort:"2h",impact:"Net+3%",tenant:"Wyndham",      status:"Active",    due:playbooks_relativeDate(9), owner:"Lisa K."   },
+  { id:"PB6",title:"ARI Sync Fixed — La Quinta",  cat:"Recovery",    effort:"—", impact:"+$12K", tenant:"Wyndham",      status:"Mitigated", due:playbooks_relativeDate(-3),owner:"Marcus T." },
+  ];
 const PB_LIBRARY = [
   { title:"ARI Sync Recovery Protocol",       cat:"Incident",    effort:"2h",impact:"High",  desc:"Reconnect ARI feed, validate date ranges, confirm sync with demand partner" },
   { title:"Rate Parity Correction",           cat:"Revenue",     effort:"1h",impact:"High",  desc:"Identify parity gaps across OTAs, update rate rules, verify display" },
@@ -939,7 +945,7 @@ export default function App() {
 
       <div style={{padding:"20px",minHeight:"calc(100vh - 136px)"}} className="fade-in" key={page}>
         {page==="dist"     && <DistributionPage tenant={activeClient.name} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
-        {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast}/>}
+        {page==="home"     && <HomePage role={role} sel={selTenant} setSel={setSelTenant} tab={detailTab} setTab={setDetailTab} goLevers={goLevers} toast={toast} activeClient={activeClient} setPage={setPage}/>}
         {page==="errors"   && <ErrorPage sel={selCluster} setSel={setSelCluster} toast={toast}/>}
         {page==="revenue"  && <RevenuePage role={role} sel={selRisk} setSel={setSelRisk} activeClient={activeClient} activePartners={activePartners} toast={toast}/>}
         {page==="playbooks"&& <PlaybooksPage tab={pbTab} setTab={setPbTab} kanban={kanban} setKanban={setKanban} activeClient={activeClient} activePartners={activePartners} goLevers={goLevers} toast={toast}/>}
@@ -957,7 +963,7 @@ export default function App() {
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
-function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
+function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
   const isExec = role==="exec";
   const [viewMode, setViewMode] = useState("account"); // "account" or "portfolio"
   const [partnersExpanded, setPartnersExpanded] = useState(false);
@@ -999,7 +1005,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
           <h1 style={{fontFamily:"'DM Sans',sans-serif",fontSize:24,fontWeight:800,color:C.t1,letterSpacing:"-0.6px",lineHeight:1}}>Health Overview</h1>
-          <div style={{fontSize:12,color:C.t3,marginTop:4}}>{viewMode === "account" ? "Wyndham Hotels & Resorts · 27 brands · 9,849 properties" : (isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants")}</div>
+          <div style={{fontSize:12,color:C.t3,marginTop:4}}>{viewMode === "account" ? `${activeClient?.name || "Wyndham Hotels"} · 27 brands · 9,849 properties` : (isExec ? "Cross-tenant executive view · 84 active tenants" : "Operator view · Your assigned tenants")}</div>
         </div>
         <div style={{display:"flex",gap:8}}>
           <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:8,padding:"7px 16px",fontSize:12,color:C.t2,fontWeight:500}} onClick={()=>toast("Export queued — check your downloads","info")}>↗ Export</button>
@@ -1035,7 +1041,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
           ))}
         </div>
       </div>
-      <SH phase="SEE" title={viewMode === "account" ? "Account Health Summary" : "Portfolio Health Summary"} ann="ui" sub={viewMode === "account" ? "Wyndham Hotels & Resorts · 27 brands" : (isExec ? "All segments · 84 tenants" : "Your assigned tenants · 8 properties")}/>
+      <SH phase="SEE" title={viewMode === "account" ? "Account Health Summary" : "Portfolio Health Summary"} ann="ui" sub={viewMode === "account" ? `${activeClient?.name || "Wyndham Hotels"} · 27 brands` : (isExec ? "All segments · 84 tenants" : "Your assigned tenants · 8 properties")}/>
       <div style={{display:"grid",gridTemplateColumns:"210px 1fr 1fr 1fr",gap:12,marginBottom:22}}>
         <div style={{background:`linear-gradient(145deg,${C.cardBg} 50%,${kpiData.healthAccent}0A 100%)`,border:`1px solid ${C.border}`,borderTop:`3px solid ${kpiData.healthAccent}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
           <div style={{fontSize:10,color:C.t3,fontWeight:600,letterSpacing:0.6,textTransform:"uppercase",marginBottom:8,alignSelf:"flex-start"}}>Health Score <Ann type="ui"/></div>
@@ -1095,7 +1101,20 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
       </div>
 
       {/* Account View: Brand Health Grid + Demand Partners */}
-      {viewMode === "account" && (
+      {viewMode === "account" && activeClient?.name !== "Wyndham Hotels" && (
+        <Card style={{marginBottom:22,padding:48,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center"}}>
+          <div style={{fontSize:24,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",marginBottom:8}}>{activeClient?.name || "Selected Account"}</div>
+          <div style={{marginBottom:16}}><ProducerTier name={activeClient?.name}/></div>
+          <div style={{fontSize:13,color:C.t3,maxWidth:420,lineHeight:1.6,marginBottom:20}}>Full account diagnostic coming in next release. Switch to Portfolio View to compare all enterprise accounts.</div>
+          <button 
+            onClick={()=>setViewMode("portfolio")} 
+            style={{background:C.brand,border:"none",borderRadius:8,padding:"10px 24px",fontSize:13,color:"#fff",fontWeight:700,cursor:"pointer",boxShadow:`0 2px 8px ${C.brand}44`}}
+          >
+            View Portfolio →
+          </button>
+        </Card>
+      )}
+      {viewMode === "account" && activeClient?.name === "Wyndham Hotels" && (
         <div style={{display:"grid",gridTemplateColumns:"60% 40%",gap:16,marginBottom:22}}>
           {/* Left Panel: Brand Health Grid */}
           <Card>
@@ -1239,24 +1258,24 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast }) {
         <Card style={{padding:16}}>
           <SH phase="PREVENT" title="Emerging Risk Patterns" ann="new"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],["Rate restriction spikes correlate with weekend inventory windows","amber"],["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
-              <div key={txt} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,borderLeft:`3px solid ${C[s]}`}}>
-                <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{txt}</span>
-                <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>View →</button>
-              </div>
-            ))}
+{[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],["Rate restriction spikes correlate with weekend inventory windows","amber"],["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
+  <div key={txt} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,borderLeft:`3px solid ${C[s]}`}}>
+  <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{txt}</span>
+  <button onClick={()=>setPage("errors")} className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0,cursor:"pointer"}}>View →</button>
+  </div>
+  ))}
           </div>
         </Card>
         <Card style={{padding:16}}>
           <SH phase="PREVENT" title="Recommended Preventive Playbooks" ann="ui"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
-            {["Standardise retry policy for ARI sync across all Tier 1 tenants","Add pre-deployment health check for onboarding + content modules","Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
-              <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
-                <div style={{width:4,height:4,borderRadius:"50%",background:C.blue,flexShrink:0}}/>
-                <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{t}</span>
-                <button className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0}}>Add →</button>
-              </div>
-            ))}
+{["Standardise retry policy for ARI sync across all Tier 1 tenants","Add pre-deployment health check for onboarding + content modules","Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
+  <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
+  <div style={{width:4,height:4,borderRadius:"50%",background:C.blue,flexShrink:0}}/>
+  <span style={{fontSize:12,color:C.t2,flex:1,lineHeight:1.5}}>{t}</span>
+  <button onClick={()=>setPage("playbooks")} className="btn-ghost" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"3px 10px",fontSize:10,color:C.t3,flexShrink:0,cursor:"pointer"}}>Add →</button>
+  </div>
+  ))}
           </div>
         </Card>
       </div>
@@ -1347,7 +1366,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ═════════════════════════════���════════════════════════════════════════════
    PAGE 2 — ERROR INTELLIGENCE
 ═════════════════════════════════════════════════════════════════════════��� */
 function ErrorPage({ sel, setSel, toast }) {
@@ -1635,6 +1654,11 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
 ══════════════════════════════════════════════════════════════════════════ */
 function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePartners, goLevers, toast }) {
+  const relativeDate = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
   const kanbanCols = [["To Review","Unassigned","PRIORITISE"],["In Progress","InProgress","FIX"],["Proved","Mitigated","PROVE"],["Preventive","Active","PREVENT"]];
   return (
     <div className="fade-in">
