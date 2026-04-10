@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ─────────────────────────────────────────────── */
+/* ── MultiSelect dropdown ────────────���────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -679,6 +679,137 @@ function ContentErrorModal({ onClose }) {
   );
 }
 
+function InnovationModal({ tab, setTab, onClose, toast }) {
+  const [name, setName] = useState("");
+  const [account, setAccount] = useState("");
+  const [idea, setIdea] = useState("");
+  const [priority, setPriority] = useState("");
+  const [sentiment, setSentiment] = useState(null);
+  const [feedback, setFeedback] = useState("");
+
+  const resetForm = () => {
+    setName(""); setAccount(""); setIdea(""); setPriority("");
+    setSentiment(null); setFeedback("");
+  };
+
+  const handleIdeaSubmit = () => {
+    toast("💡 Idea submitted — thank you!", "success");
+    resetForm();
+    onClose();
+  };
+
+  const handleFeedbackSubmit = () => {
+    toast("✓ Feedback received — thank you!", "success");
+    resetForm();
+    onClose();
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:800,display:"flex",alignItems:"center",
+      justifyContent:"center",background:"rgba(15,20,40,0.6)",backdropFilter:"blur(4px)"}}
+      onClick={onClose}>
+      <div style={{background:"#FFFFFF",borderRadius:16,width:"min(520px,92vw)",
+        maxHeight:"85vh",display:"flex",flexDirection:"column",
+        boxShadow:"0 32px 80px rgba(0,0,0,0.25)",overflow:"hidden"}}
+        onClick={e=>e.stopPropagation()}>
+        {/* Header */}
+        <div style={{padding:"20px 24px 0",display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:20}}>💡</span>
+          <span style={{fontSize:18,fontWeight:800,color:C.t1,fontFamily:"'DM Sans',sans-serif",flex:1}}>Shape the Future</span>
+          <button onClick={onClose} style={{background:C.cardBg,border:`1px solid ${C.border}`,color:C.t3,width:28,height:28,borderRadius:6,cursor:"pointer",fontSize:12,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+        </div>
+        {/* Tabs */}
+        <div style={{display:"flex",gap:0,padding:"12px 24px 0",borderBottom:`1px solid ${C.border}`}}>
+          {[["shape","Shape the Future"],["feedback","Give Feedback"]].map(([k,l])=>(
+            <button key={k} onClick={()=>setTab(k)} style={{
+              background:"transparent",border:"none",
+              padding:"8px 16px",fontSize:13,fontWeight:tab===k?700:500,
+              color:tab===k?C.brand:C.t3,cursor:"pointer",
+              borderBottom:tab===k?`2px solid ${C.brand}`:"2px solid transparent",
+              marginBottom:-1,transition:"all 0.15s"}}>{l}</button>
+          ))}
+        </div>
+        {/* Tab Content */}
+        <div style={{padding:"20px 24px",overflowY:"auto",flex:1}}>
+          {tab === "shape" && (
+            <>
+              <div style={{fontSize:13,color:C.t3,marginBottom:20,lineHeight:1.5}}>Help us build the next generation of distribution intelligence. Your insights drive our roadmap.</div>
+              <div style={{marginBottom:16}}>
+                <label style={{display:"block",fontSize:12,fontWeight:600,color:C.t2,marginBottom:4}}>Your Name</label>
+                <input type="text" value={name} onChange={e=>setName(e.target.value)}
+                  style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:8,padding:"9px 12px",fontSize:13,fontFamily:"inherit",boxSizing:"border-box"}}/>
+              </div>
+              <div style={{marginBottom:16}}>
+                <label style={{display:"block",fontSize:12,fontWeight:600,color:C.t2,marginBottom:4}}>Brand / Account</label>
+                <select value={account} onChange={e=>setAccount(e.target.value)}
+                  style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:8,padding:"9px 12px",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",background:"#fff"}}>
+                  <option value="">Select account</option>
+                  {["Wyndham Hotels","Hilton Worldwide","Marriott International","IHG Hotels & Resorts","Hyatt Hotels","Best Western Hotels","Choice Hotels","Omni Hotels & Resorts"].map(a=>(
+                    <option key={a} value={a}>{a}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{marginBottom:16}}>
+                <label style={{display:"block",fontSize:12,fontWeight:600,color:C.t2,marginBottom:4}}>Your Idea</label>
+                <textarea value={idea} onChange={e=>setIdea(e.target.value)} rows={4}
+                  placeholder="Describe your idea for improving RateIQ..."
+                  style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:8,padding:"9px 12px",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",resize:"vertical"}}/>
+              </div>
+              <div style={{marginBottom:16}}>
+                <label style={{display:"block",fontSize:12,fontWeight:600,color:C.t2,marginBottom:4}}>Priority</label>
+                <select value={priority} onChange={e=>setPriority(e.target.value)}
+                  style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:8,padding:"9px 12px",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",background:"#fff"}}>
+                  <option value="">Select priority</option>
+                  {["Critical","High","Medium","Low"].map(p=>(
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </div>
+              <button onClick={handleIdeaSubmit}
+                style={{width:"100%",background:C.brand,color:"#fff",border:"none",borderRadius:8,padding:11,fontSize:14,fontWeight:700,marginTop:4,cursor:"pointer"}}
+                onMouseEnter={e=>e.target.style.opacity="0.88"}
+                onMouseLeave={e=>e.target.style.opacity="1"}>Submit Idea</button>
+              <div style={{marginTop:20}}>
+                <div style={{fontSize:11,fontWeight:700,color:C.t4,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:10}}>Recent Innovation Wins</div>
+                {["Weekend error pattern detection (suggested by NORAM team)","Push connectivity opportunity scoring (suggested by enterprise workshop)"].map(t=>(
+                  <div key={t} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+                    <div style={{width:16,height:16,borderRadius:"50%",background:C.greenBg,border:`1px solid ${C.greenBorder}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:C.green}}>✓</div>
+                    <span style={{fontSize:12,color:C.t2}}>{t}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          {tab === "feedback" && (
+            <>
+              <div style={{fontSize:13,color:C.t3,marginBottom:16}}>How is your experience with RateIQ?</div>
+              <div style={{display:"flex",justifyContent:"center",gap:12,marginBottom:16}}>
+                {["😞","😐","😊"].map((emoji,i)=>(
+                  <button key={emoji} onClick={()=>setSentiment(i)}
+                    style={{width:48,height:48,borderRadius:"50%",
+                      border:sentiment===i?`2px solid ${C.brand}`:`2px solid ${C.border}`,
+                      background:sentiment===i?C.brandDim:"#fff",
+                      boxShadow:sentiment===i?`0 0 0 3px ${C.brandBorder}`:"none",
+                      fontSize:22,cursor:"pointer",transition:"all 0.15s"}}>{emoji}</button>
+                ))}
+              </div>
+              <textarea value={feedback} onChange={e=>setFeedback(e.target.value.slice(0,500))} rows={4}
+                placeholder="Anything you want to tell us?"
+                style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:8,padding:"9px 12px",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",resize:"vertical",marginTop:16}}/>
+              <div style={{textAlign:"right",fontSize:11,color:C.t4,marginTop:4}}>{feedback.length} / 500 characters</div>
+              <button onClick={handleFeedbackSubmit}
+                style={{width:"100%",background:C.brand,color:"#fff",border:"none",borderRadius:8,padding:11,fontSize:14,fontWeight:700,marginTop:8,cursor:"pointer"}}
+                onMouseEnter={e=>e.target.style.opacity="0.88"}
+                onMouseLeave={e=>e.target.style.opacity="1"}>Submit Feedback</button>
+              <div style={{fontSize:11,color:C.t4,textAlign:"center",marginTop:12}}>Need help? Contact your RateGain account team.</div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [page, setPage]             = useState("dist");
   const [role, setRole]             = useState("exec");
@@ -697,17 +828,85 @@ export default function App() {
   const [leversFor, setLeversFor]   = useState(null);
   const [alertOpen, setAlertOpen]   = useState(false);
   const [kanban, setKanban]         = useState(true);
+  const [authed, setAuthed]         = useState(false);
+  const [innovOpen, setInnovOpen]   = useState(false);
+  const [innovTab, setInnovTab]     = useState("shape");
+  const [avatarOpen, setAvatarOpen] = useState(false);
 
   const goLevers = (name) => { setLeversFor(name); setPage("levers"); };
   // Close multi-select dropdowns on outside click
   useEffect(() => {
-    const handler = () => { setDpOpen(false); setBrandOpen(false); setClientOpen(false); };
+    const handler = () => { setDpOpen(false); setBrandOpen(false); setClientOpen(false); setAvatarOpen(false); };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, []);
   const toast    = useToast();
   const curNav   = TOP_NAV.find(n=>n.id===page);
   const loopPhase = curNav?.phase || "SEE";
+
+  // Login state
+  const [loginUser, setLoginUser] = useState("");
+  const [loginPin, setLoginPin]   = useState("");
+  const [loginError, setLoginError] = useState(false);
+
+  const handleLogin = () => {
+    if (loginUser === "RGRateIQ" && loginPin === "RG2026") {
+      setAuthed(true);
+      setLoginError(false);
+      setLoginUser("");
+      setLoginPin("");
+    } else {
+      setLoginError(true);
+    }
+  };
+
+  // PIN Gate
+  if (!authed) {
+    return (
+      <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:"#12172A",minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap');`}</style>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:4,height:36,background:"#fff",borderRadius:2}}/>
+          <span style={{fontSize:28,fontWeight:800,color:"#fff"}}>RG</span>
+          <span style={{fontSize:28,fontWeight:800,color:"#67E8F9"}}>RateIQ</span>
+        </div>
+        <div style={{color:"#64748B",fontSize:13,marginTop:8}}>Distribution Intelligence Platform</div>
+        <div style={{background:"#fff",borderRadius:16,padding:40,width:340,boxShadow:"0 24px 64px rgba(0,0,0,0.4)",marginTop:40}}>
+          <div style={{marginBottom:16}}>
+            <label style={{display:"block",fontSize:12,fontWeight:600,color:"#334155",marginBottom:6}}>Username</label>
+            <input 
+              type="text" 
+              value={loginUser} 
+              onChange={e=>setLoginUser(e.target.value)}
+              style={{width:"100%",border:"1px solid #E2E8F0",borderRadius:8,padding:"10px 14px",fontSize:14,outline:"none",boxSizing:"border-box"}}
+              onFocus={e=>e.target.style.borderColor="#6941F2"}
+              onBlur={e=>e.target.style.borderColor="#E2E8F0"}
+            />
+          </div>
+          <div style={{marginBottom:16}}>
+            <label style={{display:"block",fontSize:12,fontWeight:600,color:"#334155",marginBottom:6}}>PIN</label>
+            <input 
+              type="password" 
+              value={loginPin} 
+              onChange={e=>setLoginPin(e.target.value)}
+              onKeyDown={e=>e.key==="Enter"&&handleLogin()}
+              style={{width:"100%",border:"1px solid #E2E8F0",borderRadius:8,padding:"10px 14px",fontSize:14,outline:"none",boxSizing:"border-box"}}
+              onFocus={e=>e.target.style.borderColor="#6941F2"}
+              onBlur={e=>e.target.style.borderColor="#E2E8F0"}
+            />
+          </div>
+          {loginError && <div style={{color:"#DC2626",fontSize:12,marginTop:8}}>Invalid credentials. Try again.</div>}
+          <button 
+            onClick={handleLogin}
+            style={{width:"100%",background:"#6941F2",color:"#fff",border:"none",borderRadius:8,padding:11,fontSize:14,fontWeight:700,marginTop:8,cursor:"pointer"}}
+            onMouseEnter={e=>e.target.style.opacity="0.88"}
+            onMouseLeave={e=>e.target.style.opacity="1"}
+          >Login</button>
+          <div style={{color:"#475569",fontSize:11,textAlign:"center",marginTop:12}}>Demo Access · RateGain Internal Only</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{fontFamily:"'DM Sans',system-ui,sans-serif",background:C.pageBg,minHeight:"100vh",color:C.t1}}>
@@ -873,13 +1072,44 @@ export default function App() {
             </div>
           )}
         </div>
+        <button onClick={e=>{e.stopPropagation();setInnovOpen(true);}}
+          style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",
+            borderRadius:6,width:32,height:30,color:"#CBD5E1",fontSize:16,
+            display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>💡</button>
         <button style={{background:"none",border:"none",color:"#A78BFA",
           fontSize:12,fontWeight:600,letterSpacing:"-0.1px"}}>Grow with RateGain →</button>
-        <div style={{width:30,height:30,borderRadius:"50%",
-          background:"linear-gradient(135deg,#7C3AED,#6941F2)",
-          display:"flex",alignItems:"center",justifyContent:"center",
-          fontSize:11,fontWeight:700,color:"#fff",
-          boxShadow:"0 0 0 2px rgba(255,255,255,0.15)"}}>JR</div>
+        <div style={{position:"relative"}}>
+          <div onClick={e=>{e.stopPropagation();setAvatarOpen(!avatarOpen);}} style={{width:30,height:30,borderRadius:"50%",
+            background:"linear-gradient(135deg,#7C3AED,#6941F2)",
+            display:"flex",alignItems:"center",justifyContent:"center",
+            fontSize:11,fontWeight:700,color:"#fff",cursor:"pointer",
+            boxShadow:"0 0 0 2px rgba(255,255,255,0.15)"}}>JR</div>
+          {avatarOpen && (
+            <div onClick={e=>e.stopPropagation()} style={{position:"absolute",top:40,right:0,background:C.cardBg,
+              border:`1px solid ${C.border}`,borderRadius:10,width:240,
+              boxShadow:C.shadowLg,zIndex:300,overflow:"hidden"}}>
+              <div style={{padding:16,display:"flex",flexDirection:"column",alignItems:"center"}}>
+                <div style={{width:44,height:44,borderRadius:"50%",
+                  background:"linear-gradient(135deg,#7C3AED,#6941F2)",
+                  display:"flex",alignItems:"center",justifyContent:"center",
+                  fontSize:15,fontWeight:700,color:"#fff"}}>JR</div>
+                <div style={{fontSize:14,fontWeight:700,color:C.t1,marginTop:8}}>Julie Grose</div>
+                <div style={{fontSize:11,color:C.t3}}>julie.grose@rategain.com</div>
+              </div>
+              <div style={{borderTop:`1px solid ${C.border}`}}/>
+              {[["🔑","Change Password"],["🔄","Switch Account"],["🚪","Logout"]].map(([icon,label])=>(
+                <div key={label} onClick={()=>{
+                  if(label==="Logout"){setAuthed(false);setAvatarOpen(false);}
+                  else setAvatarOpen(false);
+                }} style={{padding:"10px 16px",fontSize:13,color:C.t2,cursor:"pointer",display:"flex",alignItems:"center",gap:8}}
+                  onMouseEnter={e=>e.currentTarget.style.background="#F8FAFC"}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <span>{icon}</span><span>{label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div style={{background:C.cardBg,borderBottom:`1px solid ${C.border}`,
@@ -954,6 +1184,12 @@ export default function App() {
       </div>
       <ToastHost/>
       {showContentErrors && <ContentErrorModal onClose={()=>setShowContentErrors(false)}/>}
+      {innovOpen && <InnovationModal 
+        tab={innovTab} 
+        setTab={setInnovTab} 
+        onClose={()=>setInnovOpen(false)} 
+        toast={toast}
+      />}
     </div>
   );
 }
@@ -1366,7 +1602,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   );
 }
 
-/* ═════════════════════════════���════════════════════════════════════════════
+/* ════════════════���════════════���════════════════════════════════════════════
    PAGE 2 — ERROR INTELLIGENCE
 ═════════════════════════════════════════════════════════════════════════��� */
 function ErrorPage({ sel, setSel, toast }) {
