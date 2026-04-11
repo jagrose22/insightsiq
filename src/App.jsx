@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ────────────���────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────����─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -854,7 +854,7 @@ export default function App() {
   // Auto-rotate slides on login screen
   useEffect(() => {
     if (authed) return;
-    const t = setInterval(() => setSlide(s => s===0?1:0), 6000);
+    const t = setInterval(() => setSlide(s => s===0?1:0), 8500);
     return () => clearInterval(t);
   }, [authed]);
 
@@ -869,7 +869,7 @@ export default function App() {
     }
   };
 
-  // PIN Gate — Two-panel login screen
+  // PIN Gate — 60/40 Left/Right split login shell
   if (!authed) {
     const handleLoginSubmit = () => {
       if (loginUser === "RGRateIQ" && loginPin === "RG2026") {
@@ -885,203 +885,136 @@ export default function App() {
 
     return (
       <div style={{width:"100vw",height:"100vh",display:"flex",overflow:"hidden",
-        background:"linear-gradient(135deg, #0A0714 0%, #12172A 40%, #1A0A3D 70%, #0D1B3E 100%)",
         fontFamily:"'DM Sans',system-ui,sans-serif"}}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap');
-          @keyframes bgDrift {0%,100%{background-position:0 0}50%{background-position:14px 14px}}
-          @keyframes fadeSlideUp {from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-          @keyframes slideInLeft {from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
-          @keyframes countUp {from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-          @keyframes glow {0%,100%{box-shadow:0 0 20px rgba(128,33,255,0.3)}50%{box-shadow:0 0 40px rgba(128,33,255,0.6)}}
+          @keyframes fadeSlide {from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
           .login-input:focus{border-color:#8021FF !important;box-shadow:0 0 0 3px rgba(128,33,255,0.12) !important;outline:none}
-          .login-btn:hover{opacity:0.9;transform:translateY(-1px)}
+          .login-btn:hover{opacity:0.92;transform:translateY(-1px)}
           .login-btn:active{transform:translateY(0)}
-          .dot-nav:hover{opacity:0.8;cursor:pointer}
+          .nav-dot{cursor:pointer;transition:all 0.2s ease}
+          .nav-dot:hover{opacity:0.8}
         `}</style>
 
-        {/* Dot grid overlay */}
-        <div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:0,
-          background:"radial-gradient(circle, rgba(128,33,255,0.18) 1px, transparent 1px)",
-          backgroundSize:"28px 28px",animation:"bgDrift 25s ease infinite"}}/>
-
-        {/* LEFT PANEL */}
-        <div style={{width:"55%",height:"100vh",padding:"52px 56px",display:"flex",flexDirection:"column",
-          justifyContent:"space-between",position:"relative",zIndex:1,
-          background:"linear-gradient(160deg, rgba(30,10,74,0.95) 0%, rgba(18,23,42,0.98) 100%)",
-          borderRight:"1px solid rgba(128,33,255,0.2)"}}>
-
-          {/* TOP — Logo row */}
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:3,height:32,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
-            <span style={{fontSize:20,fontWeight:800,color:"#fff"}}>RG</span>
+        {/* LEFT PANEL — 60% — Dark gradient with rotating content */}
+        <div style={{width:"60%",height:"100vh",
+          background:"linear-gradient(135deg, #12172A 0%, #1B2140 50%, #2B1760 100%)",
+          padding:"48px 56px",display:"flex",flexDirection:"column",position:"relative"}}>
+          
+          {/* Logo */}
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:48}}>
+            <img src="/Logo-RG.png" alt="RG" style={{width:32,height:32,borderRadius:6,objectFit:"contain"}}/>
             <span style={{fontSize:20,fontWeight:800,color:"#67E8F9"}}>RateIQ</span>
-            <div style={{width:1,height:20,background:"rgba(255,255,255,0.15)",margin:"0 12px"}}/>
-            <span style={{background:"rgba(128,33,255,0.2)",border:"1px solid rgba(128,33,255,0.4)",
-              borderRadius:4,padding:"2px 8px",fontSize:9,fontWeight:700,color:"#A78BFA",
-              letterSpacing:"0.8px",fontFamily:"'IBM Plex Mono',monospace"}}>POWERED BY RG4D</span>
           </div>
 
-          {/* MIDDLE — Rotating content */}
+          {/* Rotating content area */}
           <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
-            {slide === 0 && (
-              <div style={{animation:"slideInLeft 0.5s ease both"}} key="slide0">
-                <div style={{color:"#EF4444",fontSize:10,fontWeight:700,letterSpacing:"1.2px",
-                  fontFamily:"'IBM Plex Mono',monospace",marginBottom:16}}>&#9679; DISTRIBUTION HEALTH CRISIS</div>
-                <h2 style={{fontSize:46,fontWeight:800,color:"#fff",lineHeight:1.1,marginBottom:8}}>
-                  Your revenue is<br/><span style={{color:"#67E8F9"}}>leaking</span>. Right now.
-                </h2>
-                <p style={{fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.65,maxWidth:420,marginBottom:36}}>
-                  Distribution errors cost enterprise hotel chains millions every year — silently, across brands, channels, and properties. Most teams find out from a quarterly report. By then, the damage is done.
-                </p>
+            <div style={{animation:"fadeSlide 0.4s ease both"}} key={slide}>
+              {slide === 0 ? (
+                <>
+                  {/* Screen 1: Product hook */}
+                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:20}}>
+                    Revenue is leaking.<br/><span style={{color:"#67E8F9"}}>RateIQ</span> shows you where.
+                  </h1>
+                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:44}}>
+                    See hidden revenue risk across distribution, parity, and booking performance.
+                  </p>
 
-                {/* Stat tiles */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-                  {[
-                    {val:"$633K",color:"#fff",label:"avg revenue at risk per enterprise account",accent:"#EF4444"},
-                    {val:"15.2",color:"#EF4444",label:"errors per 1k \u00B7 Wyndham portfolio today",accent:"#EF4444"},
-                    {val:"770",color:"#F59E0B",label:"properties \u00B7 zero OTA bookings \u00B7 6 months",accent:"#F59E0B"},
-                  ].map((t,i)=>(
-                    <div key={i} style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)",
-                      borderRadius:12,padding:"16px 14px",borderLeft:`3px solid ${t.accent}`,
-                      animation:`countUp 0.6s ease both`,animationDelay:`${i*0.1}s`}}>
-                      <div style={{color:t.color,fontSize:28,fontWeight:800,fontFamily:"'IBM Plex Mono',monospace"}}>{t.val}</div>
-                      <div style={{color:"rgba(255,255,255,0.45)",fontSize:10,lineHeight:1.4,marginTop:6}}>{t.label}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* RateIQ 4D mini-strip */}
-                <div style={{display:"flex",gap:0,borderRadius:10,overflow:"hidden",border:"1px solid rgba(255,255,255,0.1)",marginTop:28}}>
-                  {[
-                    {n:"01",l:"DISCOVER",s:"Find the leak",bg:"rgba(103,232,249,0.1)",c:"#67E8F9"},
-                    {n:"02",l:"DIAGNOSE",s:"16-lever grid",bg:"rgba(128,33,255,0.15)",c:"#A78BFA"},
-                    {n:"03",l:"DELIVER",s:"Fix & track",bg:"rgba(251,191,36,0.1)",c:"#FBB024"},
-                    {n:"04",l:"DRIVE",s:"Agentic AI",bg:"rgba(16,185,129,0.1)",c:"#10B981"},
-                  ].map((d,i)=>(
-                    <div key={d.n} style={{flex:1,padding:"10px 8px",textAlign:"center",background:d.bg,
-                      borderLeft:i>0?"1px solid rgba(255,255,255,0.08)":"none"}}>
-                      <div style={{fontSize:9,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",
-                        letterSpacing:"0.8px",color:d.c}}>{d.n} {d.l}</div>
-                      <div style={{fontSize:10,color:"rgba(255,255,255,0.5)",marginTop:3}}>{d.s}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {slide === 1 && (
-              <div style={{animation:"slideInLeft 0.5s ease both"}} key="slide1">
-                <div style={{color:"#A78BFA",fontSize:10,fontWeight:700,letterSpacing:"1.2px",
-                  fontFamily:"'IBM Plex Mono',monospace",marginBottom:16}}>&#9679; THE RG4D REVENUE FRAMEWORK</div>
-                <h2 style={{fontSize:46,fontWeight:800,color:"#fff",lineHeight:1.1,marginBottom:8}}>
-                  From signal to <span style={{color:"#67E8F9"}}>recovery</span>.<br/>One platform. Four stages.
-                </h2>
-                <p style={{fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.65,maxWidth:420,marginBottom:20}}>
-                  RateGain is the only end-to-end hospitality intelligence platform connecting pricing, distribution, content, and payments — across the full RG4D loop.
-                </p>
-
-                {/* RG4D logo */}
-                <div style={{textAlign:"center",margin:"20px 0"}}>
-                  <img src="/RG4D-Logo.png" alt="RG4D" style={{width:80,height:80,objectFit:"contain"}}/>
-                  <div style={{color:"rgba(255,255,255,0.5)",fontSize:11,letterSpacing:"1px",
-                    fontFamily:"'IBM Plex Mono',monospace",marginTop:8}}>Discover · Diagnose · Deliver · Drive</div>
-                </div>
-
-                {/* Four D cards */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginTop:20}}>
-                  {[
-                    {n:"01",t:"Discover",s:"Find where value is leaking",c:"#67E8F9",bg:"rgba(103,232,249,0.07)",
-                      tags:["RATE SHOPPING","PARITY","DEMAND NAV","OTA VISIBILITY"]},
-                    {n:"02",t:"Diagnose",s:"Understand why it is happening",c:"#A78BFA",bg:"rgba(128,33,255,0.1)",
-                      tags:["RATEIQ 16-LEVER","ARI ANALYSIS","CONNECTIVITY","CHANNEL DIAGNOSTICS"]},
-                    {n:"03",t:"Deliver",s:"Move the right fix faster",c:"#FBB024",bg:"rgba(251,176,36,0.08)",
-                      tags:["PLAYBOOKS","ACTION QUEUE","RECOVERY PLANS","RATEIQ POC"]},
-                    {n:"04",t:"Drive — Agentic AI",s:"Continuously execute and optimize",c:"#10B981",bg:"rgba(16,185,129,0.1)",
-                      tags:["AGENTIC AI","AUTO ARI FIX","SMART ROUTING","PREDICTIVE OPT"]},
-                  ].map((card,i)=>(
-                    <div key={card.n} style={{background:card.bg,border:`1px solid ${card.c}40`,borderRadius:10,
-                      padding:14,animation:`countUp 0.5s ease both`,animationDelay:`${i*0.08}s`}}>
-                      <div style={{fontSize:9,fontFamily:"'IBM Plex Mono',monospace",fontWeight:700,color:card.c}}>{card.n}</div>
-                      <div style={{fontSize:14,fontWeight:700,color:"#fff",marginTop:2}}>{card.t}</div>
-                      <div style={{fontSize:11,color:card.c,marginTop:2}}>{card.s}</div>
-                      <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:8}}>
-                        {card.tags.map(tag=>(
-                          <span key={tag} style={{background:`${card.c}18`,border:`1px solid ${card.c}44`,
-                            borderRadius:3,padding:"2px 6px",fontSize:9,color:card.c,
-                            fontFamily:"'IBM Plex Mono',monospace"}}>{tag}</span>
-                        ))}
+                  {/* Metric tiles — white cards on dark */}
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(3, 1fr)",gap:14,maxWidth:520}}>
+                    {[
+                      {val:"$633K",label:"avg revenue at risk"},
+                      {val:"15.2",label:"errors per 1k bookings"},
+                      {val:"770",label:"properties impacted"},
+                    ].map((t,i)=>(
+                      <div key={i} className="metric-tile" style={{background:"#fff",border:"1.5px solid #E9D5FF",borderRadius:12,
+                        padding:"20px 16px",boxShadow:"0 8px 24px rgba(0,0,0,0.18)",
+                        transition:"transform 0.15s ease, box-shadow 0.15s ease",cursor:"default"}}
+                        onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 12px 32px rgba(0,0,0,0.22)";}}
+                        onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.18)";}}>
+                        <div style={{fontSize:28,fontWeight:800,color:"#0F172A",fontFamily:"'IBM Plex Mono',monospace",lineHeight:1}}>{t.val}</div>
+                        <div style={{fontSize:11,color:"#64748B",marginTop:6}}>{t.label}</div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{color:"rgba(255,255,255,0.35)",fontSize:11,fontStyle:"italic",textAlign:"center",marginTop:12}}>
-                  RateIQ is your entry point into the full RG4D loop.
-                </div>
-              </div>
-            )}
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Screen 2: RG4D story */}
+                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:20}}>
+                    Find the leak. Fix the cause.<br/><span style={{color:"#67E8F9"}}>Recover</span> the revenue.
+                  </h1>
+                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:44}}>
+                    RateIQ is the entry point into the full RG4D loop — connecting parity, connectivity, recovery, and AI-driven optimization.
+                  </p>
+
+                  {/* RG4D cards — white cards on dark */}
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4, 1fr)",gap:12,maxWidth:560}}>
+                    {[
+                      {title:"DISCOVER",sub:"Find the issue"},
+                      {title:"DIAGNOSE",sub:"See root cause"},
+                      {title:"DELIVER",sub:"Fix & track"},
+                      {title:"DRIVE",sub:"AI keeps it green"},
+                    ].map((card,i)=>(
+                      <div key={i} style={{background:"#fff",border:"1.5px solid #8021FF",borderRadius:10,
+                        padding:"18px 12px",textAlign:"center",boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>
+                        <div style={{fontSize:11,fontWeight:800,color:"#8021FF",letterSpacing:"0.5px",marginBottom:6}}>{card.title}</div>
+                        <div style={{fontSize:11,color:"#64748B",lineHeight:1.4}}>{card.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* BOTTOM — Dot navigation */}
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
+          {/* Navigation dots — centered at bottom */}
+          <div style={{position:"absolute",bottom:32,left:0,right:0,display:"flex",justifyContent:"center",alignItems:"center",gap:12}}>
             {[0,1].map(i=>(
-              <div key={i} onClick={()=>setSlide(i)} className="dot-nav"
-                style={{width:slide===i?28:8,height:8,borderRadius:slide===i?4:4,
-                  background:slide===i?"#8021FF":"rgba(255,255,255,0.2)",
-                  animation:slide===i?"glow 2s ease infinite":"none",
-                  transition:"all 0.3s ease",cursor:"pointer"}}/>
+              <div key={i} onClick={()=>setSlide(i)} className="nav-dot"
+                style={{width:slide===i?24:10,height:10,borderRadius:slide===i?5:"50%",
+                  background:slide===i?"#8021FF":"transparent",
+                  border:slide===i?"none":"2px solid rgba(255,255,255,0.35)",
+                  boxShadow:slide===i?"0 0 12px rgba(128,33,255,0.5)":"none",
+                  transition:"all 0.2s ease"}}/>
             ))}
-            <span style={{marginLeft:"auto",fontSize:10,fontFamily:"'IBM Plex Mono',monospace",
-              color:"rgba(255,255,255,0.25)"}}>RateGain · RG4D Framework · Early Access</span>
           </div>
         </div>
 
-        {/* RIGHT PANEL — Login form */}
-        <div style={{width:"45%",height:"100vh",display:"flex",flexDirection:"column",
-          justifyContent:"center",alignItems:"center",padding:"56px 48px",
-          background:"rgba(255,255,255,0.97)",position:"relative",zIndex:1}}>
-
-          <div style={{maxWidth:360,width:"100%"}}>
-            {/* Top logo */}
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:24}}>
-              <div style={{width:3,height:26,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
-              <span style={{fontSize:18,fontWeight:800,color:"#0F172A"}}>RG</span>
-              <span style={{fontSize:18,fontWeight:800,color:"#0891B2"}}>RateIQ</span>
-            </div>
-
+        {/* RIGHT PANEL — 40% — White login form (fixed, never rotates) */}
+        <div style={{width:"40%",height:"100vh",background:"#fff",
+          display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",
+          padding:"48px 40px",paddingBottom:"12vh",borderLeft:"1px solid #E2E8F0"}}>
+          
+          <div style={{maxWidth:320,width:"100%"}}>
             {/* Header */}
-            <h1 style={{fontSize:30,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome back</h1>
-            <p style={{fontSize:13,color:"#64748B",marginBottom:8}}>Distribution Intelligence Platform</p>
-            <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"#F0FDF4",
-              border:"1px solid #86EFAC",borderRadius:20,padding:"3px 10px",marginBottom:28}}>
-              <span style={{width:5,height:5,borderRadius:"50%",background:"#059669",display:"inline-block"}}/>
-              <span style={{fontSize:10,fontWeight:700,color:"#059669",fontFamily:"'IBM Plex Mono',monospace"}}>LIVE — Wyndham POC Active</span>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+              <img src="/Logo-RG.png" alt="RG" style={{width:26,height:26,borderRadius:5,objectFit:"contain"}}/>
+              <span style={{fontSize:17,fontWeight:800,color:"#0891B2"}}>RateIQ</span>
             </div>
+            <h2 style={{fontSize:24,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome back</h2>
+            <p style={{fontSize:13,color:"#64748B",marginBottom:24}}>Distribution Intelligence Platform</p>
 
             {/* Form */}
-            <div style={{marginBottom:16}}>
-              <label style={{display:"block",fontSize:12,fontWeight:600,color:"#374151",marginBottom:6,letterSpacing:"0.3px"}}>Username</label>
-              <div style={{position:"relative"}}>
-                <span style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#94A3B8"}}>&#128100;</span>
-                <input type="text" className="login-input" value={loginUser} onChange={e=>setLoginUser(e.target.value)}
-                  style={{width:"100%",border:"1.5px solid #E2E8F0",borderRadius:10,padding:"12px 14px 12px 40px",
-                    fontSize:14,fontFamily:"inherit",background:"#F8FAFC",boxSizing:"border-box",
-                    transition:"border-color 0.15s, box-shadow 0.15s"}}/>
-              </div>
+            <div style={{marginBottom:14}}>
+              <label style={{display:"block",fontSize:11,fontWeight:600,color:"#374151",marginBottom:5}}>Username</label>
+              <input type="text" className="login-input" value={loginUser} onChange={e=>setLoginUser(e.target.value)}
+                style={{width:"100%",border:"1.5px solid #E2E8F0",borderRadius:8,padding:"11px 12px",
+                  fontSize:14,fontFamily:"inherit",background:"#F8FAFC",boxSizing:"border-box",
+                  transition:"border-color 0.15s, box-shadow 0.15s"}}/>
             </div>
-            <div style={{marginBottom:16}}>
-              <label style={{display:"block",fontSize:12,fontWeight:600,color:"#374151",marginBottom:6,letterSpacing:"0.3px"}}>PIN</label>
+            <div style={{marginBottom:14}}>
+              <label style={{display:"block",fontSize:11,fontWeight:600,color:"#374151",marginBottom:5}}>PIN</label>
               <div style={{position:"relative"}}>
-                <span style={{position:"absolute",left:13,top:"50%",transform:"translateY(-50%)",fontSize:14,color:"#94A3B8"}}>&#128272;</span>
                 <input type={showPin?"text":"password"} className="login-input" value={loginPin}
                   onChange={e=>setLoginPin(e.target.value)}
                   onKeyDown={e=>e.key==="Enter"&&handleLoginSubmit()}
-                  style={{width:"100%",border:"1.5px solid #E2E8F0",borderRadius:10,padding:"12px 40px 12px 40px",
-                    fontSize:14,fontFamily:"inherit",background:"#F8FAFC",boxSizing:"border-box",
+                  style={{width:"100%",border:"1.5px solid #E2E8F0",borderRadius:8,padding:"11px 12px",
+                    paddingRight:36,fontSize:14,fontFamily:"inherit",background:"#F8FAFC",boxSizing:"border-box",
                     transition:"border-color 0.15s, box-shadow 0.15s"}}/>
                 <button onClick={()=>setShowPin(!showPin)} type="button"
-                  style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",
-                    background:"none",border:"none",fontSize:14,color:"#94A3B8",cursor:"pointer",padding:0}}>
+                  style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",
+                    background:"none",border:"none",fontSize:13,color:"#94A3B8",cursor:"pointer",padding:0}}>
                   {showPin ? "\uD83D\uDC41\u200D\uD83D\uDDE8" : "\uD83D\uDC41"}
                 </button>
               </div>
@@ -1089,28 +1022,24 @@ export default function App() {
 
             {/* Error message */}
             {loginError && (
-              <div style={{background:"#FEF2F2",border:"1px solid #FECACA",borderLeft:"3px solid #DC2626",
-                borderRadius:8,padding:"10px 14px",fontSize:12,color:"#DC2626",marginTop:8,
-                display:"flex",alignItems:"center",gap:8}}>
-                <span>&#9888;</span> Invalid credentials — please try again.
+              <div style={{fontSize:11,color:"#DC2626",marginBottom:10,display:"flex",alignItems:"center",gap:5}}>
+                <span>&#9888;</span> Invalid credentials
               </div>
             )}
 
             {/* Login button */}
             <button className="login-btn" onClick={handleLoginSubmit}
-              style={{width:"100%",background:"linear-gradient(135deg, #8021FF 0%, #6941F2 100%)",
-                color:"#fff",border:"none",borderRadius:10,padding:14,fontSize:15,fontWeight:700,
-                marginTop:20,cursor:"pointer",boxShadow:"0 4px 16px rgba(128,33,255,0.35)",
-                transition:"all 0.15s",letterSpacing:"0.3px"}}>
-              Sign In to RateIQ &rarr;
+              style={{width:"100%",background:"linear-gradient(135deg, #3B82F6 0%, #8021FF 100%)",
+                color:"#fff",border:"none",borderRadius:8,padding:12,fontSize:14,fontWeight:700,
+                cursor:"pointer",boxShadow:"0 4px 14px rgba(128,33,255,0.3)",
+                transition:"all 0.15s"}}>
+              Login
             </button>
-            <div style={{color:"#94A3B8",fontSize:11,textAlign:"center",marginTop:14}}>Demo Access · RateGain Internal Only</div>
+            <div style={{color:"#94A3B8",fontSize:10,textAlign:"center",marginTop:10}}>Demo Access · RateGain Internal Only</div>
 
-            {/* Bottom of right panel */}
-            <div style={{borderTop:"1px solid #F1F5F9",marginTop:40,paddingTop:16,
-              display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <img src="/RG4D-Logo.png" alt="RG4D" style={{width:28,height:28,objectFit:"contain"}}/>
-              <span style={{fontSize:10,color:"#CBD5E1"}}>&copy; 2026 RateGain Technologies</span>
+            {/* Footer */}
+            <div style={{borderTop:"1px solid #F1F5F9",marginTop:32,paddingTop:14,textAlign:"center"}}>
+              <span style={{fontSize:9,color:"#CBD5E1"}}>&copy; 2026 RateGain Technologies</span>
             </div>
           </div>
         </div>
@@ -1178,14 +1107,14 @@ export default function App() {
                   ? "linear-gradient(180deg,#A78BFA,#6941F2)"
                   : "linear-gradient(180deg,#67E8F9,#0891B2)",
                 transition:"background 0.3s ease"}}/>
-              <div style={{lineHeight:1}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <img src="/Logo-RG.png" alt="RG" style={{width:24,height:24,borderRadius:4,objectFit:"contain"}}/>
                 <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:800,
                   color:"#FFF",letterSpacing:"-0.3px",transition:"all 0.2s ease"}}>
                   {isInsights
-                    ? <>RG<span style={{color:"#A78BFA"}}>InsightsIQ</span></>
-                    : <>RG<span style={{color:"#67E8F9"}}>RateIQ</span></>}
+                    ? <span style={{color:"#A78BFA"}}>InsightsIQ</span>
+                    : <span style={{color:"#67E8F9"}}>RateIQ</span>}
                 </div>
-
               </div>
             </>);
           })()}
@@ -1921,7 +1850,7 @@ function ErrorPage({ sel, setSel, toast }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════��═════════════════════════════════════
    PAGE 3 — REVENUE AT RISK
 ══════════════════════════════════════════════════════════════════════════ */
 function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast }) {
