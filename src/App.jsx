@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ─────────��──���────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────��─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -946,20 +946,23 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* RateIQ 4D mini-strip */}
-                <div style={{display:"flex",gap:0,borderRadius:10,overflow:"hidden",border:"1px solid rgba(128,33,255,0.2)",marginTop:28}}>
+                {/* SPFPP Operating Loop strip */}
+                <div style={{color:"rgba(255,255,255,0.3)",fontSize:9,fontFamily:"'IBM Plex Mono',monospace",letterSpacing:"1px",marginTop:28,marginBottom:8}}>THE RATEIQ OPERATING LOOP</div>
+                <div style={{display:"flex",alignItems:"stretch",borderRadius:10,overflow:"hidden",border:"1px solid rgba(128,33,255,0.2)"}}>
                   {[
-                    {n:"01",l:"DISCOVER",s:"Find the leak"},
-                    {n:"02",l:"DIAGNOSE",s:"16-lever grid"},
-                    {n:"03",l:"DELIVER",s:"Fix & track"},
-                    {n:"04",l:"DRIVE",s:"Agentic AI"},
-                  ].map((d,i)=>(
-                    <div key={d.n} style={{flex:1,padding:"10px 8px",textAlign:"center",background:"rgba(128,33,255,0.15)",
-                      borderLeft:i>0?"1px solid rgba(128,33,255,0.2)":"none"}}>
-                      <div style={{fontSize:9,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",
-                        letterSpacing:"0.8px",color:"#fff"}}>{d.n} {d.l}</div>
-                      <div style={{fontSize:10,color:"rgba(255,255,255,0.5)",marginTop:3}}>{d.s}</div>
-                    </div>
+                    {n:"01",l:"SEE",s:"Health score"},
+                    {n:"02",l:"PRIORITIZE",s:"Revenue impact"},
+                    {n:"03",l:"FIX",s:"Playbooks"},
+                    {n:"04",l:"PROVE",s:"Recovery"},
+                    {n:"05",l:"PROTECT",s:"Stay green"},
+                  ].map((d,i,arr)=>(
+                    <React.Fragment key={d.n}>
+                      <div style={{flex:1,padding:"10px 6px",textAlign:"center",background:"rgba(128,33,255,0.12)"}}>
+                        <div style={{fontSize:9,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",letterSpacing:"0.8px",color:"#A78BFA"}}>{d.n} {d.l}</div>
+                        <div style={{fontSize:10,color:"rgba(255,255,255,0.45)",marginTop:3}}>{d.s}</div>
+                      </div>
+                      {i < arr.length - 1 && <div style={{display:"flex",alignItems:"center",background:"rgba(128,33,255,0.12)",color:"rgba(255,255,255,0.2)",fontSize:10,padding:"0 2px"}}>&rarr;</div>}
+                    </React.Fragment>
                   ))}
                 </div>
               </div>
@@ -972,39 +975,26 @@ export default function App() {
                 <h2 style={{fontSize:46,fontWeight:800,color:"#fff",lineHeight:1.1,marginBottom:8}}>
                   From signal to <span style={{color:"#67E8F9"}}>recovery</span>.<br/>One platform. Four stages.
                 </h2>
-                <p style={{fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.65,maxWidth:420,marginBottom:24}}>
+                <p style={{fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.65,maxWidth:420,marginBottom:28}}>
                   RateGain is the only end-to-end hospitality intelligence platform connecting pricing, distribution, content, and payments — across the full RG4D loop.
                 </p>
 
-                {/* Eyebrow label */}
-                <div style={{color:"#A78BFA",fontSize:10,fontWeight:700,letterSpacing:"1.2px",
-                  fontFamily:"'IBM Plex Mono',monospace",marginBottom:12}}>&#9679; WHERE RATEIQ FITS IN THE BIGGER PICTURE</div>
-
-                {/* Four D cards */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                {/* RG4D strip */}
+                <div style={{color:"rgba(255,255,255,0.3)",fontSize:9,fontFamily:"'IBM Plex Mono',monospace",letterSpacing:"1px",marginBottom:8}}>THE RG4D&#8482; REVENUE FRAMEWORK</div>
+                <div style={{display:"flex",alignItems:"stretch",borderRadius:10,overflow:"hidden",border:"1px solid rgba(103,232,249,0.2)"}}>
                   {[
-                    {n:"01",t:"Discover",s:"Find where value is leaking",c:"#67E8F9",bg:"rgba(103,232,249,0.07)",
-                      tags:["RATE SHOPPING","PARITY","DEMAND NAV","OTA VISIBILITY"]},
-                    {n:"02",t:"Diagnose",s:"Understand why it is happening",c:"#A78BFA",bg:"rgba(128,33,255,0.1)",
-                      tags:["RATEIQ 16-LEVER","ARI ANALYSIS","CONNECTIVITY","CHANNEL DIAGNOSTICS"]},
-                    {n:"03",t:"Deliver",s:"Move the right fix faster",c:"#FBB024",bg:"rgba(251,176,36,0.08)",
-                      tags:["PLAYBOOKS","ACTION QUEUE","RECOVERY PLANS","RATEIQ POC"]},
-                    {n:"04",t:"Drive — Agentic AI",s:"Continuously execute and optimize",c:"#10B981",bg:"rgba(16,185,129,0.1)",
-                      tags:["AGENTIC AI","AUTO ARI FIX","SMART ROUTING","PREDICTIVE OPT"]},
-                  ].map((card,i)=>(
-                    <div key={card.n} style={{background:card.bg,border:`1px solid ${card.c}40`,borderRadius:10,
-                      padding:14,animation:`countUp 0.5s ease both`,animationDelay:`${i*0.08}s`}}>
-                      <div style={{fontSize:9,fontFamily:"'IBM Plex Mono',monospace",fontWeight:700,color:card.c}}>{card.n}</div>
-                      <div style={{fontSize:14,fontWeight:700,color:"#fff",marginTop:2}}>{card.t}</div>
-                      <div style={{fontSize:11,color:card.c,marginTop:2}}>{card.s}</div>
-                      <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:8}}>
-                        {card.tags.map(tag=>(
-                          <span key={tag} style={{background:`${card.c}18`,border:`1px solid ${card.c}44`,
-                            borderRadius:3,padding:"2px 6px",fontSize:9,color:card.c,
-                            fontFamily:"'IBM Plex Mono',monospace"}}>{tag}</span>
-                        ))}
+                    {n:"01",l:"DISCOVER",s:"Find the leak"},
+                    {n:"02",l:"DIAGNOSE",s:"16-lever grid"},
+                    {n:"03",l:"DELIVER",s:"Fix & track"},
+                    {n:"04",l:"DRIVE",s:"Agentic AI"},
+                  ].map((d,i,arr)=>(
+                    <React.Fragment key={d.n}>
+                      <div style={{flex:1,padding:"10px 8px",textAlign:"center",background:"rgba(103,232,249,0.08)"}}>
+                        <div style={{fontSize:9,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",letterSpacing:"0.8px",color:"#67E8F9"}}>{d.n} {d.l}</div>
+                        <div style={{fontSize:10,color:"rgba(255,255,255,0.45)",marginTop:3}}>{d.s}</div>
                       </div>
-                    </div>
+                      {i < arr.length - 1 && <div style={{display:"flex",alignItems:"center",background:"rgba(103,232,249,0.08)",color:"rgba(255,255,255,0.2)",fontSize:10,padding:"0 2px"}}>&rarr;</div>}
+                    </React.Fragment>
                   ))}
                 </div>
                 <div style={{color:"rgba(255,255,255,0.35)",fontSize:11,fontStyle:"italic",textAlign:"center",marginTop:12}}>
