@@ -651,7 +651,7 @@ function ContentErrorModal({ onClose }) {
                     <div style={{width:`${(b.count/maxCount)*100}%`,height:"100%",background:expanded===b.brand?"#6941F2":"#DC2626",borderRadius:3,transition:"background 0.12s"}}/>
                   </div>
                 </div>
-                <div style={{textAlign:"center",fontSize:10,color:"#9CA3AF"}}>{expanded===b.brand?"▲":"▼"}</div>
+                <div style={{textAlign:"center",fontSize:10,color:"#9CA3AF"}}>{expanded===b.brand?"▲":"���"}</div>
               </div>
               {expanded===b.brand && (
                 <div style={{background:"#FAFBFF",borderBottom:"2px solid #EDE9FE"}}>
@@ -969,7 +969,6 @@ export default function App() {
           </div>
 
           {/* Navigation dots — centered at bottom */}
-<<<<<<< HEAD
           <div style={{position:"absolute",bottom:36,left:0,right:0,display:"flex",justifyContent:"center",alignItems:"center",gap:10}}>
             {[0,1].map(i=>(
               <div key={i} onClick={()=>setSlide(i)} className="nav-dot"
@@ -978,16 +977,6 @@ export default function App() {
                   border:"none",
                   boxShadow:slide===i?"0 0 16px rgba(128,33,255,0.7), 0 0 4px rgba(128,33,255,0.4)":"none",
                   transition:"all 0.25s ease"}}/>
-=======
-          <div style={{position:"absolute",bottom:32,left:0,right:0,display:"flex",justifyContent:"center",alignItems:"center",gap:12}}>
-            {[0,1].map(i=>(
-              <div key={i} onClick={()=>setSlide(i)} className="nav-dot"
-                style={{width:slide===i?32:10,height:10,borderRadius:slide===i?5:"50%",
-                  background:slide===i?"#8021FF":"rgba(255,255,255,0.55)",
-                  border:"none",
-                  boxShadow:slide===i?"0 0 14px rgba(128,33,255,0.6)":"none",
-                  transition:"all 0.2s ease"}}/>
->>>>>>> c673b296964d6f047c39ef0352b10201330e768c
             ))}
           </div>
         </div>
