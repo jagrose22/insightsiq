@@ -854,7 +854,7 @@ export default function App() {
   // Auto-rotate slides on login screen
   useEffect(() => {
     if (authed) return;
-    const t = setInterval(() => setSlide(s => s===0?1:0), 6000);
+    const t = setInterval(() => setSlide(s => s===0?1:0), 8500);
     return () => clearInterval(t);
   }, [authed]);
 
@@ -916,17 +916,13 @@ export default function App() {
             <div style={{width:3,height:32,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
             <span style={{fontSize:20,fontWeight:800,color:"#fff"}}>RG</span>
             <span style={{fontSize:20,fontWeight:800,color:"#67E8F9"}}>RateIQ</span>
-            <div style={{width:1,height:20,background:"rgba(255,255,255,0.15)",margin:"0 12px"}}/>
-            <span style={{background:"rgba(128,33,255,0.2)",border:"1px solid rgba(128,33,255,0.4)",
-              borderRadius:4,padding:"2px 8px",fontSize:9,fontWeight:700,color:"#A78BFA",
-              letterSpacing:"0.8px",fontFamily:"'IBM Plex Mono',monospace"}}>POWERED BY RG4D</span>
           </div>
 
           {/* MIDDLE — Rotating content */}
           <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
             {slide === 0 && (
               <div style={{animation:"slideInLeft 0.5s ease both"}} key="slide0">
-                <div style={{color:"#EF4444",fontSize:10,fontWeight:700,letterSpacing:"1.2px",
+                <div style={{color:"#A78BFA",fontSize:10,fontWeight:700,letterSpacing:"1.2px",
                   fontFamily:"'IBM Plex Mono',monospace",marginBottom:16}}>&#9679; DISTRIBUTION HEALTH CRISIS</div>
                 <h2 style={{fontSize:46,fontWeight:800,color:"#fff",lineHeight:1.1,marginBottom:8}}>
                   Your revenue is<br/><span style={{color:"#67E8F9"}}>leaking</span>. Right now.
@@ -938,11 +934,11 @@ export default function App() {
                 {/* Stat tiles */}
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
                   {[
-                    {val:"$633K",color:"#fff",label:"avg revenue at risk per enterprise account",accent:"#EF4444"},
-                    {val:"15.2",color:"#EF4444",label:"errors per 1k \u00B7 Wyndham portfolio today",accent:"#EF4444"},
-                    {val:"770",color:"#F59E0B",label:"properties \u00B7 zero OTA bookings \u00B7 6 months",accent:"#F59E0B"},
+                    {val:"$633K",color:"#fff",label:"avg revenue at risk per enterprise account",accent:"#8021FF"},
+                    {val:"15.2",color:"#67E8F9",label:"errors per 1k \u00B7 Wyndham portfolio today",accent:"#67E8F9"},
+                    {val:"770",color:"#A78BFA",label:"properties \u00B7 zero OTA bookings \u00B7 6 months",accent:"#A78BFA"},
                   ].map((t,i)=>(
-                    <div key={i} style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.09)",
+                    <div key={i} style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.08)",
                       borderRadius:12,padding:"16px 14px",borderLeft:`3px solid ${t.accent}`,
                       animation:`countUp 0.6s ease both`,animationDelay:`${i*0.1}s`}}>
                       <div style={{color:t.color,fontSize:28,fontWeight:800,fontFamily:"'IBM Plex Mono',monospace"}}>{t.val}</div>
@@ -952,17 +948,17 @@ export default function App() {
                 </div>
 
                 {/* RateIQ 4D mini-strip */}
-                <div style={{display:"flex",gap:0,borderRadius:10,overflow:"hidden",border:"1px solid rgba(255,255,255,0.1)",marginTop:28}}>
+                <div style={{display:"flex",gap:0,borderRadius:10,overflow:"hidden",border:"1px solid rgba(128,33,255,0.2)",marginTop:28}}>
                   {[
-                    {n:"01",l:"DISCOVER",s:"Find the leak",bg:"rgba(103,232,249,0.1)",c:"#67E8F9"},
-                    {n:"02",l:"DIAGNOSE",s:"16-lever grid",bg:"rgba(128,33,255,0.15)",c:"#A78BFA"},
-                    {n:"03",l:"DELIVER",s:"Fix & track",bg:"rgba(251,191,36,0.1)",c:"#FBB024"},
-                    {n:"04",l:"DRIVE",s:"Agentic AI",bg:"rgba(16,185,129,0.1)",c:"#10B981"},
+                    {n:"01",l:"DISCOVER",s:"Find the leak"},
+                    {n:"02",l:"DIAGNOSE",s:"16-lever grid"},
+                    {n:"03",l:"DELIVER",s:"Fix & track"},
+                    {n:"04",l:"DRIVE",s:"Agentic AI"},
                   ].map((d,i)=>(
-                    <div key={d.n} style={{flex:1,padding:"10px 8px",textAlign:"center",background:d.bg,
-                      borderLeft:i>0?"1px solid rgba(255,255,255,0.08)":"none"}}>
+                    <div key={d.n} style={{flex:1,padding:"10px 8px",textAlign:"center",background:"rgba(128,33,255,0.15)",
+                      borderLeft:i>0?"1px solid rgba(128,33,255,0.2)":"none"}}>
                       <div style={{fontSize:9,fontWeight:700,fontFamily:"'IBM Plex Mono',monospace",
-                        letterSpacing:"0.8px",color:d.c}}>{d.n} {d.l}</div>
+                        letterSpacing:"0.8px",color:"#fff"}}>{d.n} {d.l}</div>
                       <div style={{fontSize:10,color:"rgba(255,255,255,0.5)",marginTop:3}}>{d.s}</div>
                     </div>
                   ))}
@@ -977,19 +973,16 @@ export default function App() {
                 <h2 style={{fontSize:46,fontWeight:800,color:"#fff",lineHeight:1.1,marginBottom:8}}>
                   From signal to <span style={{color:"#67E8F9"}}>recovery</span>.<br/>One platform. Four stages.
                 </h2>
-                <p style={{fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.65,maxWidth:420,marginBottom:20}}>
+                <p style={{fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.65,maxWidth:420,marginBottom:24}}>
                   RateGain is the only end-to-end hospitality intelligence platform connecting pricing, distribution, content, and payments — across the full RG4D loop.
                 </p>
 
-                {/* RG4D logo */}
-                <div style={{textAlign:"center",margin:"20px 0"}}>
-                  <img src="/RG4D-Logo.png" alt="RG4D" style={{width:80,height:80,objectFit:"contain"}}/>
-                  <div style={{color:"rgba(255,255,255,0.5)",fontSize:11,letterSpacing:"1px",
-                    fontFamily:"'IBM Plex Mono',monospace",marginTop:8}}>Discover · Diagnose · Deliver · Drive</div>
-                </div>
+                {/* Eyebrow label */}
+                <div style={{color:"#A78BFA",fontSize:10,fontWeight:700,letterSpacing:"1.2px",
+                  fontFamily:"'IBM Plex Mono',monospace",marginBottom:12}}>&#9679; WHERE RATEIQ FITS IN THE BIGGER PICTURE</div>
 
                 {/* Four D cards */}
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginTop:20}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
                   {[
                     {n:"01",t:"Discover",s:"Find where value is leaking",c:"#67E8F9",bg:"rgba(103,232,249,0.07)",
                       tags:["RATE SHOPPING","PARITY","DEMAND NAV","OTA VISIBILITY"]},
@@ -1026,7 +1019,7 @@ export default function App() {
           <div style={{display:"flex",alignItems:"center",gap:8}}>
             {[0,1].map(i=>(
               <div key={i} onClick={()=>setSlide(i)} className="dot-nav"
-                style={{width:slide===i?28:8,height:8,borderRadius:slide===i?4:4,
+                style={{width:slide===i?28:10,height:10,borderRadius:slide===i?5:5,
                   background:slide===i?"#8021FF":"rgba(255,255,255,0.2)",
                   animation:slide===i?"glow 2s ease infinite":"none",
                   transition:"all 0.3s ease",cursor:"pointer"}}/>
@@ -1051,12 +1044,7 @@ export default function App() {
 
             {/* Header */}
             <h1 style={{fontSize:30,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome back</h1>
-            <p style={{fontSize:13,color:"#64748B",marginBottom:8}}>Distribution Intelligence Platform</p>
-            <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"#F0FDF4",
-              border:"1px solid #86EFAC",borderRadius:20,padding:"3px 10px",marginBottom:28}}>
-              <span style={{width:5,height:5,borderRadius:"50%",background:"#059669",display:"inline-block"}}/>
-              <span style={{fontSize:10,fontWeight:700,color:"#059669",fontFamily:"'IBM Plex Mono',monospace"}}>LIVE — Wyndham POC Active</span>
-            </div>
+            <p style={{fontSize:13,color:"#64748B",marginBottom:28}}>Distribution Intelligence Platform</p>
 
             {/* Form */}
             <div style={{marginBottom:16}}>
@@ -1108,8 +1096,7 @@ export default function App() {
 
             {/* Bottom of right panel */}
             <div style={{borderTop:"1px solid #F1F5F9",marginTop:40,paddingTop:16,
-              display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-              <img src="/RG4D-Logo.png" alt="RG4D" style={{width:28,height:28,objectFit:"contain"}}/>
+              display:"flex",justifyContent:"center",alignItems:"center"}}>
               <span style={{fontSize:10,color:"#CBD5E1"}}>&copy; 2026 RateGain Technologies</span>
             </div>
           </div>
