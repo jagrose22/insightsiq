@@ -26,10 +26,10 @@ const C = {
 
 const PHASE_CFG = {
   SEE:       { bg:"#EDE9FE", color:"#6941F2", border:"#C4B5FD", dot:"#7C3AED" },
-  PRIORITISE:{ bg:"#FEF2F2", color:"#DC2626", border:"#FECACA", dot:"#EF4444" },
+  PRIORITIZE:{ bg:"#FEF2F2", color:"#DC2626", border:"#FECACA", dot:"#EF4444" },
   FIX:       { bg:"#FFFBEB", color:"#D97706", border:"#FCD34D", dot:"#F59E0B" },
   PROVE:     { bg:"#F0FDF4", color:"#059669", border:"#86EFAC", dot:"#10B981" },
-  PREVENT:   { bg:"#EFF6FF", color:"#2563EB", border:"#BFDBFE", dot:"#3B82F6" },
+  PROTECT:   { bg:"#EFF6FF", color:"#2563EB", border:"#BFDBFE", dot:"#3B82F6" },
 };
 
 function Phase({ label }) {
@@ -265,7 +265,7 @@ function KpiTile({ label, value, sub, accent, spark, ann, badge }) {
 }
 
 function LoopBar({ active }) {
-  const steps = ["SEE","PRIORITISE","FIX","PROVE","PREVENT"];
+  const steps = ["SEE","PRIORITIZE","FIX","PROVE","PROTECT"];
   const idx   = steps.indexOf(active);
   return (
     <div style={{background:"#FAFBFD",borderBottom:`1px solid ${C.border}`,
@@ -525,8 +525,8 @@ const PB_LIBRARY = [
 const TOP_NAV = [
   { id:"dist",      label:"Distribution Health",  phase:"SEE"       },
   { id:"home",      label:"Health Overview",      phase:"SEE"       },
-  { id:"errors",    label:"Error Intelligence",   phase:"PRIORITISE"},
-  { id:"revenue",   label:"Revenue at Risk",      phase:"PRIORITISE"},
+  { id:"errors",    label:"Error Intelligence",   phase:"PRIORITIZE"},
+  { id:"revenue",   label:"Revenue at Risk",      phase:"PRIORITIZE"},
   { id:"playbooks", label:"Playbooks & Queue",    phase:"FIX"       },
   { id:"recovery",  label:"Revenue Recovery",    phase:"PROVE"     },
   { id:"levers",    label:"16-Lever Grid",        phase:"SEE"       },
@@ -1159,7 +1159,7 @@ export default function App() {
         .toast-in  {animation:toastIn   0.25s cubic-bezier(0.34,1.56,0.64,1) both}
         .live-dot  {animation:dotPulse  2s ease-in-out infinite}
         .nav-active-see       {border-bottom:2px solid #6941F2 !important;color:#6941F2 !important}
-        .nav-active-prioritise{border-bottom:2px solid #DC2626 !important;color:#DC2626 !important}
+        .nav-active-prioritize{border-bottom:2px solid #DC2626 !important;color:#DC2626 !important}
         .nav-active-fix       {border-bottom:2px solid #D97706 !important;color:#D97706 !important}
         .nav-active-prove     {border-bottom:2px solid #059669 !important;color:#059669 !important}
         .nav-active-prevent   {border-bottom:2px solid #2563EB !important;color:#2563EB !important}
@@ -1565,7 +1565,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
           {/* Left Panel: Brand Health Grid */}
           <Card>
             <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
-              <Phase label="PRIORITISE"/>
+              <Phase label="PRIORITIZE"/>
               <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
               <Ann type="ui"/>
               <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Health ▴</span>
@@ -1658,7 +1658,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
         <div style={{display:"grid",gridTemplateColumns:"1fr 368px",gap:14,marginBottom:22}}>
           <Card>
             <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
-              <Phase label="PRIORITISE"/>
+              <Phase label="PRIORITIZE"/>
               <span style={{fontSize:13,fontWeight:700,color:C.t1}}>{isExec ? "Priority Grid — Impact × Urgency" : "Your Assigned Tenants"}</span>
               <Ann type="ui"/>
               <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Impact ▾</span>
@@ -1702,7 +1702,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
 
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
         <Card style={{padding:16}}>
-          <SH phase="PREVENT" title="Emerging Risk Patterns" ann="new"/>
+          <SH phase="PROTECT" title="Emerging Risk Patterns" ann="new"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
 {[["ARI sync failure pattern across 3 Enterprise tenants this week","red"],["Rate restriction spikes correlate with weekend inventory windows","amber"],["Content score decline precedes error rate increase by ~14 days","amber"]].map(([txt,s])=>(
   <div key={txt} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:{red:C.redBg,amber:C.amberBg}[s]||C.rowAlt,border:`1px solid ${{red:C.redBorder,amber:C.amberBorder}[s]||C.border}`,borderLeft:`3px solid ${C[s]}`}}>
@@ -1713,7 +1713,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
           </div>
         </Card>
         <Card style={{padding:16}}>
-          <SH phase="PREVENT" title="Recommended Preventive Playbooks" ann="ui"/>
+          <SH phase="PROTECT" title="Recommended Preventive Playbooks" ann="ui"/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
 {["Standardise retry policy for ARI sync across all Tier 1 tenants","Add pre-deployment health check for onboarding + content modules","Set automated alert threshold for error index > 10 /1k events"].map((t,i)=>(
   <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#F8FAFC",borderRadius:8,border:`1px solid ${C.border}`}}>
@@ -1737,7 +1737,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
     </Card>
   );
   const TABS=[["snapshot","Snapshot"],["drivers","Drivers"],["actions","Actions"],["impact","Impact"]];
-  const phaseMap={snapshot:"SEE",drivers:"PRIORITISE",actions:"FIX",impact:"PROVE"};
+  const phaseMap={snapshot:"SEE",drivers:"PRIORITIZE",actions:"FIX",impact:"PROVE"};
   return (
     <Card style={{display:"flex",flexDirection:"column",overflow:"hidden"}} selected>
       <div style={{padding:"14px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD"}}>
@@ -1848,7 +1848,7 @@ function ErrorPage({ sel, setSel, toast }) {
       <div style={{display:"grid",gridTemplateColumns:"310px 1fr",gap:14}}>
         <Card>
           <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div style={{display:"flex",alignItems:"center",gap:7}}><Phase label="PRIORITISE"/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>Error Clusters</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:7}}><Phase label="PRIORITIZE"/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>Error Clusters</span></div>
             <span style={{fontSize:10,color:C.t4}}>Rev Impact ▾</span>
           </div>
           {ERROR_CLUSTERS.map(ec=>{
@@ -1969,7 +1969,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
       {/* ── ACCOUNT VIEW ── */}
       {view==="account" && (
         <div>
-          <SH phase="PRIORITISE" title={`${activeClient?.short || activeClient?.name} · Revenue Risk by Lever`} ann="new"/>
+          <SH phase="PRIORITIZE" title={`${activeClient?.short || activeClient?.name} · Revenue Risk by Lever`} ann="new"/>
           {/* Summary strip */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
             {[
@@ -1987,7 +1987,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
           {/* Lever table */}
           <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:12,boxShadow:C.shadow,overflow:"hidden"}}>
             <div style={{padding:"10px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
-              <Phase label="PRIORITISE"/>
+              <Phase label="PRIORITIZE"/>
               <span style={{fontSize:12,fontWeight:700,color:C.t1}}>16 Levers — Ranked by Revenue Impact</span>
               <span style={{fontSize:11,color:C.t3,marginLeft:"auto"}}>{activeClient?.name}</span>
             </div>
@@ -2044,7 +2044,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 300px",gap:14}}>
         <Card>
-          <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}><Phase label="PRIORITISE"/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>Revenue Risk Grid</span><Ann type="backed"/></div>
+          <div style={{padding:"10px 14px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}><Phase label="PRIORITIZE"/><span style={{fontSize:12,fontWeight:700,color:C.t1}}>Revenue Risk Grid</span><Ann type="backed"/></div>
           <table>
             <thead>
               <tr style={{background:"#F8FAFC"}}>{["Tenant","ARR $M","Risk Score","Key Drivers","Renewal","Owner","Trend"].map(h=><th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`}}>{h}</th>)}</tr>
@@ -2105,7 +2105,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
     d.setDate(d.getDate() + days);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
-  const kanbanCols = [["To Review","Unassigned","PRIORITISE"],["In Progress","InProgress","FIX"],["Proved","Mitigated","PROVE"],["Preventive","Active","PREVENT"]];
+  const kanbanCols = [["To Review","Unassigned","PRIORITIZE"],["In Progress","InProgress","FIX"],["Proved","Mitigated","PROVE"],["Preventive","Active","PROTECT"]];
   return (
     <div className="fade-in">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
@@ -2143,7 +2143,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
         </Card>
       </>)}
       {tab==="queue" && kanban && (<>
-        <SH phase="FIX" title="Kanban — SEE → PROVE → PREVENT Flow" ann="ui"/>
+        <SH phase="FIX" title="Kanban — SEE → PROVE → PROTECT Flow" ann="ui"/>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12}}>
           {kanbanCols.map(([col,stat,ph])=>{
             const items = PLAYBOOKS.filter(p=>p.status===stat);
@@ -2196,7 +2196,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
             id:"fix-week", icon:"⚡", label:"Fix This Week",
             badge:C.red, badgeBg:C.redBg, badgeBdr:C.redBorder,
             tagline:"Highest impact fixes — sorted by revenue at risk",
-            phase:"PRIORITISE",
+            phase:"PRIORITIZE",
             items: levers.filter(l=>l.status==="critical")
                          .sort((a,b)=>impactNum(b)-impactNum(a))
                          .slice(0,8),
@@ -2241,7 +2241,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
 
         return (
           <div key={activeClient?.name}>
-            <SH phase="PRIORITISE" title="Smart Queues" ann="new"
+            <SH phase="PRIORITIZE" title="Smart Queues" ann="new"
               sub={`${tenant} · Pre-filtered action lists · ${levers.filter(l=>l.status!=="healthy").length} open issues`}/>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {PLAYLISTS.map(pl => (
@@ -2339,7 +2339,7 @@ function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePar
         );
       })()}
       {tab==="library" && (<>
-        <SH phase="PREVENT" title="Reusable Playbook Library" ann="ui"/>
+        <SH phase="PROTECT" title="Reusable Playbook Library" ann="ui"/>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
           {PB_LIBRARY.map((pb,i)=>(
             <div key={i} className="card-hover" style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:12,padding:"16px",boxShadow:C.shadow,display:"flex",flexDirection:"column",gap:10}}>
@@ -2516,7 +2516,7 @@ const ACCOUNT_LEVERS_BASE = {
     ],
     [
       { id:"images",       icon:"📷", name:"Images",        score:62, impact:"$12.3K", status:"medium",
-        detail:[["Properties with images","4,432"],["Below threshold","84 properties"],["Coverage","98.1%"],["Action","Prioritise image enrichment"]] },
+        detail:[["Properties with images","4,432"],["Below threshold","84 properties"],["Coverage","98.1%"],["Action","PRIORITIZE image enrichment"]] },
       { id:"amenities",    icon:"🏨", name:"Amenities",     score:82, impact:"$6.8K",  status:"healthy",
         detail:[["Amenity fill rate","89%"],["Missing","<6 per property"],["Top gap","Parking info"]] },
       { id:"descriptions", icon:"📝", name:"Descriptions",  score:80, impact:"$5.9K",  status:"healthy",
@@ -3298,7 +3298,7 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
           boxShadow:C.shadow,overflow:"hidden",display:"flex",flexDirection:"column"}}>
           <div style={{padding:"14px 18px",borderBottom:`1px solid ${C.border}`,
             display:"flex",alignItems:"center",gap:8}}>
-            <Phase label="PRIORITISE"/>
+            <Phase label="PRIORITIZE"/>
             <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Uplift by Pillar</span>
           </div>
           <table style={{width:"100%",borderCollapse:"collapse",flex:1}}>
