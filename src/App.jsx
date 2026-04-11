@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ─────────����─������────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────�����─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -990,7 +990,7 @@ export default function App() {
             {/* Header */}
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
               <img src="/Logo-RG.png" alt="RG" style={{width:26,height:26,borderRadius:5,objectFit:"contain"}}/>
-              <span style={{fontSize:17,fontWeight:800,color:"#8021FF"}}>RateIQ</span>
+              <span style={{fontSize:17,fontWeight:800,color:"#0891B2",textShadow:"0 0 12px rgba(103,232,249,0.4)"}}>RateIQ</span>
             </div>
             <h2 style={{fontSize:24,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome to RateIQ</h2>
             <p style={{fontSize:13,color:"#64748B",marginBottom:24}}>Distribution Intelligence Platform</p>
@@ -1741,7 +1741,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   );
 }
 
-/* ═══════════════�����════════════���════════════════════════════════════════════
+/* ═══════════════�����════════════���════════════════════════════��═══════════════
    PAGE 2 — ERROR INTELLIGENCE
 ═════════════════════════════════════════════════════════════════════════��� */
 function ErrorPage({ sel, setSel, toast }) {
