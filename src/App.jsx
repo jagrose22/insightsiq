@@ -908,15 +908,15 @@ export default function App() {
           </div>
 
           {/* Rotating content area */}
-          <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"center"}}>
+          <div style={{flex:1,display:"flex",flexDirection:"column",paddingTop:"6vh"}}>
             <div style={{animation:"fadeSlide 0.4s ease both"}} key={slide}>
               {slide === 0 ? (
                 <>
                   {/* Screen 1: Product hook */}
-                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:20}}>
+                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:24}}>
                     Revenue is leaking.<br/><span style={{color:"#67E8F9"}}>RateIQ</span> shows you where.
                   </h1>
-                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:44}}>
+                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:52}}>
                     See hidden revenue risk across distribution, parity, and booking performance.
                   </p>
 
@@ -941,10 +941,10 @@ export default function App() {
               ) : (
                 <>
                   {/* Screen 2: RG4D story */}
-                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:20}}>
+                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:24}}>
                     Find the leak. Fix the cause.<br/><span style={{color:"#67E8F9"}}>Recover</span> the revenue.
                   </h1>
-                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:44}}>
+                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:52}}>
                     RateIQ is the entry point into the full RG4D loop — connecting parity, connectivity, recovery, and AI-driven optimization.
                   </p>
 
@@ -972,10 +972,10 @@ export default function App() {
           <div style={{position:"absolute",bottom:32,left:0,right:0,display:"flex",justifyContent:"center",alignItems:"center",gap:12}}>
             {[0,1].map(i=>(
               <div key={i} onClick={()=>setSlide(i)} className="nav-dot"
-                style={{width:slide===i?24:10,height:10,borderRadius:slide===i?5:"50%",
-                  background:slide===i?"#8021FF":"transparent",
-                  border:slide===i?"none":"2px solid rgba(255,255,255,0.35)",
-                  boxShadow:slide===i?"0 0 12px rgba(128,33,255,0.5)":"none",
+                style={{width:slide===i?32:10,height:10,borderRadius:slide===i?5:"50%",
+                  background:slide===i?"#8021FF":"rgba(255,255,255,0.55)",
+                  border:"none",
+                  boxShadow:slide===i?"0 0 14px rgba(128,33,255,0.6)":"none",
                   transition:"all 0.2s ease"}}/>
             ))}
           </div>
@@ -990,9 +990,9 @@ export default function App() {
             {/* Header */}
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
               <img src="/Logo-RG.png" alt="RG" style={{width:26,height:26,borderRadius:5,objectFit:"contain"}}/>
-              <span style={{fontSize:17,fontWeight:800,color:"#0891B2"}}>RateIQ</span>
+              <span style={{fontSize:17,fontWeight:800,color:"#8021FF"}}>RateIQ</span>
             </div>
-            <h2 style={{fontSize:24,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome back</h2>
+            <h2 style={{fontSize:24,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome to RateIQ</h2>
             <p style={{fontSize:13,color:"#64748B",marginBottom:24}}>Distribution Intelligence Platform</p>
 
             {/* Form */}
@@ -1033,7 +1033,7 @@ export default function App() {
                 color:"#fff",border:"none",borderRadius:8,padding:12,fontSize:14,fontWeight:700,
                 cursor:"pointer",boxShadow:"0 4px 14px rgba(128,33,255,0.3)",
                 transition:"all 0.15s"}}>
-              Login
+              Enter RateIQ Workspace
             </button>
             <div style={{color:"#94A3B8",fontSize:10,textAlign:"center",marginTop:10}}>Demo Access · RateGain Internal Only</div>
 
