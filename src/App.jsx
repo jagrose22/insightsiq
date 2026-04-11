@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ─────────���─������────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────����─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -913,10 +913,10 @@ export default function App() {
               {slide === 0 ? (
                 <>
                   {/* Screen 1: Product hook */}
-                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:16}}>
+                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:20}}>
                     Revenue is leaking.<br/><span style={{color:"#67E8F9"}}>RateIQ</span> shows you where.
                   </h1>
-                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:36}}>
+                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:44}}>
                     See hidden revenue risk across distribution, parity, and booking performance.
                   </p>
 
@@ -927,8 +927,11 @@ export default function App() {
                       {val:"15.2",label:"errors per 1k bookings"},
                       {val:"770",label:"properties impacted"},
                     ].map((t,i)=>(
-                      <div key={i} style={{background:"#fff",border:"1.5px solid #E9D5FF",borderRadius:12,
-                        padding:"20px 16px",boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>
+                      <div key={i} className="metric-tile" style={{background:"#fff",border:"1.5px solid #E9D5FF",borderRadius:12,
+                        padding:"20px 16px",boxShadow:"0 8px 24px rgba(0,0,0,0.18)",
+                        transition:"transform 0.15s ease, box-shadow 0.15s ease",cursor:"default"}}
+                        onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 12px 32px rgba(0,0,0,0.22)";}}
+                        onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,0.18)";}}>
                         <div style={{fontSize:28,fontWeight:800,color:"#0F172A",fontFamily:"'IBM Plex Mono',monospace",lineHeight:1}}>{t.val}</div>
                         <div style={{fontSize:11,color:"#64748B",marginTop:6}}>{t.label}</div>
                       </div>
@@ -938,10 +941,10 @@ export default function App() {
               ) : (
                 <>
                   {/* Screen 2: RG4D story */}
-                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:16}}>
+                  <h1 style={{fontSize:40,fontWeight:800,color:"#fff",lineHeight:1.15,marginBottom:20}}>
                     Find the leak. Fix the cause.<br/><span style={{color:"#67E8F9"}}>Recover</span> the revenue.
                   </h1>
-                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:36}}>
+                  <p style={{fontSize:15,color:"rgba(255,255,255,0.55)",lineHeight:1.6,maxWidth:440,marginBottom:44}}>
                     RateIQ is the entry point into the full RG4D loop — connecting parity, connectivity, recovery, and AI-driven optimization.
                   </p>
 
@@ -965,24 +968,23 @@ export default function App() {
             </div>
           </div>
 
-          {/* Navigation dots — bottom left */}
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {/* Navigation dots — centered at bottom */}
+          <div style={{position:"absolute",bottom:32,left:0,right:0,display:"flex",justifyContent:"center",alignItems:"center",gap:12}}>
             {[0,1].map(i=>(
               <div key={i} onClick={()=>setSlide(i)} className="nav-dot"
-                style={{width:10,height:10,borderRadius:"50%",
-                  background:slide===i?"#fff":"transparent",
-                  border:slide===i?"2px solid #8021FF":"2px solid rgba(255,255,255,0.25)",
+                style={{width:slide===i?24:10,height:10,borderRadius:slide===i?5:"50%",
+                  background:slide===i?"#8021FF":"transparent",
+                  border:slide===i?"none":"2px solid rgba(255,255,255,0.35)",
+                  boxShadow:slide===i?"0 0 12px rgba(128,33,255,0.5)":"none",
                   transition:"all 0.2s ease"}}/>
             ))}
-            <span style={{marginLeft:"auto",fontSize:10,fontFamily:"'IBM Plex Mono',monospace",
-              color:"rgba(255,255,255,0.2)"}}>RateGain · RG4D Framework</span>
           </div>
         </div>
 
         {/* RIGHT PANEL — 40% — White login form (fixed, never rotates) */}
         <div style={{width:"40%",height:"100vh",background:"#fff",
           display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",
-          padding:"48px 40px",borderLeft:"1px solid #E2E8F0"}}>
+          padding:"48px 40px",paddingBottom:"12vh",borderLeft:"1px solid #E2E8F0"}}>
           
           <div style={{maxWidth:320,width:"100%"}}>
             {/* Header */}
@@ -991,14 +993,7 @@ export default function App() {
               <span style={{fontSize:17,fontWeight:800,color:"#0891B2"}}>RateIQ</span>
             </div>
             <h2 style={{fontSize:24,fontWeight:800,color:"#0F172A",marginBottom:4}}>Welcome back</h2>
-            <p style={{fontSize:13,color:"#64748B",marginBottom:20}}>Distribution Intelligence Platform</p>
-
-            {/* Wyndham POC badge — subtle green pill */}
-            <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"#F0FDF4",
-              border:"1px solid #BBF7D0",borderRadius:16,padding:"4px 10px",marginBottom:24}}>
-              <span style={{width:6,height:6,borderRadius:"50%",background:"#22C55E",display:"inline-block"}}/>
-              <span style={{fontSize:10,fontWeight:600,color:"#16A34A"}}>LIVE — Wyndham POC Active</span>
-            </div>
+            <p style={{fontSize:13,color:"#64748B",marginBottom:24}}>Distribution Intelligence Platform</p>
 
             {/* Form */}
             <div style={{marginBottom:14}}>
