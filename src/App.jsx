@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ────────────���────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────��──���────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -913,8 +913,7 @@ export default function App() {
 
           {/* TOP — Logo row */}
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:3,height:32,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
-            <span style={{fontSize:20,fontWeight:800,color:"#fff"}}>RG</span>
+            <img src="/Logo-RG.png" alt="RG" style={{width:32,height:32,borderRadius:6,objectFit:"contain"}}/>
             <span style={{fontSize:20,fontWeight:800,color:"#67E8F9"}}>RateIQ</span>
           </div>
 
@@ -1037,8 +1036,7 @@ export default function App() {
           <div style={{maxWidth:360,width:"100%"}}>
             {/* Top logo */}
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:24}}>
-              <div style={{width:3,height:26,background:"linear-gradient(180deg,#A78BFA,#6941F2)",borderRadius:2}}/>
-              <span style={{fontSize:18,fontWeight:800,color:"#0F172A"}}>RG</span>
+              <img src="/Logo-RG.png" alt="RG" style={{width:28,height:28,borderRadius:5,objectFit:"contain"}}/>
               <span style={{fontSize:18,fontWeight:800,color:"#0891B2"}}>RateIQ</span>
             </div>
 
@@ -1165,14 +1163,14 @@ export default function App() {
                   ? "linear-gradient(180deg,#A78BFA,#6941F2)"
                   : "linear-gradient(180deg,#67E8F9,#0891B2)",
                 transition:"background 0.3s ease"}}/>
-              <div style={{lineHeight:1}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <img src="/Logo-RG.png" alt="RG" style={{width:24,height:24,borderRadius:4,objectFit:"contain"}}/>
                 <div style={{fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:800,
                   color:"#FFF",letterSpacing:"-0.3px",transition:"all 0.2s ease"}}>
                   {isInsights
-                    ? <>RG<span style={{color:"#A78BFA"}}>InsightsIQ</span></>
-                    : <>RG<span style={{color:"#67E8F9"}}>RateIQ</span></>}
+                    ? <span style={{color:"#A78BFA"}}>InsightsIQ</span>
+                    : <span style={{color:"#67E8F9"}}>RateIQ</span>}
                 </div>
-
               </div>
             </>);
           })()}
