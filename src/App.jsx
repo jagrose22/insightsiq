@@ -811,6 +811,7 @@ function InnovationModal({ tab, setTab, onClose, toast }) {
 }
 
 export default function App() {
+  // Default landing: Health Overview with Wyndham context
   const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
   const [showContentErrors, setShowContentErrors] = useState(false);
