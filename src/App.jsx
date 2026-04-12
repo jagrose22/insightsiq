@@ -523,8 +523,8 @@ const PB_LIBRARY = [
 ];
 
 const TOP_NAV = [
-  { id:"dist",      label:"Distribution Health",  phase:"SEE"       },
   { id:"home",      label:"Health Overview",      phase:"SEE"       },
+  { id:"dist",      label:"Distribution Health",  phase:"SEE"       },
   { id:"errors",    label:"Error Intelligence",   phase:"PRIORITIZE"},
   { id:"revenue",   label:"Revenue at Risk",      phase:"PRIORITIZE"},
   { id:"playbooks", label:"Playbooks & Queue",    phase:"FIX"       },
@@ -535,7 +535,7 @@ const TOP_NAV = [
 ];
 
 
-/* ── MultiSelect dropdown ─────────�����─������────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────������─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -651,7 +651,7 @@ function ContentErrorModal({ onClose }) {
                     <div style={{width:`${(b.count/maxCount)*100}%`,height:"100%",background:expanded===b.brand?"#6941F2":"#DC2626",borderRadius:3,transition:"background 0.12s"}}/>
                   </div>
                 </div>
-                <div style={{textAlign:"center",fontSize:10,color:"#9CA3AF"}}>{expanded===b.brand?"▲":"���"}</div>
+                <div style={{textAlign:"center",fontSize:10,color:"#9CA3AF"}}>{expanded===b.brand?"▲":"�����"}</div>
               </div>
               {expanded===b.brand && (
                 <div style={{background:"#FAFBFF",borderBottom:"2px solid #EDE9FE"}}>
@@ -811,7 +811,7 @@ function InnovationModal({ tab, setTab, onClose, toast }) {
 }
 
 export default function App() {
-  const [page, setPage]             = useState("dist");
+  const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
   const [showContentErrors, setShowContentErrors] = useState(false);
   const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
@@ -1303,7 +1303,7 @@ export default function App() {
               setActivePartners(ACCOUNT_PARTNER_MAP[resetClient.name] || DEFAULT_PARTNERS);
               setActiveBrands(DEFAULT_BRANDS);
               setDpOpen(false); setBrandOpen(false); setClientOpen(false);
-              setPage("levers");
+              setPage("home");
             }}
             style={{background:"transparent",border:`1px solid ${C.border}`,borderRadius:7,
               padding:"5px 12px",fontSize:12,color:C.t3}}>↺ Reset</button>
@@ -1741,7 +1741,7 @@ function DetailPane({ row, tab, setTab, goLevers }) {
   );
 }
 
-/* ═══════════════�����════════════���════════════════════════════��═══════════════
+/* ═══════════════�����════════════�����════════════════════════════��═══════════════
    PAGE 2 — ERROR INTELLIGENCE
 ═════════════════════════════════════════════════════════════════════════��� */
 function ErrorPage({ sel, setSel, toast }) {
