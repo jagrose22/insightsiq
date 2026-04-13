@@ -1356,7 +1356,7 @@ export default function App() {
 
 
 
-/* ══════════════════════════════��══════════════════════════════��════════════
+/* ══════════════════════════════��══════════════════════════════����════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
 function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
@@ -3194,9 +3194,8 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
             {d.monthsIn} months into program · Projected recovery potential: +{d.forecastBookings} bookings/mo
           </div>
           {/* SVG bar chart */}
-<div style={{overflowX:"auto"}}>
-  <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
-  {/* Bars */}
+          <div style={{overflowX:"auto"}}>
+            <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
               {d.monthly.map((v, i) => {
                 const x = 20 + i * ((BAR_W - 40) / n);
                 const bh = barH(v);
@@ -3215,17 +3214,17 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
               })}
             </svg>
           </div>
-{/* Legend */}
-  <div style={{display:"flex",gap:16,marginTop:8}}>
-  {[[C.blue,"Realized uplift"],[C.green,"Above baseline"]].map(([c,l])=>(
-  <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
-  <div style={{width:14,height:10,background:c,borderRadius:2}}/>
-  <span style={{fontSize:10,color:C.t3}}>{l}</span>
-  </div>
-  ))}
-  </div>
+          {/* Legend */}
+          <div style={{display:"flex",gap:16,marginTop:8}}>
+            {[[C.blue,"Realized uplift"],[C.green,"Above baseline"]].map(([c,l])=>(
+              <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
+                <div style={{width:14,height:10,background:c,borderRadius:2}}/>
+                <span style={{fontSize:10,color:C.t3}}>{l}</span>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
         {/* Pillar Breakdown Table */}
         <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,
