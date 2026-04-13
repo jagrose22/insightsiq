@@ -1356,7 +1356,7 @@ export default function App() {
 
 
 
-/* ══════════════════════════════��═══════════════════════════════════════════
+/* ══════════════════════════════��══════════════════════════════��════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
 function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
@@ -3191,15 +3191,12 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
             <span style={{fontSize:12,fontWeight:700,color:C.t1}}>Monthly Uplift vs Forecast</span>
           </div>
           <div style={{fontSize:11,color:C.t3,marginBottom:16}}>
-            {d.monthsIn} months into program · Target: +{d.forecastBookings} bookings/mo
+            {d.monthsIn} months into program · Projected recovery potential: +{d.forecastBookings} bookings/mo
           </div>
           {/* SVG bar chart */}
-          <div style={{overflowX:"auto"}}>
-            <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
-              {/* Forecast dashed line (no target label per PT feedback) */}
-              <line x1="20" y1={forecastY} x2={BAR_W - 20} y2={forecastY}
-                stroke={C.brand} strokeWidth="1.5" strokeDasharray="6 4" opacity="0.6"/>
-              {/* Bars */}
+<div style={{overflowX:"auto"}}>
+  <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
+  {/* Bars */}
               {d.monthly.map((v, i) => {
                 const x = 20 + i * ((BAR_W - 40) / n);
                 const bh = barH(v);
@@ -3218,18 +3215,15 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
               })}
             </svg>
           </div>
-          {/* Legend */}
-          <div style={{display:"flex",gap:16,marginTop:8}}>
-            {[[C.blue,"Realized uplift",""],[C.green,"Above forecast",""],
-              [C.brand,"Forecast baseline","6 4"]].map(([c,l,dash])=>(
-              <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
-                {dash ? (
-                  <svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke={c} strokeWidth="1.5" strokeDasharray={dash}/></svg>
-                ) : (
-                  <div style={{width:12,height:10,background:c,borderRadius:2,opacity:0.85}}/>
-                )}
-                <span style={{fontSize:10,color:C.t3}}>{l}</span>
-              </div>
+{/* Legend */}
+  <div style={{display:"flex",gap:16,marginTop:8}}>
+  {[[C.blue,"Realized uplift"],[C.green,"Above baseline"]].map(([c,l])=>(
+  <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
+  <div style={{width:14,height:10,background:c,borderRadius:2}}/>
+  <span style={{fontSize:10,color:C.t3}}>{l}</span>
+  </div>
+  ))}
+  </div>
             ))}
           </div>
         </div>
