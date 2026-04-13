@@ -561,13 +561,14 @@ function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   };
 
   return (
-    <div style={{position:"relative",display:"flex",flexDirection:"column",gap:1}}>
-      <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>{label}</span>
+    <div style={{position:"relative",display:"flex",alignItems:"center",gap:6}}>
+      <span style={{fontSize:11,color:"#94A3B8",whiteSpace:"nowrap"}}>{label}:</span>
       <button onClick={e=>{e.stopPropagation();setOpen(!isOpen);}}
-        style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",
-          cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:4,padding:0,
-          maxWidth:140,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
-        <span style={{overflow:"hidden",textOverflow:"ellipsis"}}>{displayLabel}</span>
+        style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",
+          borderRadius:5,color:"#E2E8F0",fontSize:12,fontWeight:500,outline:"none",
+          cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:6,
+          padding:"4px 10px",minWidth:70,whiteSpace:"nowrap"}}>
+        <span style={{overflow:"hidden",textOverflow:"ellipsis",maxWidth:100}}>{displayLabel}</span>
         <span style={{fontSize:8,opacity:0.6,flexShrink:0}}>{isOpen?"▲":"▼"}</span>
       </button>
       {isOpen && (
@@ -1128,11 +1129,10 @@ export default function App() {
         <div style={{position:"relative",display:"flex",flexDirection:"column",gap:1}}>
           <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Client</span>
           <button onClick={e=>{e.stopPropagation();setClientOpen(!clientOpen);setDpOpen(false);setBrandOpen(false);}}
-            style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",
-              borderRadius:6,padding:"3px 10px",fontSize:12,color:"#E2E8F0",fontWeight:600,outline:"none",
-              cursor:"pointer",minWidth:160,textAlign:"left",display:"flex",alignItems:"center",justifyContent:"space-between",gap:6}}>
+            style={{background:"transparent",border:"none",fontSize:14,color:"#FFF",fontWeight:700,outline:"none",
+              cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:6,padding:0}}>
             <span>{activeClient.name}</span>
-            <span style={{fontSize:8,opacity:0.6}}>{clientOpen?"▲":"▼"}</span>
+            <span style={{fontSize:9,color:"#64748B"}}>{clientOpen?"▲":"▼"}</span>
           </button>
           {clientOpen && (
             <div style={{position:"absolute",top:"100%",left:0,marginTop:6,background:"#1E2433",
@@ -1153,7 +1153,8 @@ export default function App() {
             </div>
           )}
         </div>
-        <MultiSelect label="Demand Partner" options={DEMAND_PARTNERS}
+        <div style={{width:1,height:20,background:"rgba(255,255,255,0.15)",margin:"0 8px"}}/>
+        <MultiSelect label="Partner" options={DEMAND_PARTNERS}
           selected={activePartners} onChange={next => {
             // If the newly-added partner has a dedicated pairing key, swap to it exclusively
             const added = next.filter(p => !activePartners.includes(p));
@@ -1167,18 +1168,29 @@ export default function App() {
         <MultiSelect label="Brand" options={BRAND_MAP[activeClient.name]||["All Brands"]}
           selected={activeBrands} onChange={setActiveBrands}
           isOpen={brandOpen} setOpen={v=>{setBrandOpen(v);setDpOpen(false);}}/>
-        <div style={{display:"flex",alignItems:"center",gap:5,marginLeft:4,
+        <div style={{width:1,height:20,background:"rgba(255,255,255,0.15)",margin:"0 8px"}}/>
+        <div style={{display:"flex",alignItems:"center",gap:5,
           background:"rgba(255,255,255,0.06)",borderRadius:6,padding:"3px 8px"}}>
-          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>‹</button>
+          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px",cursor:"pointer"}}>‹</button>
           <span style={{color:"#64748B",fontSize:11,fontFamily:C.mono}}>2025</span>
           <span style={{color:"#FFF",fontSize:15,fontWeight:800,fontFamily:C.mono,padding:"0 4px"}}>2026</span>
           <span style={{color:"#64748B",fontSize:11,fontFamily:C.mono}}>2027</span>
-          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>›</button>
+          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px",cursor:"pointer"}}>›</button>
         </div>
+        <button onClick={()=>{
+          const resetClient = ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT);
+          setActiveClient(resetClient);
+          setActivePartners(ACCOUNT_PARTNER_MAP[resetClient.name] || DEFAULT_PARTNERS);
+          setActiveBrands(DEFAULT_BRANDS);
+        }} style={{background:"transparent",border:"1px solid rgba(255,255,255,0.2)",
+          borderRadius:6,padding:"5px 12px",fontSize:11,color:"#94A3B8",fontWeight:500,
+          cursor:"pointer",whiteSpace:"nowrap",marginLeft:8}}>
+          Reset Filters
+        </button>
         <div style={{flex:1}}/>
         {/* Presentation mode toggle */}
         <div style={{display:"flex",background:"rgba(255,255,255,0.07)",
-          border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1,marginRight:8}}>
+          border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1}}>
           {[["essentials","Essentials"],["full","Full"]].map(([k,l])=>(
             <button key={k} onClick={()=>{
               const isEssentials = k === "essentials";
@@ -1189,16 +1201,6 @@ export default function App() {
               background:(k==="essentials"&&execView)||(k==="full"&&!execView)?"#0891B2":"transparent",
               color:(k==="essentials"&&execView)||(k==="full"&&!execView)?"#fff":"#94A3B8",border:"none",borderRadius:5,
               padding:"3px 12px",fontSize:11,fontWeight:(k==="essentials"&&execView)||(k==="full"&&!execView)?700:400,transition:"all 0.15s"}}>{l}
-            </button>
-          ))}
-        </div>
-        <div style={{display:"flex",background:"rgba(255,255,255,0.07)",
-          border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1}}>
-          {[["exec","Executive"],["ops","Operator"]].map(([k,l])=>(
-            <button key={k} onClick={()=>setRole(k)} style={{
-              background:role===k?"#6941F2":"transparent",
-              color:role===k?"#fff":"#94A3B8",border:"none",borderRadius:5,
-              padding:"3px 12px",fontSize:11,fontWeight:role===k?700:400,transition:"all 0.15s"}}>{l}
             </button>
           ))}
         </div>
@@ -1236,8 +1238,6 @@ export default function App() {
           style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",
             borderRadius:6,width:32,height:30,color:"#CBD5E1",fontSize:16,
             display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>💡</button>
-        <button style={{background:"none",border:"none",color:"#A78BFA",
-          fontSize:12,fontWeight:600,letterSpacing:"-0.1px"}}>Grow with RateGain →</button>
         <div style={{position:"relative"}}>
           <div onClick={e=>{e.stopPropagation();setAvatarOpen(!avatarOpen);}} style={{width:30,height:30,borderRadius:"50%",
             background:"linear-gradient(135deg,#7C3AED,#6941F2)",
@@ -1356,7 +1356,7 @@ export default function App() {
 
 
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ══════════════════════════════��═══════════════════════════════════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
 function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
@@ -1521,7 +1521,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                 <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
                 ALL PULL
               </span>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Bookings ▾</span>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Volume ▾</span>
             </div>
             <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
               {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
@@ -1563,7 +1563,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
               <Phase label="PRIORITIZE"/>
               <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
               <Ann type="ui"/>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Health ▴</span>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Risk ▾</span>
             </div>
             <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse"}}>
@@ -1575,7 +1575,11 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                   </tr>
                 </thead>
                 <tbody>
-                  {WYNDHAM_BRANDS.map((b,i)=>(
+                  {[...WYNDHAM_BRANDS].sort((a,b) => {
+                    const ragOrder = {red:0, amber:1, green:2};
+                    if (ragOrder[a.rag] !== ragOrder[b.rag]) return ragOrder[a.rag] - ragOrder[b.rag];
+                    return a.health - b.health; // Within same rag, lowest health first
+                  }).map((b,i)=>(
                     <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
                       <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
                       <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
@@ -2401,7 +2405,7 @@ const ACCOUNT_LEVERS_BASE = {
     [
       { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:81, impact:"$14.2K", status:"healthy",
         detail:[["Booking error rate","Low — 2.11% max"],["SYS82 booking","2.11%"],["SYS84 booking","2.82%"],["Stability","Booking flow stable"]] },
-      { id:"activation",   icon:"⚙️", name:"Activation",   score:14, impact:"$124.8K",status:"critical",
+      { id:"activation",   icon:"⚙���", name:"Activation",   score:14, impact:"$124.8K",status:"critical",
         detail:[["Bookable properties","91%"],["Actually booking","7% only"],["Non-bookable","2% minimal"],["Monetization gap","84% bookable but idle"],["Active brands","21 of 25 (4 inactive)"]] },
       { id:"mapping",      icon:"🔗", name:"Mapping",       score:83, impact:"$12.1K", status:"healthy",
         detail:[["Mapping accuracy","98.4%"],["Unmatched","1.6%"],["Room type gaps","0.8%"]] },
