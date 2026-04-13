@@ -534,8 +534,11 @@ const TOP_NAV = [
   { id:"qbr",       label:"Reporting / QBR",      stub:true         },
 ];
 
+// Presentation mode: only show essential tabs for Wyndham demo
+const EXEC_TABS = ["home", "dist", "levers"];
 
-/* ── MultiSelect dropdown ─────────������─������────────────────────────────────── */
+
+/* ── MultiSelect dropdown ─────────�������─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -814,6 +817,7 @@ export default function App() {
   // Default landing: Health Overview with Wyndham context
   const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
+  const [execView, setExecView]     = useState(true); // Presentation mode: shows only essential tabs
   const [showContentErrors, setShowContentErrors] = useState(false);
   const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
   const [activePartners, setActivePartners]     = useState(DEFAULT_PARTNERS);
@@ -1172,6 +1176,22 @@ export default function App() {
           <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>›</button>
         </div>
         <div style={{flex:1}}/>
+        {/* Presentation mode toggle */}
+        <div style={{display:"flex",background:"rgba(255,255,255,0.07)",
+          border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1,marginRight:8}}>
+          {[["essentials","Essentials"],["full","Full"]].map(([k,l])=>(
+            <button key={k} onClick={()=>{
+              const isEssentials = k === "essentials";
+              setExecView(isEssentials);
+              // If switching to essentials and current page not in EXEC_TABS, redirect to home
+              if (isEssentials && !EXEC_TABS.includes(page)) setPage("home");
+            }} style={{
+              background:(k==="essentials"&&execView)||(k==="full"&&!execView)?"#0891B2":"transparent",
+              color:(k==="essentials"&&execView)||(k==="full"&&!execView)?"#fff":"#94A3B8",border:"none",borderRadius:5,
+              padding:"3px 12px",fontSize:11,fontWeight:(k==="essentials"&&execView)||(k==="full"&&!execView)?700:400,transition:"all 0.15s"}}>{l}
+            </button>
+          ))}
+        </div>
         <div style={{display:"flex",background:"rgba(255,255,255,0.07)",
           border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1}}>
           {[["exec","Executive"],["ops","Operator"]].map(([k,l])=>(
@@ -1257,7 +1277,7 @@ export default function App() {
         position:"sticky",top:50,zIndex:150,
         boxShadow:"0 1px 4px rgba(15,23,42,0.05)"}}>
         <div style={{display:"flex",alignItems:"center",gap:0,flex:1,overflowX:"auto"}}>
-          {TOP_NAV.map(n=>{
+          {(execView ? TOP_NAV.filter(n => EXEC_TABS.includes(n.id)) : TOP_NAV).map(n=>{
             const active = page===n.id;
             if (n.stub) return (
               <button key={n.id} title="Coming in V1.1"
@@ -1491,8 +1511,53 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
         </Card>
       )}
       {viewMode === "account" && activeClient?.name === "Wyndham Hotels" && (
-        <div style={{display:"grid",gridTemplateColumns:"60% 40%",gap:16,marginBottom:22}}>
-          {/* Left Panel: Brand Health Grid */}
+        <div style={{display:"grid",gridTemplateColumns:"40% 60%",gap:16,marginBottom:22}}>
+          {/* Left Panel: Demand Partner Pairings (sorted by bookings desc) */}
+          <Card style={{display:"flex",flexDirection:"column"}}>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+              <Phase label="SEE"/>
+              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Demand Partner Pairings</span>
+              <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}>
+                <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
+                ALL PULL
+              </span>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Bookings ▾</span>
+            </div>
+            <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
+              {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
+            </div>
+            <div style={{flex:1,overflowY:"auto",padding:"8px 0",maxHeight:380}}>
+              {[...WYNDHAM_DEMAND_PARTNERS, ...WYNDHAM_DEMAND_PARTNERS_EXTENDED].sort((a,b) => b.bookings - a.bookings).slice(0, partnersExpanded ? undefined : 6).map(p=>(
+                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
+                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
+                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{padding:"10px 16px",borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
+              <button 
+                onClick={()=>setPartnersExpanded(!partnersExpanded)} 
+                style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"6px 14px",fontSize:11,color:C.brand,fontWeight:600,cursor:"pointer",transition:"all 0.12s"}}
+              >
+                {partnersExpanded ? "Show Less ↑" : "View All Partners ↓"}
+              </button>
+              {partnersExpanded && (
+                <button style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"6px 12px",fontSize:10,color:C.t3,cursor:"pointer"}}>⬇ Export</button>
+              )}
+            </div>
+            {/* Push Opportunity Callout */}
+            <div style={{margin:"0 16px 16px",padding:12,background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderLeft:`3px solid ${C.amber}`,borderRadius:8}}>
+              <span style={{fontSize:12,color:C.amber,lineHeight:1.5}}>⚡ <b>Push Opportunity</b> — migrating top 3 partners to Push could recover an estimated $180K–$240K in annual booking volume.</span>
+            </div>
+          </Card>
+
+          {/* Right Panel: Brand Health Grid */}
           <Card>
             <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
               <Phase label="PRIORITIZE"/>
@@ -1522,62 +1587,6 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                   ))}
                 </tbody>
               </table>
-            </div>
-          </Card>
-
-          {/* Right Panel: Demand Partner Pairings */}
-          <Card style={{display:"flex",flexDirection:"column"}}>
-            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-              <Phase label="SEE"/>
-              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Demand Partner Pairings</span>
-              <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}>
-                <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
-                ALL PULL
-              </span>
-            </div>
-            <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
-              {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
-            </div>
-            <div style={{flex:1,overflowY:"auto",padding:"8px 0"}}>
-              {WYNDHAM_DEMAND_PARTNERS.map(p=>(
-                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
-                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
-                  </div>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
-                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
-                  </div>
-                </div>
-              ))}
-              {partnersExpanded && WYNDHAM_DEMAND_PARTNERS_EXTENDED.map(p=>(
-                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
-                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
-                  </div>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
-                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div style={{padding:"10px 16px",borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
-              <button 
-                onClick={()=>setPartnersExpanded(!partnersExpanded)} 
-                style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"6px 14px",fontSize:11,color:C.brand,fontWeight:600,cursor:"pointer",transition:"all 0.12s"}}
-              >
-                {partnersExpanded ? "Show Less ↑" : "View All Partners ↓"}
-              </button>
-              {partnersExpanded && (
-                <button style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:6,padding:"6px 12px",fontSize:10,color:C.t3,cursor:"pointer"}}>⬇ Export</button>
-              )}
-            </div>
-            {/* Push Opportunity Callout */}
-            <div style={{margin:"0 16px 16px",padding:12,background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderLeft:`3px solid ${C.amber}`,borderRadius:8}}>
-              <span style={{fontSize:12,color:C.amber,lineHeight:1.5}}>⚡ <b>Push Opportunity</b> — migrating top 3 partners to Push could recover an estimated $180K–$240K in annual booking volume.</span>
             </div>
           </Card>
         </div>
@@ -2028,7 +2037,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
 
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
-══════════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════���═══════════════════ */
 function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePartners, goLevers, toast }) {
   const relativeDate = (days) => {
     const d = new Date();
@@ -2675,7 +2684,7 @@ const ACCOUNT_LEVERS_BASE = {
         detail:[["Amenity fill rate","93%"],["Missing","<4 per property"],["Top gap","Pool hours"]] },
       { id:"descriptions", icon:"📝", name:"Descriptions",  score:85, impact:"$5.9K",  status:"healthy",
         detail:[["Completeness","96%"],["Char avg","390"],["Missing","4%"]] },
-      { id:"content-score",icon:"🖼️", name:"Content Score", score:89, impact:"$7.2K",  status:"healthy",
+      { id:"content-score",icon:"����️", name:"Content Score", score:89, impact:"$7.2K",  status:"healthy",
         detail:[["Overall","89/100"],["Image","98"],["Text","86"],["Structured","84"]] },
     ],
     [
@@ -3183,11 +3192,9 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
           {/* SVG bar chart */}
           <div style={{overflowX:"auto"}}>
             <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
-              {/* Forecast dashed line */}
+              {/* Forecast dashed line (no target label per PT feedback) */}
               <line x1="20" y1={forecastY} x2={BAR_W - 20} y2={forecastY}
                 stroke={C.brand} strokeWidth="1.5" strokeDasharray="6 4" opacity="0.6"/>
-              <text x={BAR_W - 18} y={forecastY - 4} fontSize="9" fill={C.brand}
-                textAnchor="end" fontFamily="IBM Plex Mono" fontWeight="700">TARGET</text>
               {/* Bars */}
               {d.monthly.map((v, i) => {
                 const x = 20 + i * ((BAR_W - 40) / n);
@@ -3209,8 +3216,8 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
           </div>
           {/* Legend */}
           <div style={{display:"flex",gap:16,marginTop:8}}>
-            {[[C.blue,"Realized uplift",""],[C.green,"Exceeded target",""],
-              [C.brand,"Forecast line","6 4"]].map(([c,l,dash])=>(
+            {[[C.blue,"Realized uplift",""],[C.green,"Above forecast",""],
+              [C.brand,"Forecast baseline","6 4"]].map(([c,l,dash])=>(
               <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
                 {dash ? (
                   <svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke={c} strokeWidth="1.5" strokeDasharray={dash}/></svg>
@@ -3551,6 +3558,7 @@ function IssueTag({ leverId, status }) {
 function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const [fixStatus, setFixStatus]     = useState({});
+  const [leverFilter, setLeverFilter] = useState("all"); // "all" | "critical" | "warning" | "healthy"
 
   // Find first partner-specific key that exists (supports single or multi-select)
   const partnerKey = (activePartners || [])
@@ -3596,6 +3604,18 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
             {tenant && <ProducerTier name={tenant}/>}
           </div>
           <div style={{fontSize:12,color:C.t3}}>16 levers across 4 domains · Click any card to drill down</div>
+        </div>
+        {/* Filter strip */}
+        <div style={{display:"flex",gap:6,alignItems:"center",marginRight:12}}>
+          {[["all","All"],["critical","Critical"],["warning","At Risk"],["healthy","Healthy"]].map(([k,l])=>(
+            <button key={k} onClick={()=>setLeverFilter(k)} style={{
+              background:leverFilter===k?(k==="critical"?C.redBg:k==="warning"?C.amberBg:k==="healthy"?C.greenBg:C.brandDim):"transparent",
+              border:`1px solid ${leverFilter===k?(k==="critical"?C.redBorder:k==="warning"?C.amberBorder:k==="healthy"?C.greenBorder:C.brandBorder):C.border}`,
+              borderRadius:6,padding:"5px 12px",fontSize:11,fontWeight:leverFilter===k?700:500,
+              color:leverFilter===k?(k==="critical"?C.red:k==="warning"?C.amber:k==="healthy"?C.green:C.brand):C.t3,
+              cursor:"pointer",transition:"all 0.15s"}}>{l}
+            </button>
+          ))}
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
           {(() => {
@@ -3687,7 +3707,16 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
       </div>
 
       {/* ── BUCKET SECTIONS ──────────────────────────────────────────── */}
-      {leverBuckets.map(bucket => (
+      {leverBuckets.map(bucket => {
+        const filteredLevers = leverFilter === "all" 
+          ? bucket.levers 
+          : bucket.levers.filter(l => 
+              leverFilter === "critical" ? l.status === "critical" :
+              leverFilter === "warning" ? l.status === "medium" :
+              leverFilter === "healthy" ? l.status === "healthy" : true
+            );
+        if (filteredLevers.length === 0) return null;
+        return (
         <div key={bucket.name} style={{marginBottom:32}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
             <div style={{width:9,height:9,borderRadius:"50%",background:bucket.color}}/>
@@ -3695,7 +3724,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
             <div style={{flex:1,height:1,background:C.border}}/>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:12}}>
-            {bucket.levers.map(lever => {
+            {filteredLevers.map(lever => {
               const st = LEVER_STATUS_CFG[lever.status];
               return (
                 <div key={lever.id} className="lever-card"
@@ -3765,7 +3794,8 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
             })}
           </div>
         </div>
-      ))}
+      );
+      })}
 
       {/* ── SLIDE PANEL ──────────────────────────────────────────────── */}
       {activePanel && (
