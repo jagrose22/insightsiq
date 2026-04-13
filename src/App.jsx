@@ -1521,7 +1521,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                 <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
                 ALL PULL
               </span>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Bookings ▾</span>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Volume ▾</span>
             </div>
             <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
               {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
@@ -1563,7 +1563,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
               <Phase label="PRIORITIZE"/>
               <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
               <Ann type="ui"/>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Health ▴</span>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Risk ▾</span>
             </div>
             <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse"}}>
@@ -1575,7 +1575,11 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                   </tr>
                 </thead>
                 <tbody>
-                  {WYNDHAM_BRANDS.map((b,i)=>(
+                  {[...WYNDHAM_BRANDS].sort((a,b) => {
+                    const ragOrder = {red:0, amber:1, green:2};
+                    if (ragOrder[a.rag] !== ragOrder[b.rag]) return ragOrder[a.rag] - ragOrder[b.rag];
+                    return a.health - b.health; // Within same rag, lowest health first
+                  }).map((b,i)=>(
                     <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
                       <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
                       <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
@@ -2401,7 +2405,7 @@ const ACCOUNT_LEVERS_BASE = {
     [
       { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:81, impact:"$14.2K", status:"healthy",
         detail:[["Booking error rate","Low — 2.11% max"],["SYS82 booking","2.11%"],["SYS84 booking","2.82%"],["Stability","Booking flow stable"]] },
-      { id:"activation",   icon:"⚙️", name:"Activation",   score:14, impact:"$124.8K",status:"critical",
+      { id:"activation",   icon:"⚙���", name:"Activation",   score:14, impact:"$124.8K",status:"critical",
         detail:[["Bookable properties","91%"],["Actually booking","7% only"],["Non-bookable","2% minimal"],["Monetization gap","84% bookable but idle"],["Active brands","21 of 25 (4 inactive)"]] },
       { id:"mapping",      icon:"🔗", name:"Mapping",       score:83, impact:"$12.1K", status:"healthy",
         detail:[["Mapping accuracy","98.4%"],["Unmatched","1.6%"],["Room type gaps","0.8%"]] },
