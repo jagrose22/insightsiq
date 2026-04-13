@@ -3224,7 +3224,6 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
   </div>
   ))}
   </div>
-            ))}
           </div>
         </div>
 
