@@ -1630,7 +1630,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                         <td style={{padding:"9px 12px"}}><StatusChip s={t.status}/></td>
                         <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{t.owner}</td>
                         <td style={{padding:"9px 10px"}}>
-                          <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 →</button>
+                          <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 ��</button>
                         </td>
                       </tr>
                     );
@@ -1925,19 +1925,9 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
                 <div style={{fontSize:36,fontWeight:800,fontFamily:C.mono,color,letterSpacing:"-1px",lineHeight:1}}>{count}</div>
                 {risk>0 && <div style={{fontSize:11,color:C.t3,marginTop:6}}>${(risk/1000).toFixed(1)}K at risk</div>}
               </div>
-))}
-            </svg>
-          </div>
-          {/* Legend */}
-          <div style={{display:"flex",gap:16,marginTop:8}}>
-            {[[C.blue,"Realized uplift"],[C.green,"Above baseline"]].map(([c,l])=>(
-              <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
-                <div style={{width:14,height:10,background:c,borderRadius:2}}/>
-                <span style={{fontSize:10,color:C.t3}}>{l}</span>
-              </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Pillar Breakdown Table */}
         <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,
