@@ -1497,41 +1497,8 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
         </Card>
       )}
       {viewMode === "account" && activeClient?.name === "Wyndham Hotels" && (
-        <div style={{display:"grid",gridTemplateColumns:"60% 40%",gap:16,marginBottom:22}}>
-          {/* Left Panel: Brand Health Grid */}
-          <Card>
-            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
-              <Phase label="PRIORITIZE"/>
-              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
-              <Ann type="ui"/>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Health ▴</span>
-            </div>
-            <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
-              <table style={{width:"100%",borderCollapse:"collapse"}}>
-                <thead>
-                  <tr style={{background:"#F8FAFC",position:"sticky",top:0,zIndex:1}}>
-                    {["Brand","Tier","Health","Err/1k","Status","Properties"].map(h=>(
-                      <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3,background:"#F8FAFC"}}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {WYNDHAM_BRANDS.map((b,i)=>(
-                    <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
-                      <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
-                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.health>=70?C.green:b.health>=50?C.amber:C.red}}>{b.health}</td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.err>=10?C.red:b.err>=5?C.amber:C.green}}>{b.err}</td>
-                      <td style={{padding:"9px 12px"}}><Rag s={b.rag}/></td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{b.properties.toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
-          {/* Right Panel: Demand Partner Pairings */}
+        <div style={{display:"grid",gridTemplateColumns:"40% 60%",gap:16,marginBottom:22}}>
+          {/* Left Panel: Demand Partner Pairings (sorted by bookings desc) */}
           <Card style={{display:"flex",flexDirection:"column"}}>
             <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
               <Phase label="SEE"/>
@@ -1540,24 +1507,13 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                 <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
                 ALL PULL
               </span>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Volume ▾</span>
             </div>
             <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
               {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
             </div>
-            <div style={{flex:1,overflowY:"auto",padding:"8px 0"}}>
-              {WYNDHAM_DEMAND_PARTNERS.map(p=>(
-                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
-                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
-                  </div>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
-                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
-                  </div>
-                </div>
-              ))}
-              {partnersExpanded && WYNDHAM_DEMAND_PARTNERS_EXTENDED.map(p=>(
+            <div style={{flex:1,overflowY:"auto",padding:"8px 0",maxHeight:380}}>
+              {[...WYNDHAM_DEMAND_PARTNERS, ...WYNDHAM_DEMAND_PARTNERS_EXTENDED].sort((a,b) => b.bookings - a.bookings).slice(0, partnersExpanded ? undefined : 6).map(p=>(
                 <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
                   <div style={{flex:1}}>
                     <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
@@ -1584,6 +1540,43 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
             {/* Push Opportunity Callout */}
             <div style={{margin:"0 16px 16px",padding:12,background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderLeft:`3px solid ${C.amber}`,borderRadius:8}}>
               <span style={{fontSize:12,color:C.amber,lineHeight:1.5}}>⚡ <b>Push Opportunity</b> — migrating top 3 partners to Push could recover an estimated $180K–$240K in annual booking volume.</span>
+            </div>
+          </Card>
+
+          {/* Right Panel: Brand Health Grid (sorted by risk: red first, then amber, then green) */}
+          <Card>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
+              <Phase label="PRIORITIZE"/>
+              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
+              <Ann type="ui"/>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Risk ▾</span>
+            </div>
+            <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead>
+                  <tr style={{background:"#F8FAFC",position:"sticky",top:0,zIndex:1}}>
+                    {["Brand","Tier","Health","Err/1k","Status","Properties"].map(h=>(
+                      <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3,background:"#F8FAFC"}}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...WYNDHAM_BRANDS].sort((a,b) => {
+                    const ragOrder = {red:0, amber:1, green:2};
+                    if (ragOrder[a.rag] !== ragOrder[b.rag]) return ragOrder[a.rag] - ragOrder[b.rag];
+                    return a.health - b.health;
+                  }).map((b,i)=>(
+                    <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
+                      <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
+                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.health>=70?C.green:b.health>=50?C.amber:C.red}}>{b.health}</td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.err>=10?C.red:b.err>=5?C.amber:C.green}}>{b.err}</td>
+                      <td style={{padding:"9px 12px"}}><Rag s={b.rag}/></td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{b.properties.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </Card>
         </div>
@@ -2032,7 +2025,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* ═══════════════════════���══════════════════════════════════════════════════
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
 ══════════════════════════════════════════════════════���═══════════════════ */
 function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePartners, goLevers, toast }) {
