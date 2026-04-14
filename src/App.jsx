@@ -534,11 +534,8 @@ const TOP_NAV = [
   { id:"qbr",       label:"Reporting / QBR",      stub:true         },
 ];
 
-// Presentation mode: only show essential tabs for Wyndham demo
-const EXEC_TABS = ["home", "dist", "levers"];
 
-
-/* ── MultiSelect dropdown ─────────�������─������────────────────────────────────── */
+/* ── MultiSelect dropdown ─────────������─������────────────────────────────────── */
 function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   const allSelected = selected.includes("All Brands") || selected.includes("All");
   const displayLabel = selected.length === 0 ? "None"
@@ -561,14 +558,13 @@ function MultiSelect({ label, options, selected, onChange, isOpen, setOpen }) {
   };
 
   return (
-    <div style={{position:"relative",display:"flex",alignItems:"center",gap:6}}>
-      <span style={{fontSize:11,color:"#94A3B8",whiteSpace:"nowrap"}}>{label}:</span>
+    <div style={{position:"relative",display:"flex",flexDirection:"column",gap:1}}>
+      <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>{label}</span>
       <button onClick={e=>{e.stopPropagation();setOpen(!isOpen);}}
-        style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",
-          borderRadius:5,color:"#E2E8F0",fontSize:12,fontWeight:500,outline:"none",
-          cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:6,
-          padding:"4px 10px",minWidth:70,whiteSpace:"nowrap"}}>
-        <span style={{overflow:"hidden",textOverflow:"ellipsis",maxWidth:100}}>{displayLabel}</span>
+        style={{background:"transparent",border:"none",color:"#CBD5E1",fontSize:12,outline:"none",
+          cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:4,padding:0,
+          maxWidth:140,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+        <span style={{overflow:"hidden",textOverflow:"ellipsis"}}>{displayLabel}</span>
         <span style={{fontSize:8,opacity:0.6,flexShrink:0}}>{isOpen?"▲":"▼"}</span>
       </button>
       {isOpen && (
@@ -818,7 +814,6 @@ export default function App() {
   // Default landing: Health Overview with Wyndham context
   const [page, setPage]             = useState("home");
   const [role, setRole]             = useState("exec");
-  const [execView, setExecView]     = useState(true); // Presentation mode: shows only essential tabs
   const [showContentErrors, setShowContentErrors] = useState(false);
   const [activeClient, setActiveClient]         = useState(ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT));
   const [activePartners, setActivePartners]     = useState(DEFAULT_PARTNERS);
@@ -1129,10 +1124,11 @@ export default function App() {
         <div style={{position:"relative",display:"flex",flexDirection:"column",gap:1}}>
           <span style={{fontSize:9,color:"#6B7280",letterSpacing:0.5,textTransform:"uppercase"}}>Client</span>
           <button onClick={e=>{e.stopPropagation();setClientOpen(!clientOpen);setDpOpen(false);setBrandOpen(false);}}
-            style={{background:"transparent",border:"none",fontSize:14,color:"#FFF",fontWeight:700,outline:"none",
-              cursor:"pointer",textAlign:"left",display:"flex",alignItems:"center",gap:6,padding:0}}>
+            style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.18)",
+              borderRadius:6,padding:"3px 10px",fontSize:12,color:"#E2E8F0",fontWeight:600,outline:"none",
+              cursor:"pointer",minWidth:160,textAlign:"left",display:"flex",alignItems:"center",justifyContent:"space-between",gap:6}}>
             <span>{activeClient.name}</span>
-            <span style={{fontSize:9,color:"#64748B"}}>{clientOpen?"▲":"▼"}</span>
+            <span style={{fontSize:8,opacity:0.6}}>{clientOpen?"▲":"▼"}</span>
           </button>
           {clientOpen && (
             <div style={{position:"absolute",top:"100%",left:0,marginTop:6,background:"#1E2433",
@@ -1153,8 +1149,7 @@ export default function App() {
             </div>
           )}
         </div>
-        <div style={{width:1,height:20,background:"rgba(255,255,255,0.15)",margin:"0 8px"}}/>
-        <MultiSelect label="Partner" options={DEMAND_PARTNERS}
+        <MultiSelect label="Demand Partner" options={DEMAND_PARTNERS}
           selected={activePartners} onChange={next => {
             // If the newly-added partner has a dedicated pairing key, swap to it exclusively
             const added = next.filter(p => !activePartners.includes(p));
@@ -1168,39 +1163,22 @@ export default function App() {
         <MultiSelect label="Brand" options={BRAND_MAP[activeClient.name]||["All Brands"]}
           selected={activeBrands} onChange={setActiveBrands}
           isOpen={brandOpen} setOpen={v=>{setBrandOpen(v);setDpOpen(false);}}/>
-        <div style={{width:1,height:20,background:"rgba(255,255,255,0.15)",margin:"0 8px"}}/>
-        <div style={{display:"flex",alignItems:"center",gap:5,
+        <div style={{display:"flex",alignItems:"center",gap:5,marginLeft:4,
           background:"rgba(255,255,255,0.06)",borderRadius:6,padding:"3px 8px"}}>
-          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px",cursor:"pointer"}}>‹</button>
+          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>‹</button>
           <span style={{color:"#64748B",fontSize:11,fontFamily:C.mono}}>2025</span>
           <span style={{color:"#FFF",fontSize:15,fontWeight:800,fontFamily:C.mono,padding:"0 4px"}}>2026</span>
           <span style={{color:"#64748B",fontSize:11,fontFamily:C.mono}}>2027</span>
-          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px",cursor:"pointer"}}>›</button>
+          <button style={{background:"none",border:"none",color:"#64748B",fontSize:13,padding:"0 2px"}}>›</button>
         </div>
-        <button onClick={()=>{
-          const resetClient = ENTERPRISE_ACCOUNTS.find(a=>a.name===DEFAULT_CLIENT);
-          setActiveClient(resetClient);
-          setActivePartners(ACCOUNT_PARTNER_MAP[resetClient.name] || DEFAULT_PARTNERS);
-          setActiveBrands(DEFAULT_BRANDS);
-        }} style={{background:"transparent",border:"1px solid rgba(255,255,255,0.2)",
-          borderRadius:6,padding:"5px 12px",fontSize:11,color:"#94A3B8",fontWeight:500,
-          cursor:"pointer",whiteSpace:"nowrap",marginLeft:8}}>
-          Reset Filters
-        </button>
         <div style={{flex:1}}/>
-        {/* Presentation mode toggle */}
         <div style={{display:"flex",background:"rgba(255,255,255,0.07)",
           border:"1px solid rgba(255,255,255,0.1)",borderRadius:7,padding:2,gap:1}}>
-          {[["essentials","Essentials"],["full","Full"]].map(([k,l])=>(
-            <button key={k} onClick={()=>{
-              const isEssentials = k === "essentials";
-              setExecView(isEssentials);
-              // If switching to essentials and current page not in EXEC_TABS, redirect to home
-              if (isEssentials && !EXEC_TABS.includes(page)) setPage("home");
-            }} style={{
-              background:(k==="essentials"&&execView)||(k==="full"&&!execView)?"#0891B2":"transparent",
-              color:(k==="essentials"&&execView)||(k==="full"&&!execView)?"#fff":"#94A3B8",border:"none",borderRadius:5,
-              padding:"3px 12px",fontSize:11,fontWeight:(k==="essentials"&&execView)||(k==="full"&&!execView)?700:400,transition:"all 0.15s"}}>{l}
+          {[["exec","Executive"],["ops","Operator"]].map(([k,l])=>(
+            <button key={k} onClick={()=>setRole(k)} style={{
+              background:role===k?"#6941F2":"transparent",
+              color:role===k?"#fff":"#94A3B8",border:"none",borderRadius:5,
+              padding:"3px 12px",fontSize:11,fontWeight:role===k?700:400,transition:"all 0.15s"}}>{l}
             </button>
           ))}
         </div>
@@ -1238,6 +1216,8 @@ export default function App() {
           style={{background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",
             borderRadius:6,width:32,height:30,color:"#CBD5E1",fontSize:16,
             display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>💡</button>
+        <button style={{background:"none",border:"none",color:"#A78BFA",
+          fontSize:12,fontWeight:600,letterSpacing:"-0.1px"}}>Grow with RateGain →</button>
         <div style={{position:"relative"}}>
           <div onClick={e=>{e.stopPropagation();setAvatarOpen(!avatarOpen);}} style={{width:30,height:30,borderRadius:"50%",
             background:"linear-gradient(135deg,#7C3AED,#6941F2)",
@@ -1277,7 +1257,7 @@ export default function App() {
         position:"sticky",top:50,zIndex:150,
         boxShadow:"0 1px 4px rgba(15,23,42,0.05)"}}>
         <div style={{display:"flex",alignItems:"center",gap:0,flex:1,overflowX:"auto"}}>
-          {(execView ? TOP_NAV.filter(n => EXEC_TABS.includes(n.id)) : TOP_NAV).map(n=>{
+          {TOP_NAV.map(n=>{
             const active = page===n.id;
             if (n.stub) return (
               <button key={n.id} title="Coming in V1.1"
@@ -1356,7 +1336,7 @@ export default function App() {
 
 
 
-/* ══════════════════════════════��═══════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
 function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
@@ -1511,8 +1491,41 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
         </Card>
       )}
       {viewMode === "account" && activeClient?.name === "Wyndham Hotels" && (
-        <div style={{display:"grid",gridTemplateColumns:"40% 60%",gap:16,marginBottom:22}}>
-          {/* Left Panel: Demand Partner Pairings (sorted by bookings desc) */}
+        <div style={{display:"grid",gridTemplateColumns:"60% 40%",gap:16,marginBottom:22}}>
+          {/* Left Panel: Brand Health Grid */}
+          <Card>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
+              <Phase label="PRIORITIZE"/>
+              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
+              <Ann type="ui"/>
+              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Health ▴</span>
+            </div>
+            <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead>
+                  <tr style={{background:"#F8FAFC",position:"sticky",top:0,zIndex:1}}>
+                    {["Brand","Tier","Health","Err/1k","Status","Properties"].map(h=>(
+                      <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3,background:"#F8FAFC"}}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {WYNDHAM_BRANDS.map((b,i)=>(
+                    <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
+                      <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
+                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.health>=70?C.green:b.health>=50?C.amber:C.red}}>{b.health}</td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.err>=10?C.red:b.err>=5?C.amber:C.green}}>{b.err}</td>
+                      <td style={{padding:"9px 12px"}}><Rag s={b.rag}/></td>
+                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{b.properties.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          {/* Right Panel: Demand Partner Pairings */}
           <Card style={{display:"flex",flexDirection:"column"}}>
             <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
               <Phase label="SEE"/>
@@ -1521,13 +1534,24 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                 <span style={{width:5,height:5,borderRadius:"50%",background:C.red,display:"inline-block"}}/>
                 ALL PULL
               </span>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Volume ▾</span>
             </div>
             <div style={{padding:"8px 16px",borderBottom:`1px solid ${C.border}`,fontSize:11,color:C.t3}}>
               {WYNDHAM_DEMAND_PARTNERS.length + WYNDHAM_DEMAND_PARTNERS_EXTENDED.length} active partners · Push migration opportunity
             </div>
-            <div style={{flex:1,overflowY:"auto",padding:"8px 0",maxHeight:380}}>
-              {[...WYNDHAM_DEMAND_PARTNERS, ...WYNDHAM_DEMAND_PARTNERS_EXTENDED].sort((a,b) => b.bookings - a.bookings).slice(0, partnersExpanded ? undefined : 6).map(p=>(
+            <div style={{flex:1,overflowY:"auto",padding:"8px 0"}}>
+              {WYNDHAM_DEMAND_PARTNERS.map(p=>(
+                <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
+                    <div style={{fontSize:11,color:C.t3}}>{p.type}</div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:12,fontFamily:C.mono,color:C.t2}}>{p.bookings.toLocaleString()} bookings</span>
+                    <span style={{fontSize:9,fontFamily:C.mono,background:C.redBg,color:C.red,border:`1px solid ${C.redBorder}`,borderRadius:4,padding:"2px 8px",fontWeight:700}}>PULL</span>
+                  </div>
+                </div>
+              ))}
+              {partnersExpanded && WYNDHAM_DEMAND_PARTNERS_EXTENDED.map(p=>(
                 <div key={p.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${C.t6}`}}>
                   <div style={{flex:1}}>
                     <div style={{fontSize:12,fontWeight:600,color:C.t1}}>{p.name}</div>
@@ -1554,43 +1578,6 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
             {/* Push Opportunity Callout */}
             <div style={{margin:"0 16px 16px",padding:12,background:C.amberBg,border:`1px solid ${C.amberBorder}`,borderLeft:`3px solid ${C.amber}`,borderRadius:8}}>
               <span style={{fontSize:12,color:C.amber,lineHeight:1.5}}>⚡ <b>Push Opportunity</b> — migrating top 3 partners to Push could recover an estimated $180K–$240K in annual booking volume.</span>
-            </div>
-          </Card>
-
-          {/* Right Panel: Brand Health Grid */}
-          <Card>
-            <div style={{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,background:"#FAFBFD",display:"flex",alignItems:"center",gap:8}}>
-              <Phase label="PRIORITIZE"/>
-              <span style={{fontSize:13,fontWeight:700,color:C.t1}}>Brand Health Grid</span>
-              <Ann type="ui"/>
-              <span style={{marginLeft:"auto",fontSize:10,color:C.t4}}>Sort: Risk ▾</span>
-            </div>
-            <div style={{overflowX:"auto",maxHeight:420,overflowY:"auto"}}>
-              <table style={{width:"100%",borderCollapse:"collapse"}}>
-                <thead>
-                  <tr style={{background:"#F8FAFC",position:"sticky",top:0,zIndex:1}}>
-                    {["Brand","Tier","Health","Err/1k","Status","Properties"].map(h=>(
-                      <th key={h} style={{padding:"8px 12px",textAlign:"left",color:C.t4,fontSize:10,fontWeight:600,borderBottom:`1px solid ${C.border}`,whiteSpace:"nowrap",letterSpacing:0.3,background:"#F8FAFC"}}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...WYNDHAM_BRANDS].sort((a,b) => {
-                    const ragOrder = {red:0, amber:1, green:2};
-                    if (ragOrder[a.rag] !== ragOrder[b.rag]) return ragOrder[a.rag] - ragOrder[b.rag];
-                    return a.health - b.health; // Within same rag, lowest health first
-                  }).map((b,i)=>(
-                    <tr key={b.brand} className="tr-hover" style={{background:i%2===0?"#fff":"#FAFBFD",borderBottom:`1px solid ${C.t6}`}}>
-                      <td style={{padding:"9px 12px",fontWeight:500,color:C.t1,fontSize:12}}>{b.brand}</td>
-                      <td style={{padding:"9px 12px"}}><span style={{fontSize:10,color:C.t3,background:C.t6,borderRadius:4,padding:"2px 7px"}}>{b.tier}</span></td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.health>=70?C.green:b.health>=50?C.amber:C.red}}>{b.health}</td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontWeight:700,fontSize:12,color:b.err>=10?C.red:b.err>=5?C.amber:C.green}}>{b.err}</td>
-                      <td style={{padding:"9px 12px"}}><Rag s={b.rag}/></td>
-                      <td style={{padding:"9px 12px",fontFamily:C.mono,fontSize:12,color:C.t2}}>{b.properties.toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </Card>
         </div>
@@ -2041,7 +2028,7 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
 
 /* ══════════════════════════════════════════════════════════════════════════
    PAGE 4 — PLAYBOOKS & ACTION QUEUE
-══════════════════════════════════════════════════════���═══════════════════ */
+══════════════════════════════════════════════════════════════════════════ */
 function PlaybooksPage({ tab, setTab, kanban, setKanban, activeClient, activePartners, goLevers, toast }) {
   const relativeDate = (days) => {
     const d = new Date();
@@ -2405,7 +2392,7 @@ const ACCOUNT_LEVERS_BASE = {
     [
       { id:"error-rate",   icon:"⚠️", name:"Error Rate",   score:81, impact:"$14.2K", status:"healthy",
         detail:[["Booking error rate","Low — 2.11% max"],["SYS82 booking","2.11%"],["SYS84 booking","2.82%"],["Stability","Booking flow stable"]] },
-      { id:"activation",   icon:"⚙���", name:"Activation",   score:14, impact:"$124.8K",status:"critical",
+      { id:"activation",   icon:"⚙️", name:"Activation",   score:14, impact:"$124.8K",status:"critical",
         detail:[["Bookable properties","91%"],["Actually booking","7% only"],["Non-bookable","2% minimal"],["Monetization gap","84% bookable but idle"],["Active brands","21 of 25 (4 inactive)"]] },
       { id:"mapping",      icon:"🔗", name:"Mapping",       score:83, impact:"$12.1K", status:"healthy",
         detail:[["Mapping accuracy","98.4%"],["Unmatched","1.6%"],["Room type gaps","0.8%"]] },
@@ -2688,7 +2675,7 @@ const ACCOUNT_LEVERS_BASE = {
         detail:[["Amenity fill rate","93%"],["Missing","<4 per property"],["Top gap","Pool hours"]] },
       { id:"descriptions", icon:"📝", name:"Descriptions",  score:85, impact:"$5.9K",  status:"healthy",
         detail:[["Completeness","96%"],["Char avg","390"],["Missing","4%"]] },
-      { id:"content-score",icon:"����️", name:"Content Score", score:89, impact:"$7.2K",  status:"healthy",
+      { id:"content-score",icon:"🖼️", name:"Content Score", score:89, impact:"$7.2K",  status:"healthy",
         detail:[["Overall","89/100"],["Image","98"],["Text","86"],["Structured","84"]] },
     ],
     [
@@ -3196,9 +3183,11 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
           {/* SVG bar chart */}
           <div style={{overflowX:"auto"}}>
             <svg width="100%" viewBox={`0 0 ${BAR_W} ${BAR_H + 24}`} style={{display:"block",minWidth:280}}>
-              {/* Forecast dashed line (no target label per PT feedback) */}
+              {/* Forecast dashed line */}
               <line x1="20" y1={forecastY} x2={BAR_W - 20} y2={forecastY}
                 stroke={C.brand} strokeWidth="1.5" strokeDasharray="6 4" opacity="0.6"/>
+              <text x={BAR_W - 18} y={forecastY - 4} fontSize="9" fill={C.brand}
+                textAnchor="end" fontFamily="IBM Plex Mono" fontWeight="700">TARGET</text>
               {/* Bars */}
               {d.monthly.map((v, i) => {
                 const x = 20 + i * ((BAR_W - 40) / n);
@@ -3220,8 +3209,8 @@ function RecoveryPage({ activeClient, goLevers, toast }) {
           </div>
           {/* Legend */}
           <div style={{display:"flex",gap:16,marginTop:8}}>
-            {[[C.blue,"Realized uplift",""],[C.green,"Above forecast",""],
-              [C.brand,"Forecast baseline","6 4"]].map(([c,l,dash])=>(
+            {[[C.blue,"Realized uplift",""],[C.green,"Exceeded target",""],
+              [C.brand,"Forecast line","6 4"]].map(([c,l,dash])=>(
               <div key={l} style={{display:"flex",alignItems:"center",gap:5}}>
                 {dash ? (
                   <svg width="20" height="8"><line x1="0" y1="4" x2="20" y2="4" stroke={c} strokeWidth="1.5" strokeDasharray={dash}/></svg>
@@ -3562,7 +3551,6 @@ function IssueTag({ leverId, status }) {
 function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast }) {
   const [activePanel, setActivePanel] = useState(null);
   const [fixStatus, setFixStatus]     = useState({});
-  const [leverFilter, setLeverFilter] = useState("all"); // "all" | "critical" | "warning" | "healthy"
 
   // Find first partner-specific key that exists (supports single or multi-select)
   const partnerKey = (activePartners || [])
@@ -3608,18 +3596,6 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
             {tenant && <ProducerTier name={tenant}/>}
           </div>
           <div style={{fontSize:12,color:C.t3}}>16 levers across 4 domains · Click any card to drill down</div>
-        </div>
-        {/* Filter strip */}
-        <div style={{display:"flex",gap:6,alignItems:"center",marginRight:12}}>
-          {[["all","All"],["critical","Critical"],["warning","At Risk"],["healthy","Healthy"]].map(([k,l])=>(
-            <button key={k} onClick={()=>setLeverFilter(k)} style={{
-              background:leverFilter===k?(k==="critical"?C.redBg:k==="warning"?C.amberBg:k==="healthy"?C.greenBg:C.brandDim):"transparent",
-              border:`1px solid ${leverFilter===k?(k==="critical"?C.redBorder:k==="warning"?C.amberBorder:k==="healthy"?C.greenBorder:C.brandBorder):C.border}`,
-              borderRadius:6,padding:"5px 12px",fontSize:11,fontWeight:leverFilter===k?700:500,
-              color:leverFilter===k?(k==="critical"?C.red:k==="warning"?C.amber:k==="healthy"?C.green:C.brand):C.t3,
-              cursor:"pointer",transition:"all 0.15s"}}>{l}
-            </button>
-          ))}
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
           {(() => {
@@ -3711,16 +3687,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
       </div>
 
       {/* ── BUCKET SECTIONS ──────────────────────────────────────────── */}
-      {leverBuckets.map(bucket => {
-        const filteredLevers = leverFilter === "all" 
-          ? bucket.levers 
-          : bucket.levers.filter(l => 
-              leverFilter === "critical" ? l.status === "critical" :
-              leverFilter === "warning" ? l.status === "medium" :
-              leverFilter === "healthy" ? l.status === "healthy" : true
-            );
-        if (filteredLevers.length === 0) return null;
-        return (
+      {leverBuckets.map(bucket => (
         <div key={bucket.name} style={{marginBottom:32}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
             <div style={{width:9,height:9,borderRadius:"50%",background:bucket.color}}/>
@@ -3728,7 +3695,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
             <div style={{flex:1,height:1,background:C.border}}/>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:12}}>
-            {filteredLevers.map(lever => {
+            {bucket.levers.map(lever => {
               const st = LEVER_STATUS_CFG[lever.status];
               return (
                 <div key={lever.id} className="lever-card"
@@ -3798,8 +3765,7 @@ function LeversPage({ tenant, setTenant, activePartners, onContentErrors, toast 
             })}
           </div>
         </div>
-      );
-      })}
+      ))}
 
       {/* ── SLIDE PANEL ──────────────────────────────────────────────── */}
       {activePanel && (
