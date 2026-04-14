@@ -1356,7 +1356,7 @@ export default function App() {
 
 
 
-/* ══════════════════════════════��══════════════════════════════�����════════════
+/* ══════════════════════════════��══════════════════════════════������════════════
    PAGE 1 — HEALTH OVERVIEW
 ══════════════════════════════════════════════════════════════════════════ */
 function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClient, setPage }) {
@@ -1630,7 +1630,7 @@ function HomePage({ role, sel, setSel, tab, setTab, goLevers, toast, activeClien
                         <td style={{padding:"9px 12px"}}><StatusChip s={t.status}/></td>
                         <td style={{padding:"9px 12px",color:C.t3,fontSize:11}}>{t.owner}</td>
                         <td style={{padding:"9px 10px"}}>
-                          <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 ��</button>
+                          <button onClick={e=>{e.stopPropagation();goLevers(t.name);}} style={{background:C.brandDim,border:`1px solid ${C.brandBorder}`,borderRadius:6,padding:"3px 9px",fontSize:10,color:C.brand,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.12s"}} onMouseEnter={e=>{e.target.style.background=C.brand;e.target.style.color="#fff";}} onMouseLeave={e=>{e.target.style.background=C.brandDim;e.target.style.color=C.brand;}}>⬡ 16 ���</button>
                         </td>
                       </tr>
                     );
@@ -1927,7 +1927,6 @@ function RevenuePage({ role, sel, setSel, activeClient, activePartners, toast })
               </div>
             ))}
           </div>
-        </Card>
 
         {/* Pillar Breakdown Table */}
         <div style={{background:C.cardBg,border:`1px solid ${C.border}`,borderRadius:14,
